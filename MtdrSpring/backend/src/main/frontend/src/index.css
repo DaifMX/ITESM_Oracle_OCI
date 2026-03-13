@@ -1,134 +1,86 @@
-/*
-** Todo application version 1.0.
-**
-** Copyright (c) 2020, Oracle and/or its affiliates.
-** Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl/
-*/
-body {
-    /* from the redwood theme */
-    background-color: #3A3632;
-    width: 100%;
-    max-width: 50rem;
-    margin: 0 auto;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-      sans-serif;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /*
+   * shadcn/ui-style HSL tokens.
+   * Oracle red (#C74634) maps to --primary.
+   * Warm neutrals follow the Oracle Design System palette.
+   */
+  :root {
+    --background: 40 20% 97%;
+    --foreground: 30 8% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 30 8% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 30 8% 10%;
+
+    --primary: 7 59% 49%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 30 8% 94%;
+    --secondary-foreground: 30 5% 25%;
+
+    --muted: 30 8% 94%;
+    --muted-foreground: 30 4% 43%;
+
+    --accent: 30 8% 94%;
+    --accent-foreground: 30 5% 25%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 30 7% 85%;
+    --input:  30 7% 85%;
+    --ring:   7 59% 49%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 30 11% 4%;
+    --foreground: 30 9% 89%;
+
+    --card: 30 10% 11%;
+    --card-foreground: 30 9% 89%;
+
+    --popover: 30 10% 11%;
+    --popover-foreground: 30 9% 89%;
+
+    --primary: 7 59% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 30 8% 17%;
+    --secondary-foreground: 30 8% 80%;
+
+    --muted: 30 8% 17%;
+    --muted-foreground: 30 5% 56%;
+
+    --accent: 30 8% 17%;
+    --accent-foreground: 30 8% 80%;
+
+    --destructive: 0 62% 42%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 30 8% 19%;
+    --input:  30 8% 19%;
+    --ring:   7 59% 55%;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Oracle Sans", system-ui, -apple-system, BlinkMacSystemFont,
+      "Segoe UI", Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
-  .App {
-    background: #201E1C;
-    color: #FEF9F2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: max(12px,min(2vw, 18px)); /*calc(1vw + 1vmin);*/
-    margin: 2rem 0 4rem 0;
-    padding: 1rem;
-    position: relative;
-    box-shadow: 0 10px 18px 0 rgba(0, 0, 0, 0.2), 0 4.5rem 8rem 0 rgba(0, 0, 0, 0.1);
-    border-radius: 0.5rem;
-  }
-  div#maincontent, div#newinputform form {
-    width: 95%;
-  }
-  div#maincontent {
-    margin: 0;
-    padding: 0;
-  }
-  h1 {
-    margin: 0.5rem 0 1rem 0;
-    padding: 0;
-  }
-  h2 {
-    margin: 0.1rem 0 0.1rem 0;
-    padding: 0;
-  }
-  #newiteminput {
-    width: 100%;
-  }
-  div#newinputform {
-    width: 100%;
-  }
-  div#newinputform form{
-    display: flex;
-    flex-direction: row;
-    margin: 0 auto;
-  }
-  #donelist {
-    margin: 0;
-    padding: 0;
-  }
-  table#itemlistNotDone {
-    margin-bottom: 2rem;
-  }
-  table#itemlistDone {
-    margin-bottom: 3rem;
-  }
-  table.itemlist {
-    margin-top: 0.7rem;
-    border-collapse: collapse;
-    margin-bottom: 1rem;
-  }
-  table.itemlist td {
-    border-bottom: solid 1px #5B5652;
-    padding: .5rem;
-  }
-  table.itemlist td.description {
-    width: 100%;
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-  table.itemlist td.date {
-    font-size: max(10px,min(1.5vw, 14px));
-    color: grey;
-    white-space: nowrap;
-    padding-right: 0;
-    padding-left: 0;
-  }
-  table.itemlist tr:hover {
-    background-color: #161513;
-  }
-  input {
-    font-family: inherit;
-    font-size: 100%;
-    line-height: 1;
-    margin: 0;
-  }
-  button,
-  input {
-    overflow: visible;
-  }
-  input[type="text"] {
-    border-radius: 0.3rem;
-    padding-left: 10px;
-  }
-  button.AddButton,
-  button.DeleteButton,
-  button.AddButton,
-  button.DoneButton {
-    font-size: max(8px,min(2vw, 12px));
-    padding: 0.35em 0.5em;
-    color:#161513;
-  }
-  /* from the redwood theme */
-  button.AddButton {
-    color: #FEF9F2;
-    background-color: #5F7D4F;
-  }
-  button.AddButton:hover {
-    background-color: #6F915D;
-  }
-  button.DeleteButton {
-    color: #FEF9F2;
-    background-color:  #D63B25;
-  }
-  button.DeleteButton:hover {
-    background-color: #EC4F3A
-  }
-  button.DoneButton {
-    background-color: #FBF9F8;
-  }
-  button.DoneButton:hover {
-    background-color: #D4CFCA;
-  }
+}

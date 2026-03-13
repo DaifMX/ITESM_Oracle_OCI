@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#C74634" />
+    <meta name="description" content="TEAM31 Todo List Application" />
+    <link rel="manifest" href="/manifest.json" />
+    <title>Todo Application</title>
+    <!--
+      Runs synchronously before any CSS or React code so the correct
+      theme class is set on <html> before first paint — no flash.
+    -->
+    <script>
+      (function () {
+        if (localStorage.getItem('theme') === 'dark') {
+          document.documentElement.classList.add('dark')
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/index.jsx"></script>
+  </body>
+</html>

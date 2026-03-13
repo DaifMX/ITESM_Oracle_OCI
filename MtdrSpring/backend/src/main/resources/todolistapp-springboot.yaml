@@ -76,7 +76,8 @@ spec:
             - name: creds
               mountPath: /mtdrworkshop/creds
           ports:
-            - containerPort: 8080
+            - name: http
+              containerPort: 8080
       restartPolicy: Always
       volumes:
         - name: creds

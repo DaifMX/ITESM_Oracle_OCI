@@ -7,11 +7,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import jakarta.transaction.Transactional;
+import java.util.Optional;
 
 @Repository
 @Transactional
 @EnableTransactionManagement
 public interface UserRepository extends JpaRepository<User,Integer> {
-
-
+    Optional<User> findByPhonenumber(String phonenumber);
 }
