@@ -12,8 +12,8 @@ public class RefreshToken {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "USER_ID", referencedColumnName = "ID")
-    private User user;
+    @JoinColumn(name = "EMPLOYEE_ID", referencedColumnName = "EMPLOYEE_ID")
+    private Employee employee;
 
     @Column(name = "TOKEN", nullable = false, unique = true)
     private String token;
@@ -22,8 +22,8 @@ public class RefreshToken {
     private Instant expiryDate;
 
     public Long getId() { return id; }
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public Employee getEmployee() { return employee; }
+    public void setEmployee(Employee employee) { this.employee = employee; }
     public String getToken() { return token; }
     public void setToken(String token) { this.token = token; }
     public Instant getExpiryDate() { return expiryDate; }

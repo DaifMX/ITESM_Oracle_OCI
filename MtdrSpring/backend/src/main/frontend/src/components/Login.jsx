@@ -6,14 +6,14 @@ import { Label } from '@/components/ui/label'
 import { setTokens } from '@/lib/auth'
 
 export default function Login({ onLogin }) {
-  const [phonenumber, setPhonenumber] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e) {
     e.preventDefault()
-    if (!phonenumber.trim() || !password.trim()) return
+    if (!email.trim() || !password.trim()) return
     setLoading(true)
     setError('')
 
@@ -21,12 +21,16 @@ export default function Login({ onLogin }) {
       const res = await fetch('/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phonenumber, password }),
+        body: JSON.stringify({ email, password }),
       })
 
       if (!res.ok) {
-        const data = await res.json()
-        setError(data.error || 'Invalid credentials')
+        let errorMsg = 'Invalid credentials'
+        try {
+          const data = await res.json()
+          errorMsg = data.error || errorMsg
+        } catch {}
+        setError(errorMsg)
         return
       }
 
@@ -65,14 +69,14 @@ export default function Login({ onLogin }) {
 
           <form onSubmit={handleSubmit} className="px-8 py-6 space-y-4">
             <div>
-              <Label htmlFor="phonenumber">Phone number</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="phonenumber"
-                type="text"
-                placeholder="e.g. +1 555 000 0000"
-                value={phonenumber}
-                onChange={(e) => setPhonenumber(e.target.value)}
-                autoComplete="username"
+                id="email"
+                type="email"
+                placeholder="e.g. user@oracle.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
                 autoFocus
               />
             </div>

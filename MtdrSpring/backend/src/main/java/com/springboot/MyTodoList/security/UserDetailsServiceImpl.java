@@ -1,7 +1,7 @@
 package com.springboot.MyTodoList.security;
 
-import com.springboot.MyTodoList.model.User;
-import com.springboot.MyTodoList.repository.UserRepository;
+import com.springboot.MyTodoList.model.Employee;
+import com.springboot.MyTodoList.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,16 +14,16 @@ import java.util.Collections;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepository;
+    private EmployeeRepository employeeRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String phonenumber) throws UsernameNotFoundException {
-        User user = userRepository.findByPhonenumber(phonenumber)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + phonenumber));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Employee employee = employeeRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Employee not found: " + email));
 
         return new org.springframework.security.core.userdetails.User(
-                user.getPhoneNumber(),
-                user.getUserPassword(),
+                employee.getEmail(),
+                employee.getPasswordHash(),
                 Collections.emptyList()
         );
     }

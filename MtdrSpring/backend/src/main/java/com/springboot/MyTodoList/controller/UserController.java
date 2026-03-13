@@ -1,5 +1,6 @@
 package com.springboot.MyTodoList.controller;
-import com.springboot.MyTodoList.model.User;
+
+import com.springboot.MyTodoList.model.Employee;
 import com.springboot.MyTodoList.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -11,65 +12,52 @@ import java.util.List;
 
 @RestController
 public class UserController {
+
     @Autowired
     private UserService userService;
 
-    //@CrossOrigin
-    @GetMapping(value = "/users")
-    public List<User> getAllUsers(){
+    @GetMapping(value = "/employees")
+    public List<Employee> getAllEmployees() {
         return userService.findAll();
     }
 
-    //@CrossOrigin
-    @GetMapping(value = "/users/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable int id){
-        try{
-            ResponseEntity<User> responseEntity = userService.getUserById(id);
-            return new ResponseEntity<User>(responseEntity.getBody(), HttpStatus.OK);
-        }catch (Exception e){
+    @GetMapping(value = "/employees/{id}")
+    public ResponseEntity<Employee> getEmployeeById(@PathVariable int id) {
+        try {
+            ResponseEntity<Employee> responseEntity = userService.getEmployeeById(id);
+            return new ResponseEntity<>(responseEntity.getBody(), HttpStatus.OK);
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    //@CrossOrigin
-    @PostMapping(value = "/adduser")
-    public ResponseEntity<User> addUser(@RequestBody User newUser) throws Exception{
-        User dbUser = userService.addUser(newUser);
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("location",""+dbUser.getID());
-        responseHeaders.set("Access-Control-Expose-Headers","location");
-        //URI location = URI.create(""+td.getID())
 
-        return ResponseEntity.ok()
-                .headers(responseHeaders).build();
+    @PostMapping(value = "/employees")
+    public ResponseEntity<Employee> addEmployee(@RequestBody Employee employee) throws Exception {
+        Employee saved = userService.addEmployee(employee);
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("location", "" + saved.getEmployeeId());
+        responseHeaders.set("Access-Control-Expose-Headers", "location");
+        return ResponseEntity.ok().headers(responseHeaders).build();
     }
-    //@CrossOrigin
-    @PutMapping(value = "updateUser/{id}")
-    public ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable int id){
-        try{
-            User dbUser = userService.updateUser(id, user);
-            
-            return new ResponseEntity<>(dbUser,HttpStatus.OK);
-        }catch (Exception e){
+
+    @PutMapping(value = "/employees/{id}")
+    public ResponseEntity<Employee> updateEmployee(@RequestBody Employee employee, @PathVariable int id) {
+        try {
+            Employee updated = userService.updateEmployee(id, employee);
+            return new ResponseEntity<>(updated, HttpStatus.OK);
+        } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
-    //@CrossOrigin
-    @DeleteMapping(value = "deleteUser/{id}")
-    public ResponseEntity<Boolean> deleteUser(@PathVariable("id") int id){
+
+    @DeleteMapping(value = "/employees/{id}")
+    public ResponseEntity<Boolean> deleteEmployee(@PathVariable int id) {
         Boolean flag = false;
-        try{
-            flag = userService.deleteUser(id);
+        try {
+            flag = userService.deleteEmployee(id);
             return new ResponseEntity<>(flag, HttpStatus.OK);
-        }catch (Exception e){
-            return new ResponseEntity<>(flag,HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(flag, HttpStatus.NOT_FOUND);
         }
     }
-
-
-    @GetMapping(value = "/unitTestAdd")
-    public User test(){
-        return userService.test();
-    }
-
-
 }

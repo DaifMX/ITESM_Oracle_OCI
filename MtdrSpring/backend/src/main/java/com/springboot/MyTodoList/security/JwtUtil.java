@@ -23,16 +23,16 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateAccessToken(String phonenumber) {
+    public String generateAccessToken(String email) {
         return Jwts.builder()
-                .subject(phonenumber)
+                .subject(email)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + accessExpiration))
                 .signWith(getSigningKey())
                 .compact();
     }
 
-    public String getPhonenumberFromToken(String token) {
+    public String getEmailFromToken(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()

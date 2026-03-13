@@ -1,7 +1,7 @@
 package com.springboot.MyTodoList.service;
 
+import com.springboot.MyTodoList.model.Employee;
 import com.springboot.MyTodoList.model.RefreshToken;
-import com.springboot.MyTodoList.model.User;
 import com.springboot.MyTodoList.repository.RefreshTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,14 +21,12 @@ public class RefreshTokenService {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
-    public RefreshToken createRefreshToken(User user) {
-        // Delete any existing refresh token for this user
-        refreshTokenRepository.findAll().stream()
-                .filter(rt -> rt.getUser().getID() == user.getID())
-                .forEach(rt -> refreshTokenRepository.delete(rt));
+    @Transactional
+    public RefreshToken createRefreshToken(Employee employee) {
+        refreshTokenRepository.deleteByEmployee(employee);
 
         RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setUser(user);
+        refreshToken.setEmployee(employee);
         refreshToken.setToken(UUID.randomUUID().toString());
         refreshToken.setExpiryDate(Instant.now().plusMillis(refreshExpiration));
         return refreshTokenRepository.save(refreshToken);
@@ -43,7 +41,7 @@ public class RefreshTokenService {
     }
 
     @Transactional
-    public void deleteByUser(User user) {
-        refreshTokenRepository.deleteByUser(user);
+    public void deleteByEmployee(Employee employee) {
+        refreshTokenRepository.deleteByEmployee(employee);
     }
 }

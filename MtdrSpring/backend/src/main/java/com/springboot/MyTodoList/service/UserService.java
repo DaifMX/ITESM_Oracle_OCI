@@ -1,7 +1,7 @@
 package com.springboot.MyTodoList.service;
 
-import com.springboot.MyTodoList.model.User;
-import com.springboot.MyTodoList.repository.UserRepository;
+import com.springboot.MyTodoList.model.Employee;
+import com.springboot.MyTodoList.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,52 +14,48 @@ import java.util.Optional;
 public class UserService {
 
     @Autowired
-    private UserRepository userRepository;
+    private EmployeeRepository employeeRepository;
 
-    public List<User> findAll(){
-        List<User> users = userRepository.findAll();
-        return users;
+    public List<Employee> findAll() {
+        return employeeRepository.findAll();
     }
 
-    public ResponseEntity<User> getUserById(int id){
-        Optional<User> userById = userRepository.findById(id);
-        if (userById.isPresent()){
-            return new ResponseEntity<>(userById.get(), HttpStatus.OK);
-        }else{
+    public ResponseEntity<Employee> getEmployeeById(int id) {
+        Optional<Employee> found = employeeRepository.findById(id);
+        if (found.isPresent()) {
+            return new ResponseEntity<>(found.get(), HttpStatus.OK);
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-
-    public User addUser(User newUser){
-        return userRepository.save(newUser);
+    public Employee addEmployee(Employee employee) {
+        return employeeRepository.save(employee);
     }
 
-    public User test(){
-        User newUser = new User(88,"someNumber","pwd");
-
-        return userRepository.save(newUser);
-    }
-
-    public boolean deleteUser(int id){
-        try{
-            userRepository.deleteById(id);
+    public boolean deleteEmployee(int id) {
+        try {
+            employeeRepository.deleteById(id);
             return true;
-        }catch(Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
-    public User updateUser(int id, User user2update){
-        Optional<User> dbUser = userRepository.findById(id);
-        if(dbUser.isPresent()){
-            User user = dbUser.get();
-            user.setID(id);
-            user.setPhoneNumber(user2update.getPhoneNumber());
-            user.setUserPassword(user2update.getUserPassword());
-            return userRepository.save(user);
-        }else{
-            return null;
-        }
-    }
 
+    public Employee updateEmployee(int id, Employee updated) {
+        Optional<Employee> existing = employeeRepository.findById(id);
+        if (existing.isPresent()) {
+            Employee employee = existing.get();
+            employee.setFirstName(updated.getFirstName());
+            employee.setLastName(updated.getLastName());
+            employee.setEmail(updated.getEmail());
+            employee.setModality(updated.getModality());
+            employee.setPosition(updated.getPosition());
+            employee.setRole(updated.getRole());
+            employee.setPhoneNumber(updated.getPhoneNumber());
+            employee.setTelegramChatId(updated.getTelegramChatId());
+            return employeeRepository.save(employee);
+        }
+        return null;
+    }
 }
