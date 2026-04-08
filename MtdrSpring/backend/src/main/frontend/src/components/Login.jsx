@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { setTokens } from '@/lib/auth'
+import { setTokens, setUser, authFetch } from '@/lib/auth'
 
 export default function Login({ onLogin }) {
   const [email, setEmail] = useState('')
@@ -36,7 +36,12 @@ export default function Login({ onLogin }) {
 
       const data = await res.json()
       setTokens(data.accessToken, data.refreshToken)
-      onLogin()
+
+      const meRes = await authFetch('/auth/me')
+      const user = meRes.ok ? await meRes.json() : null
+      if (user) setUser(user)
+
+      onLogin(user?.role ?? 'developer')
     } catch {
       setError('Unable to connect to the server')
     } finally {

@@ -1,5 +1,6 @@
 const ACCESS_TOKEN_KEY = 'oracle_todo_access_token'
 const REFRESH_TOKEN_KEY = 'oracle_todo_refresh_token'
+const USER_KEY = 'oracle_todo_user'
 
 export function getAccessToken() {
   return sessionStorage.getItem(ACCESS_TOKEN_KEY)
@@ -17,6 +18,22 @@ export function setTokens(accessToken, refreshToken) {
 export function clearTokens() {
   sessionStorage.removeItem(ACCESS_TOKEN_KEY)
   localStorage.removeItem(REFRESH_TOKEN_KEY)
+}
+
+export function setUser(user) {
+  sessionStorage.setItem(USER_KEY, JSON.stringify(user))
+}
+
+export function getUser() {
+  try {
+    return JSON.parse(sessionStorage.getItem(USER_KEY))
+  } catch {
+    return null
+  }
+}
+
+export function clearUser() {
+  sessionStorage.removeItem(USER_KEY)
 }
 
 export async function refreshAccessToken() {

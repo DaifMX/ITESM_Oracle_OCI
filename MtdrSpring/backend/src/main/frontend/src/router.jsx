@@ -3,17 +3,18 @@ import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import RootLayout from './layouts/RootLayout'
 import AppLayout from './layouts/AppLayout'
-import { getAccessToken, getRefreshToken, refreshAccessToken } from './lib/auth'
+import { getAccessToken, getRefreshToken, refreshAccessToken, getUser } from './lib/auth'
 
 // Public pages
 const LoginPage    = lazy(() => import('./pages/LoginPage'))
 const RegisterPage = lazy(() => import('./pages/RegisterPage'))
 
 // App pages (authenticated, wrapped in AppLayout)
-const DashboardPage = lazy(() => import('./pages/DashboardPage'))
-const ProjectsPage  = lazy(() => import('./pages/ProjectsPage'))
-const SprintsPage   = lazy(() => import('./pages/SprintsPage'))
-const KanbanPage    = lazy(() => import('./pages/KanbanPage'))
+const DashboardPage          = lazy(() => import('./pages/DashboardPage'))
+const DeveloperDashboardPage = lazy(() => import('./pages/DeveloperDashboardPage'))
+const ProjectsPage           = lazy(() => import('./pages/ProjectsPage'))
+const SprintsPage            = lazy(() => import('./pages/SprintsPage'))
+const KanbanPage             = lazy(() => import('./pages/KanbanPage'))
 
 const pageFallback = (
   <div className="min-h-screen flex items-center justify-center">
@@ -43,7 +44,13 @@ const router = createBrowserRouter([
   {
     element: <RootLayout />,
     children: [
-      { index: true, element: <Navigate to="/dashboard" replace /> },
+      {
+        index: true,
+        element: (() => {
+          const user = getUser()
+          return <Navigate to={user?.role === 'developer' ? '/developer-dashboard' : '/dashboard'} replace />
+        })(),
+      },
 
       // Public
       {
@@ -66,6 +73,10 @@ const router = createBrowserRouter([
           {
             path: 'dashboard',
             element: <Suspense fallback={pageFallback}><DashboardPage /></Suspense>,
+          },
+          {
+            path: 'developer-dashboard',
+            element: <Suspense fallback={pageFallback}><DeveloperDashboardPage /></Suspense>,
           },
           {
             path: 'projects',

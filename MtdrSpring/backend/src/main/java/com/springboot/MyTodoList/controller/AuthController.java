@@ -12,6 +12,7 @@ import com.springboot.MyTodoList.service.RefreshTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -84,6 +85,20 @@ public class AuthController {
         refreshTokenService.findByToken(request.getRefreshToken())
                 .ifPresent(rt -> refreshTokenService.deleteByEmployee(rt.getEmployee()));
         return ResponseEntity.ok(Map.of("message", "Logged out"));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> me() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return employeeRepository.findByEmail(email)
+                .map(emp -> ResponseEntity.ok(Map.of(
+                        "employeeId", emp.getEmployeeId(),
+                        "email", emp.getEmail(),
+                        "firstName", emp.getFirstName(),
+                        "lastName", emp.getLastName(),
+                        "role", emp.getRole() != null ? emp.getRole() : "developer"
+                )))
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @PostMapping("/register")

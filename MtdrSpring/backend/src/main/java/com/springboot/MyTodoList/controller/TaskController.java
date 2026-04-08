@@ -77,6 +77,13 @@ public class TaskController {
                 : ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/employee/{employeeId}")
+    public List<Task> getByEmployee(@PathVariable int employeeId) {
+        return employeeTaskService.findByEmployee(employeeId).stream()
+                .map(et -> et.getTask())
+                .collect(java.util.stream.Collectors.toList());
+    }
+
     // Assignee management
 
     @GetMapping("/{id}/assignees")

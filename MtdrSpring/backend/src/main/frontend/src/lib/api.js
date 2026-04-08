@@ -88,6 +88,12 @@ export async function deleteTask(id) {
   if (!res.ok) throw new Error('Failed to delete task')
 }
 
+export async function getTasksByEmployee(employeeId) {
+  const res = await authFetch(`/tasks/employee/${employeeId}`)
+  if (!res.ok) throw new Error('Failed to load tasks')
+  return res.json()
+}
+
 export async function getTaskAssignees(taskId) {
   const res = await authFetch(`/tasks/${taskId}/assignees`)
   if (!res.ok) throw new Error('Failed to load assignees')

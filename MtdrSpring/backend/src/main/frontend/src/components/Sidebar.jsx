@@ -1,21 +1,28 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { LayoutDashboard, FolderKanban, LogOut, Sun, Moon, ChevronRight } from 'lucide-react'
 import { useTheme } from '../context/ThemeContext'
-import { clearTokens } from '../lib/auth'
+import { clearTokens, clearUser, getUser } from '../lib/auth'
 import { cn } from '../lib/utils'
 import { Button } from './ui/button'
 
-const navItems = [
+const MANAGER_NAV = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/projects', label: 'Projects', icon: FolderKanban },
+]
+
+const DEVELOPER_NAV = [
+  { to: '/developer-dashboard', label: 'My Dashboard', icon: LayoutDashboard },
 ]
 
 export default function Sidebar() {
   const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
+  const user = getUser()
+  const navItems = user?.role === 'developer' ? DEVELOPER_NAV : MANAGER_NAV
 
   function handleLogout() {
     clearTokens()
+    clearUser()
     navigate('/login')
   }
 

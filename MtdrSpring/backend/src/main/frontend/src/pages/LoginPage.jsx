@@ -3,5 +3,10 @@ import Login from '../components/Login'
 
 export default function LoginPage() {
   const navigate = useNavigate()
-  return <Login onLogin={() => navigate('/dashboard')} />
+
+  function handleLogin(role) {
+    navigate(role === 'developer' ? '/developer-dashboard' : '/dashboard', { replace: true })
+  }
+
+  return <Login onLogin={handleLogin} />
 }
