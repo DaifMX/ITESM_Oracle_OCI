@@ -11,4 +11,5 @@ import java.util.Optional;
 @Transactional
 public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     Optional<Employee> findByEmail(String email);
+    Optional<Employee> findByTelegramChatId(String telegramChatId);
 }

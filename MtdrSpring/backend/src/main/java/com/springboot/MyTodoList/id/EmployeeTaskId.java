@@ -1,4 +1,4 @@
-package com.springboot.MyTodoList.model;
+package com.springboot.MyTodoList.id;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

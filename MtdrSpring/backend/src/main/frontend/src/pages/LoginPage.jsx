@@ -3,5 +3,5 @@ import Login from '../components/Login'
 
 export default function LoginPage() {
   const navigate = useNavigate()
-  return <Login onLogin={() => navigate('/todos')} />
+  return <Login onLogin={() => navigate('/dashboard')} />
 }

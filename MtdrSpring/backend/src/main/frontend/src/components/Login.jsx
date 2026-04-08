@@ -56,7 +56,7 @@ export default function Login({ onLogin }) {
             TEAM31
           </span>
           <span className="text-muted-foreground text-xs tracking-wide uppercase">
-            Todo List Application
+            Agile Project Management
           </span>
         </div>
 

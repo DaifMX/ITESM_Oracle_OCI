@@ -1,0 +1,37 @@
+services:
+  oracle-db:
+    image: gvenzl/oracle-free:23-slim-faststart
+    container_name: oracle-atp-dev
+    ports:
+      - "1521:1521"
+    environment:
+      ORACLE_PASSWORD: ADMIN
+      APP_USER: ADMIN
+      APP_USER_PASSWORD: ADMIN
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
+
+  app:
+    build:
+      context: ./MtdrSpring/backend
+      dockerfile: Dockerfile
+    container_name: mytodolist-app
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./MtdrSpring/backend/.env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db:1521/FREEPDB1
+      SPRING_DATASOURCE_USERNAME: ADMIN
+    depends_on:
+      oracle-db:
+        condition: service_healthy
+
+volumes:
+  oracle-data:

@@ -2,11 +2,18 @@ import { lazy, Suspense, useState, useEffect } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import RootLayout from './layouts/RootLayout'
+import AppLayout from './layouts/AppLayout'
 import { getAccessToken, getRefreshToken, refreshAccessToken } from './lib/auth'
 
-const LoginPage = lazy(() => import('./pages/LoginPage'))
+// Public pages
+const LoginPage    = lazy(() => import('./pages/LoginPage'))
 const RegisterPage = lazy(() => import('./pages/RegisterPage'))
-const TodosPage = lazy(() => import('./pages/TodosPage'))
+
+// App pages (authenticated, wrapped in AppLayout)
+const DashboardPage = lazy(() => import('./pages/DashboardPage'))
+const ProjectsPage  = lazy(() => import('./pages/ProjectsPage'))
+const SprintsPage   = lazy(() => import('./pages/SprintsPage'))
+const KanbanPage    = lazy(() => import('./pages/KanbanPage'))
 
 const pageFallback = (
   <div className="min-h-screen flex items-center justify-center">
@@ -15,7 +22,7 @@ const pageFallback = (
 )
 
 function ProtectedRoute({ children }) {
-  const [status, setStatus] = useState('checking') // 'checking' | 'ok' | 'denied'
+  const [status, setStatus] = useState('checking')
 
   useEffect(() => {
     if (getAccessToken()) {
@@ -36,7 +43,9 @@ const router = createBrowserRouter([
   {
     element: <RootLayout />,
     children: [
-      { index: true, element: <Navigate to="/login" replace /> },
+      { index: true, element: <Navigate to="/dashboard" replace /> },
+
+      // Public
       {
         path: 'login',
         element: <Suspense fallback={pageFallback}><LoginPage /></Suspense>,
@@ -45,13 +54,32 @@ const router = createBrowserRouter([
         path: 'register',
         element: <Suspense fallback={pageFallback}><RegisterPage /></Suspense>,
       },
+
+      // Protected — all wrapped in AppLayout (sidebar, theme, logout)
       {
-        path: 'todos',
         element: (
           <ProtectedRoute>
-            <Suspense fallback={pageFallback}><TodosPage /></Suspense>
+            <AppLayout />
           </ProtectedRoute>
         ),
+        children: [
+          {
+            path: 'dashboard',
+            element: <Suspense fallback={pageFallback}><DashboardPage /></Suspense>,
+          },
+          {
+            path: 'projects',
+            element: <Suspense fallback={pageFallback}><ProjectsPage /></Suspense>,
+          },
+          {
+            path: 'projects/:projectId/sprints',
+            element: <Suspense fallback={pageFallback}><SprintsPage /></Suspense>,
+          },
+          {
+            path: 'projects/:projectId/sprints/:sprintId/board',
+            element: <Suspense fallback={pageFallback}><KanbanPage /></Suspense>,
+          },
+        ],
       },
     ],
   },

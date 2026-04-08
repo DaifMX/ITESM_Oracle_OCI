@@ -15,42 +15,36 @@ public class BotHelper {
 	public static void sendMessageToTelegram(Long chatId, String text, TelegramClient bot) {
 
 		try {
-			// prepare message
-			SendMessage messageToTelegram = 
+			SendMessage messageToTelegram =
 					SendMessage
 					.builder()
 					.chatId(chatId)
 					.text(text)
+					.parseMode("Markdown")
 					.replyMarkup(new ReplyKeyboardRemove(true))
 					.build()
 				;
-
-			// send message
 			bot.execute(messageToTelegram);
-
 		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
+			logger.error("Failed to send message to chatId={}: {}", chatId, e.getLocalizedMessage(), e);
 		}
 	}
 
-	public static void sendMessageToTelegram(Long chatId, String text,TelegramClient bot, ReplyKeyboardMarkup rk ) {
+	public static void sendMessageToTelegram(Long chatId, String text, TelegramClient bot, ReplyKeyboardMarkup rk) {
 
 		try {
-			// prepare message
-			SendMessage messageToTelegram = 
+			SendMessage messageToTelegram =
 					SendMessage
 					.builder()
 					.chatId(chatId)
 					.text(text)
+					.parseMode("Markdown")
 					.replyMarkup(rk)
 					.build()
 				;
-
-			// send message
 			bot.execute(messageToTelegram);
-
 		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
+			logger.error("Failed to send message to chatId={}: {}", chatId, e.getLocalizedMessage(), e);
 		}
 	}
 

@@ -1,5 +1,6 @@
 package com.springboot.MyTodoList.model;
 
+import com.springboot.MyTodoList.id.EmployeeTaskId;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 

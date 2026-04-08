@@ -19,11 +19,11 @@ public class ToDoItem {
     @Column(name = "CREATION_TS")
     OffsetDateTime creation_ts;
     @Column(name = "done")
-    boolean done;
+    int done;
     public ToDoItem(){
 
     }
-    public ToDoItem(int ID, String description, OffsetDateTime creation_ts, boolean done) {
+    public ToDoItem(int ID, String description, OffsetDateTime creation_ts, int done) {
         this.ID = ID;
         this.description = description;
         this.creation_ts = creation_ts;
@@ -54,11 +54,11 @@ public class ToDoItem {
         this.creation_ts = creation_ts;
     }
 
-    public boolean isDone() {
+    public int getDone() {
         return done;
     }
 
-    public void setDone(boolean done) {
+    public void setDone(int done) {
         this.done = done;
     }
 

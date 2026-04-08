@@ -1,7 +1,12 @@
+FROM maven:3.9-eclipse-temurin-21 AS builder
+WORKDIR /build
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+COPY src ./src
+RUN mvn package -DskipTests -B
+
 FROM openjdk:22-jdk
-#COPY pom.xml /tmp/
-#COPY src /tmp/src/
-WORKDIR /tmp/
+WORKDIR /app
 EXPOSE 8080
-COPY target/MyTodoList-0.0.1-SNAPSHOT.jar MyTodoList.jar
-ENTRYPOINT ["java","-jar","MyTodoList.jar"]
+COPY --from=builder /build/target/MyTodoList-0.0.1-SNAPSHOT.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]

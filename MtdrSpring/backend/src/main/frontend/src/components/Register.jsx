@@ -85,7 +85,7 @@ export default function Register({ onRegister }) {
             TEAM31
           </span>
           <span className="text-muted-foreground text-xs tracking-wide uppercase">
-            Todo List Application
+            Agile Project Management
           </span>
         </div>
 
@@ -222,11 +222,11 @@ export default function Register({ onRegister }) {
                 />
               </div>
               <div>
-                <Label htmlFor="telegramChatId">Telegram username</Label>
+                <Label htmlFor="telegramChatId">Telegram Chat ID</Label>
                 <Input
                   id="telegramChatId"
                   name="telegramChatId"
-                  placeholder="@username"
+                  placeholder="e.g. 123456789"
                   value={form.telegramChatId}
                   onChange={handleChange}
                 />

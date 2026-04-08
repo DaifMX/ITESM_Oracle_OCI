@@ -58,7 +58,7 @@ public class ToDoItemService {
             toDoItem.setID(id);
             toDoItem.setCreation_ts(td.getCreation_ts());
             toDoItem.setDescription(td.getDescription());
-            toDoItem.setDone(td.isDone());
+            toDoItem.setDone(td.getDone());
             return toDoItemRepository.save(toDoItem);
         }else{
             return null;

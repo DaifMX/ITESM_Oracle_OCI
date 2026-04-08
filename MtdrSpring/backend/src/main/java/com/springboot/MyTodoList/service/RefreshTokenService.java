@@ -23,13 +23,16 @@ public class RefreshTokenService {
 
     @Transactional
     public RefreshToken createRefreshToken(Employee employee) {
+        // Delete any existing token first and flush immediately so Oracle sees the
+        // DELETE before the INSERT, avoiding ORA-00001 on the EMPLOYEE_ID unique constraint.
         refreshTokenRepository.deleteByEmployee(employee);
+        refreshTokenRepository.flush();
 
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setEmployee(employee);
         refreshToken.setToken(UUID.randomUUID().toString());
         refreshToken.setExpiryDate(Instant.now().plusMillis(refreshExpiration));
-        return refreshTokenRepository.save(refreshToken);
+        return refreshTokenRepository.saveAndFlush(refreshToken);
     }
 
     public Optional<RefreshToken> findByToken(String token) {

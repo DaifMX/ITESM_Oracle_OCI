@@ -1,25 +1,20 @@
 package com.springboot.MyTodoList.util;
 
+/**
+ * Keyboard button labels for the Telegram bot.
+ */
 public enum BotLabels {
-	
-	SHOW_MAIN_SCREEN("Show Main Screen"), 
-	HIDE_MAIN_SCREEN("Hide Main Screen"),
-	LIST_ALL_ITEMS("List All Items"), 
-	ADD_NEW_ITEM("Add New Item"),
-	DONE("DONE"),
-	UNDO("UNDO"),
-	DELETE("DELETE"),
-	MY_TODO_LIST("MY TODO LIST"),
-	DASH("-");
 
-	private String label;
+    SHOW_MAIN_SCREEN("Show Main Screen"),
+    HIDE_MAIN_SCREEN("Hide Main Screen");
 
-	BotLabels(String enumLabel) {
-		this.label = enumLabel;
-	}
+    private final String label;
 
-	public String getLabel() {
-		return label;
-	}
+    BotLabels(String label) {
+        this.label = label;
+    }
 
+    public String getLabel() {
+        return label;
+    }
 }

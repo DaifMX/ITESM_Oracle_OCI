@@ -15,9 +15,13 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/todolist': 'http://localhost:8080',
-      '/auth': 'http://localhost:8080',
+      '/auth':      'http://localhost:8080',
       '/employees': 'http://localhost:8080',
+      '/projects':  'http://localhost:8080',
+      '/sprints':   'http://localhost:8080',
+      '/tasks':     'http://localhost:8080',
+      '/comments':  'http://localhost:8080',
+      '/teams':     'http://localhost:8080',
     },
   },
 })
