@@ -141,6 +141,20 @@ export async function getEmployees() {
   return res.json()
 }
 
+export async function createUser(data) {
+  const res = await authFetch('/auth/register', { method: 'POST', body: JSON.stringify(data) })
+  const body = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(body.error || 'Failed to create user')
+  return body
+}
+
+export async function deleteEmployee(id) {
+  const res = await authFetch(`/employees/${id}`, { method: 'DELETE' })
+  const body = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(body.error || 'Failed to delete user')
+  return body
+}
+
 // ─── Teams ───────────────────────────────────────────────────────────────────
 
 export async function getTeams() {

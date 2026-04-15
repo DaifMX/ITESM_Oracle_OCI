@@ -103,9 +103,32 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+        // Determine caller's role
+        String callerEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        Employee caller = employeeRepository.findByEmail(callerEmail).orElse(null);
+        if (caller == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Unauthorized"));
+        }
+
+        String callerRole = caller.getRole() != null ? caller.getRole() : "developer";
+        String targetRole = request.getRole() != null ? request.getRole() : "developer";
+
+        // Developers cannot create any account
+        if ("developer".equals(callerRole)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Developers cannot create accounts"));
+        }
+
+        // Managers can only create developer accounts
+        if ("manager".equals(callerRole) && !"developer".equals(targetRole)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Managers can only create developer accounts"));
+        }
+
         if (employeeRepository.findByEmail(request.getEmail()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "Employee already exists"));
+                    .body(Map.of("error", "Email already in use"));
         }
 
         Employee newEmployee = new Employee();
@@ -115,12 +138,12 @@ public class AuthController {
         newEmployee.setLastName(request.getLastName());
         newEmployee.setModality(request.getModality());
         newEmployee.setPosition(request.getPosition());
-        newEmployee.setRole(request.getRole());
+        newEmployee.setRole(targetRole);
         newEmployee.setPhoneNumber(request.getPhoneNumber());
         newEmployee.setTelegramChatId(request.getTelegramChatId());
         employeeRepository.save(newEmployee);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Map.of("message", "Employee registered successfully"));
+                .body(Map.of("message", "User created successfully"));
     }
 }

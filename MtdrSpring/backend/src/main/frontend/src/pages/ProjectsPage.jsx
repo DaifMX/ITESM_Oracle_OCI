@@ -4,7 +4,7 @@ import { getProjects, createProject, updateProject, deleteProject } from '../lib
 import { Button } from '../components/ui/button'
 import { Badge } from '../components/ui/badge'
 import { Loader2, Plus, Pencil, Trash2, ChevronRight, FolderKanban, AlertCircle } from 'lucide-react'
-import { cn } from '../lib/utils'
+import { cn, parseLocalDate } from '../lib/utils'
 
 const STATUSES = ['planning', 'active', 'completed', 'on_hold']
 
@@ -30,6 +30,10 @@ function ProjectModal({ project, onClose, onSave }) {
 
   async function handleSubmit(e) {
     e.preventDefault()
+    if (form.startDate && form.endDate && form.startDate > form.endDate) {
+      setError('Start date cannot be after end date')
+      return
+    }
     setSaving(true)
     setError(null)
     try {
@@ -95,6 +99,7 @@ function ProjectModal({ project, onClose, onSave }) {
                 type="date"
                 className="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 value={form.startDate}
+                max={form.endDate || undefined}
                 onChange={(e) => setForm((f) => ({ ...f, startDate: e.target.value }))}
               />
             </div>
@@ -104,6 +109,7 @@ function ProjectModal({ project, onClose, onSave }) {
                 type="date"
                 className="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 value={form.endDate}
+                min={form.startDate || undefined}
                 onChange={(e) => setForm((f) => ({ ...f, endDate: e.target.value }))}
               />
             </div>
@@ -227,9 +233,9 @@ export default function ProjectsPage() {
                   )}
                   {(project.startDate || project.endDate) && (
                     <p className="text-xs text-muted-foreground/70 mt-0.5">
-                      {project.startDate && new Date(project.startDate).toLocaleDateString()}
+                      {project.startDate && parseLocalDate(project.startDate).toLocaleDateString()}
                       {project.startDate && project.endDate && ' – '}
-                      {project.endDate && new Date(project.endDate).toLocaleDateString()}
+                      {project.endDate && parseLocalDate(project.endDate).toLocaleDateString()}
                     </p>
                   )}
                 </div>

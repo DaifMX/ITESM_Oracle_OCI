@@ -12,7 +12,7 @@ import {
   Loader2, Plus, Trash2, ChevronRight,
   AlertCircle, X, Check, Flag, Hash, User, MessageSquare,
 } from 'lucide-react'
-import { cn } from '../lib/utils'
+import { cn, parseLocalDate } from '../lib/utils'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -39,7 +39,7 @@ const EMPTY_TASK_FORM = {
 
 // ─── Task Detail Modal ────────────────────────────────────────────────────────
 
-function TaskModal({ task, sprintId, projectId, employees, onClose, onSave }) {
+function TaskModal({ task, sprint, sprintId, projectId, employees, onClose, onSave }) {
   const isEdit = !!task
   const [form, setForm] = useState(task ? {
     title: task.title || '',
@@ -72,6 +72,18 @@ function TaskModal({ task, sprintId, projectId, employees, onClose, onSave }) {
 
   async function handleSubmit(e) {
     e.preventDefault()
+    // Validate against sprint date range
+    if (sprint) {
+      const sd = sprint.startDate
+      const ed = sprint.endDate
+      if ((form.startDate && sd && form.startDate < sd) ||
+          (form.startDate && ed && form.startDate > ed) ||
+          (form.expectedEndDate && ed && form.expectedEndDate > ed) ||
+          (form.expectedEndDate && sd && form.expectedEndDate < sd)) {
+        setError("You can't set a date outside the scope of this sprint")
+        return
+      }
+    }
     setSaving(true); setError(null)
     try {
       const payload = {
@@ -192,10 +204,14 @@ function TaskModal({ task, sprintId, projectId, employees, onClose, onSave }) {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Start Date">
-                  <input type="date" className="field" value={form.startDate} onChange={(e) => setForm((f) => ({ ...f, startDate: e.target.value }))} />
+                  <input type="date" className="field" value={form.startDate}
+                    max={form.expectedEndDate || undefined}
+                    onChange={(e) => setForm((f) => ({ ...f, startDate: e.target.value }))} />
                 </Field>
                 <Field label="Due Date">
-                  <input type="date" className="field" value={form.expectedEndDate} onChange={(e) => setForm((f) => ({ ...f, expectedEndDate: e.target.value }))} />
+                  <input type="date" className="field" value={form.expectedEndDate}
+                    min={form.startDate || undefined}
+                    onChange={(e) => setForm((f) => ({ ...f, expectedEndDate: e.target.value }))} />
                 </Field>
               </div>
               {error && <ErrorMsg>{error}</ErrorMsg>}
@@ -263,7 +279,7 @@ function TaskModal({ task, sprintId, projectId, employees, onClose, onSave }) {
                           <div className="flex-1">
                             <div className="flex gap-2 mb-1">
                               <span className="text-xs font-medium">{c.employee?.firstName} {c.employee?.lastName}</span>
-                              {c.createdAt && <span className="text-xs text-muted-foreground">{new Date(c.createdAt).toLocaleDateString()}</span>}
+                              {c.createdAt && <span className="text-xs text-muted-foreground">{parseLocalDate(c.createdAt).toLocaleDateString()}</span>}
                             </div>
                             <p className="text-sm">{c.content}</p>
                           </div>
@@ -334,7 +350,7 @@ function TaskCard({ task, onEdit, onDelete, onDragStart, isDragging }) {
         )}
         {task.expectedEndDate && (
           <span className="text-[11px] text-muted-foreground ml-auto">
-            {new Date(task.expectedEndDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+            {parseLocalDate(task.expectedEndDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
           </span>
         )}
       </div>
@@ -592,6 +608,7 @@ export default function KanbanPage() {
       {modal && (
         <TaskModal
           task={modal === 'create' ? null : modal}
+          sprint={sprint}
           sprintId={sprintId}
           projectId={projectId}
           employees={employees}

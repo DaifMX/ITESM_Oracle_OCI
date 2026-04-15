@@ -1,7 +1,12 @@
 package com.springboot.MyTodoList.service;
 
 import com.springboot.MyTodoList.model.Employee;
+import com.springboot.MyTodoList.repository.CommentRepository;
 import com.springboot.MyTodoList.repository.EmployeeRepository;
+import com.springboot.MyTodoList.repository.EmployeeTaskRepository;
+import com.springboot.MyTodoList.repository.EmployeeTeamRepository;
+import com.springboot.MyTodoList.repository.RefreshTokenRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +20,18 @@ public class UserService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private EmployeeTaskRepository employeeTaskRepository;
+
+    @Autowired
+    private EmployeeTeamRepository employeeTeamRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
+
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
 
     public List<Employee> findAll() {
         return employeeRepository.findAll();
@@ -33,13 +50,17 @@ public class UserService {
         return employeeRepository.save(employee);
     }
 
+    @Transactional
     public boolean deleteEmployee(int id) {
-        try {
-            employeeRepository.deleteById(id);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        Optional<Employee> found = employeeRepository.findById(id);
+        if (found.isEmpty()) return false;
+        Employee employee = found.get();
+        refreshTokenRepository.deleteByEmployee(employee);
+        commentRepository.deleteAll(commentRepository.findByEmployee_EmployeeId(id));
+        employeeTaskRepository.deleteAll(employeeTaskRepository.findById_EmployeeId(id));
+        employeeTeamRepository.deleteAll(employeeTeamRepository.findById_EmployeeId(id));
+        employeeRepository.deleteById(id);
+        return true;
     }
 
     public Employee updateEmployee(int id, Employee updated) {

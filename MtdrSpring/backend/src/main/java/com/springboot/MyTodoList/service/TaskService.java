@@ -1,7 +1,10 @@
 package com.springboot.MyTodoList.service;
 
 import com.springboot.MyTodoList.model.Task;
+import com.springboot.MyTodoList.repository.CommentRepository;
+import com.springboot.MyTodoList.repository.EmployeeTaskRepository;
 import com.springboot.MyTodoList.repository.TaskRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +16,12 @@ public class TaskService {
 
     @Autowired
     private TaskRepository taskRepository;
+
+    @Autowired
+    private EmployeeTaskRepository employeeTaskRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
 
     public List<Task> findAll() {
         return taskRepository.findAll();
@@ -64,8 +73,11 @@ public class TaskService {
         });
     }
 
+    @Transactional
     public boolean delete(int id) {
         if (!taskRepository.existsById(id)) return false;
+        employeeTaskRepository.deleteAll(employeeTaskRepository.findById_TaskId(id));
+        commentRepository.deleteAll(commentRepository.findByTask_TaskIdOrderByCreatedAtAsc(id));
         taskRepository.deleteById(id);
         return true;
     }

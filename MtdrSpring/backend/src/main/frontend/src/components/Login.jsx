@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -109,14 +108,6 @@ export default function Login({ onLogin }) {
             </Button>
           </form>
 
-          <div className="px-8 pb-7 text-center">
-            <p className="text-sm text-muted-foreground">
-              Don&apos;t have an account?{' '}
-              <Link to="/register" className="text-oracle-red hover:text-oracle-red-dark font-medium underline-offset-2 hover:underline">
-                Create one
-              </Link>
-            </p>
-          </div>
         </div>
 
         <p className="mt-10 text-muted-foreground text-xs">

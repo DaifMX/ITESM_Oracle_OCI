@@ -6,8 +6,7 @@ import AppLayout from './layouts/AppLayout'
 import { getAccessToken, getRefreshToken, refreshAccessToken, getUser } from './lib/auth'
 
 // Public pages
-const LoginPage    = lazy(() => import('./pages/LoginPage'))
-const RegisterPage = lazy(() => import('./pages/RegisterPage'))
+const LoginPage = lazy(() => import('./pages/LoginPage'))
 
 // App pages (authenticated, wrapped in AppLayout)
 const DashboardPage          = lazy(() => import('./pages/DashboardPage'))
@@ -15,6 +14,7 @@ const DeveloperDashboardPage = lazy(() => import('./pages/DeveloperDashboardPage
 const ProjectsPage           = lazy(() => import('./pages/ProjectsPage'))
 const SprintsPage            = lazy(() => import('./pages/SprintsPage'))
 const KanbanPage             = lazy(() => import('./pages/KanbanPage'))
+const UserManagementPage     = lazy(() => import('./pages/UserManagementPage'))
 
 const pageFallback = (
   <div className="min-h-screen flex items-center justify-center">
@@ -40,6 +40,13 @@ function ProtectedRoute({ children }) {
   return children
 }
 
+// Only admin and manager can access user management
+function ManagerRoute({ children }) {
+  const user = getUser()
+  if (user?.role === 'developer') return <Navigate to="/developer-dashboard" replace />
+  return children
+}
+
 const router = createBrowserRouter([
   {
     element: <RootLayout />,
@@ -56,10 +63,6 @@ const router = createBrowserRouter([
       {
         path: 'login',
         element: <Suspense fallback={pageFallback}><LoginPage /></Suspense>,
-      },
-      {
-        path: 'register',
-        element: <Suspense fallback={pageFallback}><RegisterPage /></Suspense>,
       },
 
       // Protected — all wrapped in AppLayout (sidebar, theme, logout)
@@ -89,6 +92,14 @@ const router = createBrowserRouter([
           {
             path: 'projects/:projectId/sprints/:sprintId/board',
             element: <Suspense fallback={pageFallback}><KanbanPage /></Suspense>,
+          },
+          {
+            path: 'user-management',
+            element: (
+              <ManagerRoute>
+                <Suspense fallback={pageFallback}><UserManagementPage /></Suspense>
+              </ManagerRoute>
+            ),
           },
         ],
       },

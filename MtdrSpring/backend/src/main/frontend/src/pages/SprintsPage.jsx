@@ -12,7 +12,7 @@ import {
   Loader2, Plus, Pencil, Trash2, ChevronRight, ChevronLeft,
   Zap, AlertCircle, Calendar
 } from 'lucide-react'
-import { cn } from '../lib/utils'
+import { cn, parseLocalDate } from '../lib/utils'
 
 const SPRINT_STATUSES = ['planned', 'active', 'completed']
 
@@ -24,7 +24,7 @@ const STATUS_CONFIG = {
 
 const EMPTY_FORM = { name: '', goal: '', status: 'planned', startDate: '', endDate: '' }
 
-function SprintModal({ sprint, projectId, onClose, onSave }) {
+function SprintModal({ sprint, project, projectId, onClose, onSave }) {
   const [form, setForm] = useState(sprint ? {
     name: sprint.name || '',
     goal: sprint.goal || '',
@@ -37,6 +37,21 @@ function SprintModal({ sprint, projectId, onClose, onSave }) {
 
   async function handleSubmit(e) {
     e.preventDefault()
+    if (form.startDate && form.endDate && form.startDate > form.endDate) {
+      setError('Start date cannot be after end date')
+      return
+    }
+    if (project) {
+      const ps = project.startDate
+      const pe = project.endDate
+      if ((form.startDate && ps && form.startDate < ps) ||
+          (form.startDate && pe && form.startDate > pe) ||
+          (form.endDate && pe && form.endDate > pe) ||
+          (form.endDate && ps && form.endDate < ps)) {
+        setError("You can't set a date outside the scope of this project")
+        return
+      }
+    }
     setSaving(true)
     setError(null)
     try {
@@ -103,6 +118,7 @@ function SprintModal({ sprint, projectId, onClose, onSave }) {
                 type="date"
                 className="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 value={form.startDate}
+                max={form.endDate || undefined}
                 onChange={(e) => setForm((f) => ({ ...f, startDate: e.target.value }))}
               />
             </div>
@@ -112,6 +128,7 @@ function SprintModal({ sprint, projectId, onClose, onSave }) {
                 type="date"
                 className="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 value={form.endDate}
+                min={form.startDate || undefined}
                 onChange={(e) => setForm((f) => ({ ...f, endDate: e.target.value }))}
               />
             </div>
@@ -258,9 +275,9 @@ export default function SprintsPage() {
                     {(sprint.startDate || sprint.endDate) && (
                       <div className="flex items-center gap-1 mt-1.5 text-xs text-muted-foreground/70">
                         <Calendar className="w-3 h-3" />
-                        {sprint.startDate && new Date(sprint.startDate).toLocaleDateString()}
+                        {sprint.startDate && parseLocalDate(sprint.startDate).toLocaleDateString()}
                         {sprint.startDate && sprint.endDate && ' – '}
-                        {sprint.endDate && new Date(sprint.endDate).toLocaleDateString()}
+                        {sprint.endDate && parseLocalDate(sprint.endDate).toLocaleDateString()}
                       </div>
                     )}
                   </div>
@@ -322,6 +339,7 @@ export default function SprintsPage() {
       {modal && (
         <SprintModal
           sprint={modal === 'create' ? null : modal}
+          project={project}
           projectId={projectId}
           onClose={() => setModal(null)}
           onSave={handleSaved}

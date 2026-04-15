@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/projects")
@@ -39,12 +40,22 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<Project> create(@RequestBody Project project) {
+    public ResponseEntity<?> create(@RequestBody Project project) {
+        if (project.getStartDate() != null && project.getEndDate() != null
+                && project.getStartDate().isAfter(project.getEndDate())) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Start date cannot be after end date"));
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(projectService.save(project));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Project> update(@PathVariable int id, @RequestBody Project project) {
+    public ResponseEntity<?> update(@PathVariable int id, @RequestBody Project project) {
+        if (project.getStartDate() != null && project.getEndDate() != null
+                && project.getStartDate().isAfter(project.getEndDate())) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Start date cannot be after end date"));
+        }
         return projectService.update(id, project)
                 .map(p -> ResponseEntity.ok(p))
                 .orElse(ResponseEntity.notFound().build());

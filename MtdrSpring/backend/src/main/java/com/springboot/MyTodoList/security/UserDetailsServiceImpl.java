@@ -1,30 +1,30 @@
 package com.springboot.MyTodoList.security;
 
+import com.springboot.MyTodoList.exception.ElementNotFoundException;
 import com.springboot.MyTodoList.model.Employee;
 import com.springboot.MyTodoList.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.util.List;
 
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class UserDetailsServiceImpl {
 
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) {
         Employee employee = employeeRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Employee not found: " + email));
+                .orElseThrow(() -> new ElementNotFoundException("Employee not found: " + email));
 
+        String role = employee.getRole() != null ? employee.getRole().toUpperCase() : "DEVELOPER";
         return new org.springframework.security.core.userdetails.User(
                 employee.getEmail(),
                 employee.getPasswordHash(),
-                Collections.emptyList()
+                List.of(new SimpleGrantedAuthority("ROLE_" + role))
         );
     }
 }

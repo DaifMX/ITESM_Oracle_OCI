@@ -6,7 +6,7 @@ import {
   ListTodo, TrendingUp, Zap, CalendarClock, ChevronDown,
   LayoutList, Columns, Package,
 } from 'lucide-react'
-import { cn } from '../lib/utils'
+import { cn, parseLocalDate } from '../lib/utils'
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -98,7 +98,7 @@ function StatusSelect({ task, onUpdate }) {
 // ─── Task row (list view) ─────────────────────────────────────────────────────
 
 function TaskRow({ task, onUpdate }) {
-  const isOverdue = task.expectedEndDate && task.status !== 'done' && new Date(task.expectedEndDate) < new Date()
+  const isOverdue = task.expectedEndDate && task.status !== 'done' && parseLocalDate(task.expectedEndDate) < new Date()
 
   return (
     <div className={cn('rounded-lg border bg-card px-5 py-4', isOverdue && 'border-red-200 dark:border-red-900')}>
@@ -125,7 +125,7 @@ function TaskRow({ task, onUpdate }) {
             )}
             {task.expectedEndDate && (
               <span className={cn('text-xs', isOverdue ? 'text-red-500' : 'text-muted-foreground')}>
-                Due {new Date(task.expectedEndDate).toLocaleDateString()}
+                Due {parseLocalDate(task.expectedEndDate).toLocaleDateString()}
               </span>
             )}
           </div>
@@ -139,7 +139,7 @@ function TaskRow({ task, onUpdate }) {
 // ─── Kanban card (kanban view) ────────────────────────────────────────────────
 
 function KanbanCard({ task, onDragStart }) {
-  const isOverdue = task.expectedEndDate && task.status !== 'done' && new Date(task.expectedEndDate) < new Date()
+  const isOverdue = task.expectedEndDate && task.status !== 'done' && parseLocalDate(task.expectedEndDate) < new Date()
 
   return (
     <div
@@ -162,7 +162,7 @@ function KanbanCard({ task, onDragStart }) {
       </div>
       {task.expectedEndDate && (
         <p className={cn('text-xs mt-1.5', isOverdue ? 'text-red-500' : 'text-muted-foreground')}>
-          Due {new Date(task.expectedEndDate).toLocaleDateString()}
+          Due {parseLocalDate(task.expectedEndDate).toLocaleDateString()}
         </p>
       )}
     </div>
@@ -401,7 +401,7 @@ export default function DeveloperDashboardPage() {
   const inProgress = tasks.filter((t) => t.status === 'in_progress').length
   const blocked    = tasks.filter((t) => t.status === 'blocked').length
   const overdue    = tasks.filter(
-    (t) => t.expectedEndDate && t.status !== 'done' && new Date(t.expectedEndDate) < new Date()
+    (t) => t.expectedEndDate && t.status !== 'done' && parseLocalDate(t.expectedEndDate) < new Date()
   ).length
   const totalPoints = tasks.filter((t) => t.status === 'done').reduce((s, t) => s + (t.storyPoints ?? 0), 0)
 

@@ -1,7 +1,9 @@
 package com.springboot.MyTodoList.controller;
 
 import com.springboot.MyTodoList.model.EmployeeTask;
+import com.springboot.MyTodoList.model.Sprint;
 import com.springboot.MyTodoList.model.Task;
+import com.springboot.MyTodoList.repository.SprintRepository;
 import com.springboot.MyTodoList.service.EmployeeTaskService;
 import com.springboot.MyTodoList.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/tasks")
@@ -20,6 +25,29 @@ public class TaskController {
 
     @Autowired
     private EmployeeTaskService employeeTaskService;
+
+    @Autowired
+    private SprintRepository sprintRepository;
+
+    private ResponseEntity<?> validateTaskDates(Task task) {
+        if (task.getSprint() == null) return null;
+        Optional<Sprint> sprintOpt = sprintRepository.findById(task.getSprint().getSprintId());
+        if (sprintOpt.isEmpty()) return null;
+        Sprint sprint = sprintOpt.get();
+        LocalDate sprintStart = sprint.getStartDate();
+        LocalDate sprintEnd = sprint.getEndDate();
+        LocalDate taskStart = task.getStartDate();
+        LocalDate taskEnd = task.getExpectedEndDate();
+        if (taskStart != null && sprintStart != null && taskStart.isBefore(sprintStart))
+            return ResponseEntity.badRequest().body(Map.of("error", "Task start date cannot be before sprint start date"));
+        if (taskStart != null && sprintEnd != null && taskStart.isAfter(sprintEnd))
+            return ResponseEntity.badRequest().body(Map.of("error", "Task start date cannot be after sprint end date"));
+        if (taskEnd != null && sprintEnd != null && taskEnd.isAfter(sprintEnd))
+            return ResponseEntity.badRequest().body(Map.of("error", "Task due date cannot be after sprint end date"));
+        if (taskEnd != null && sprintStart != null && taskEnd.isBefore(sprintStart))
+            return ResponseEntity.badRequest().body(Map.of("error", "Task due date cannot be before sprint start date"));
+        return null;
+    }
 
     @GetMapping
     public List<Task> getAll() {
@@ -59,12 +87,16 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<Task> create(@RequestBody Task task) {
+    public ResponseEntity<?> create(@RequestBody Task task) {
+        ResponseEntity<?> err = validateTaskDates(task);
+        if (err != null) return err;
         return ResponseEntity.status(HttpStatus.CREATED).body(taskService.save(task));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> update(@PathVariable int id, @RequestBody Task task) {
+    public ResponseEntity<?> update(@PathVariable int id, @RequestBody Task task) {
+        ResponseEntity<?> err = validateTaskDates(task);
+        if (err != null) return err;
         return taskService.update(id, task)
                 .map(t -> ResponseEntity.ok(t))
                 .orElse(ResponseEntity.notFound().build());
