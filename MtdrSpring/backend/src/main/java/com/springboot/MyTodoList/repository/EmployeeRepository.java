@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     Optional<Employee> findByEmail(String email);
     Optional<Employee> findByTelegramChatId(String telegramChatId);
+    long countByRole(String role);
 }
