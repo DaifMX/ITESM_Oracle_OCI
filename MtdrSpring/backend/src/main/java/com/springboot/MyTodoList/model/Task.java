@@ -41,7 +41,7 @@ public class Task {
     private BigDecimal estimatedHours;
 
     @Column(name = "ACTUAL_HOURS", precision = 6, scale = 2)
-    private BigDecimal actualHours;
+    private BigDecimal totalHours;
 
     @Column(name = "START_DATE")
     private LocalDate startDate;
@@ -89,8 +89,8 @@ public class Task {
     public BigDecimal getEstimatedHours() { return estimatedHours; }
     public void setEstimatedHours(BigDecimal estimatedHours) { this.estimatedHours = estimatedHours; }
 
-    public BigDecimal getActualHours() { return actualHours; }
-    public void setActualHours(BigDecimal actualHours) { this.actualHours = actualHours; }
+    public BigDecimal getTotalHours() { return totalHours; }
+    public void setTotalHours(BigDecimal totalHours) { this.totalHours = totalHours; }
 
     public LocalDate getStartDate() { return startDate; }
     public void setStartDate(LocalDate startDate) { this.startDate = startDate; }

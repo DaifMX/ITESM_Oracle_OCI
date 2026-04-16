@@ -16,5 +16,5 @@ export const PRIORITY_CONFIG = {
 
 export const EMPTY_TASK_FORM = {
   title: '', description: '', status: 'todo', priority: 'medium',
-  storyPoints: '', estimatedHours: '', startDate: '', expectedEndDate: '',
+  storyPoints: '', estimatedHours: '', totalHours: '', startDate: '', expectedEndDate: '',
 }

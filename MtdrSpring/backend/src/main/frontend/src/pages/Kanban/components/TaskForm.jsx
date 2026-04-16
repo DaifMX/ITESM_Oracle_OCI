@@ -38,7 +38,7 @@ export default function TaskForm({ form, setForm, onSubmit, error }) {
         </Field>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-3 gap-3">
         <Field label="Story Points">
           <input type="number" min="0" className="field" value={form.storyPoints}
             onChange={(e) => setForm((f) => ({ ...f, storyPoints: e.target.value }))} placeholder="—" />
@@ -46,6 +46,10 @@ export default function TaskForm({ form, setForm, onSubmit, error }) {
         <Field label="Est. Hours">
           <input type="number" min="0" step="0.5" className="field" value={form.estimatedHours}
             onChange={(e) => setForm((f) => ({ ...f, estimatedHours: e.target.value }))} placeholder="—" />
+        </Field>
+        <Field label="Total Hours">
+          <input type="number" min="0" step="0.5" className="field" value={form.totalHours}
+            onChange={(e) => setForm((f) => ({ ...f, totalHours: e.target.value }))} placeholder="—" />
         </Field>
       </div>
 

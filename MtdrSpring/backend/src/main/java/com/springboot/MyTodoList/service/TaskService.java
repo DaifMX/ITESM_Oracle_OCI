@@ -65,7 +65,7 @@ public class TaskService {
             existing.setPriority(updated.getPriority());
             existing.setStoryPoints(updated.getStoryPoints());
             existing.setEstimatedHours(updated.getEstimatedHours());
-            existing.setActualHours(updated.getActualHours());
+            existing.setTotalHours(updated.getTotalHours());
             existing.setStartDate(updated.getStartDate());
             existing.setExpectedEndDate(updated.getExpectedEndDate());
             existing.setEndDate(updated.getEndDate());

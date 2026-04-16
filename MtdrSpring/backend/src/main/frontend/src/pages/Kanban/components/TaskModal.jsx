@@ -17,6 +17,7 @@ export default function TaskModal({ task, sprint, sprintId, projectId, employees
     priority: task.priority || 'medium',
     storyPoints: task.storyPoints ?? '',
     estimatedHours: task.estimatedHours ?? '',
+    totalHours: task.totalHours ?? '',
     startDate: task.startDate || '',
     expectedEndDate: task.expectedEndDate || '',
   } : EMPTY_TASK_FORM)
@@ -59,6 +60,7 @@ export default function TaskModal({ task, sprint, sprintId, projectId, employees
         project: { projectId: Number(projectId) },
         storyPoints: form.storyPoints !== '' ? Number(form.storyPoints) : null,
         estimatedHours: form.estimatedHours !== '' ? Number(form.estimatedHours) : null,
+        totalHours: form.totalHours !== '' ? Number(form.totalHours) : null,
         startDate: form.startDate || null,
         expectedEndDate: form.expectedEndDate || null,
       }

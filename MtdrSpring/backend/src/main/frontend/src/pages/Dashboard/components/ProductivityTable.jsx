@@ -11,7 +11,7 @@ export default function ProductivityTable({ devStats }) {
               <th className="px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground">Done</th>
               <th className="px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground">In&nbsp;Progress</th>
               <th className="px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground">Blocked</th>
-              <th className="px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground">Actual&nbsp;Hrs</th>
+              <th className="px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground">Total&nbsp;Hrs</th>
               <th className="px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground">h/Task</th>
               <th className="px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground">Completed</th>
             </tr>

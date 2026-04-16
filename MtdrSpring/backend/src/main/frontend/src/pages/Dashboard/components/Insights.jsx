@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Lightbulb } from 'lucide-react'
-import { cn } from '../../../lib/utils'
+import { cn } from '../../lib/utils'
 
 const INSIGHT_META = {
   gap: { icon: '📊', cls: 'border-amber-400/40 bg-amber-500/5' },
@@ -42,7 +42,7 @@ export default function Insights({ devStats }) {
     if (mostHours.hours > 0) {
       list.push({
         type: 'hours',
-        msg: `${mostHours.emp.firstName} logged the most actual hours (${mostHours.hours.toFixed(1)}h). Verify whether the workload is well balanced across the team.`,
+        msg: `${mostHours.emp.firstName} logged the most total hours (${mostHours.hours.toFixed(1)}h). Verify whether the workload is well balanced across the team.`,
       })
     }
 

@@ -110,35 +110,35 @@ export default function TeamKPIs() {
     [uniqueTasks, selectedSprintId])
 
   const developers = useMemo(() => (employees ?? []).filter((e) => e.role === 'developer'), [employees])
-  const numDevs    = developers.length || 1
+  const numDevs = developers.length || 1
 
-  const totalTasks    = filteredTasks.length
-  const doneTasks     = filteredTasks.filter((t) => t.status === 'done').length
-  const totalHours    = filteredTasks.filter((t) => t.status === 'done' && t.actualHours).reduce((s, t) => s + Number(t.actualHours), 0)
+  const totalTasks = filteredTasks.length
+  const doneTasks = filteredTasks.filter((t) => t.status === 'done').length
+  const totalHours = filteredTasks.filter((t) => t.status === 'done' && t.totalHours).reduce((s, t) => s + Number(t.totalHours), 0)
   const avgTasksPerDev = (doneTasks / numDevs).toFixed(1)
   const avgHoursPerDev = (totalHours / numDevs).toFixed(1)
 
   const devStats = useMemo(() =>
     developers.map((emp, i) => {
-      const tasks   = (empTasksMap?.[emp.employeeId] ?? []).filter((t) => selectedSprintId === 'all' || t.sprint?.sprintId === selectedSprintId)
-      const done    = tasks.filter((t) => t.status === 'done').length
-      const inProg  = tasks.filter((t) => t.status === 'in_progress').length
+      const tasks = (empTasksMap?.[emp.employeeId] ?? []).filter((t) => selectedSprintId === 'all' || t.sprint?.sprintId === selectedSprintId)
+      const done = tasks.filter((t) => t.status === 'done').length
+      const inProg = tasks.filter((t) => t.status === 'in_progress').length
       const blocked = tasks.filter((t) => t.status === 'blocked').length
-      const hours   = tasks.filter((t) => t.status === 'done' && t.actualHours).reduce((s, t) => s + Number(t.actualHours), 0)
-      const rate    = tasks.length > 0 ? Math.round((done / tasks.length) * 100) : 0
-      const color   = DEV_COLORS[i % DEV_COLORS.length]
+      const hours = tasks.filter((t) => t.status === 'done' && t.totalHours).reduce((s, t) => s + Number(t.totalHours), 0)
+      const rate = tasks.length > 0 ? Math.round((done / tasks.length) * 100) : 0
+      const color = DEV_COLORS[i % DEV_COLORS.length]
       return { emp, total: tasks.length, done, inProg, blocked, hours, rate, color }
     }),
     [developers, empTasksMap, selectedSprintId])
 
-  const allProjTasks  = useMemo(() => Object.values(projTasksMap ?? {}).flat(), [projTasksMap])
+  const allProjTasks = useMemo(() => Object.values(projTasksMap ?? {}).flat(), [projTasksMap])
   const allSprintsVel = useMemo(() => Object.values(sprintMap ?? {}).flat(), [sprintMap])
-  const velocityData  = useMemo(() => {
+  const velocityData = useMemo(() => {
     const relevant = allSprintsVel.filter((s) => s.status === 'completed' || s.status === 'active')
     return relevant.map((sprint) => {
-      const sprintTasks   = allProjTasks.filter((t) => t.sprint?.sprintId === sprint.sprintId)
-      const completedPts  = sprintTasks.filter((t) => t.status === 'done').reduce((s, t) => s + (t.storyPoints ?? 0), 0)
-      const totalPts      = sprintTasks.reduce((s, t) => s + (t.storyPoints ?? 0), 0)
+      const sprintTasks = allProjTasks.filter((t) => t.sprint?.sprintId === sprint.sprintId)
+      const completedPts = sprintTasks.filter((t) => t.status === 'done').reduce((s, t) => s + (t.storyPoints ?? 0), 0)
+      const totalPts = sprintTasks.reduce((s, t) => s + (t.storyPoints ?? 0), 0)
       return { sprint, completedPts, totalPts }
     }).slice(-8)
   }, [allSprintsVel, allProjTasks])
@@ -185,10 +185,10 @@ export default function TeamKPIs() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatCard icon={CheckCircle2} label="Tasks"         value={`${doneTasks} / ${totalTasks}`} />
-        <StatCard icon={Timer}        label="Total Hours"  value={`${totalHours.toFixed(1)}h`} />
-        <StatCard icon={TrendingUp}   label="Avg Tasks/Dev" value={avgTasksPerDev} />
-        <StatCard icon={Clock}        label="Avg Hours/Dev" value={`${avgHoursPerDev}h`} />
+        <StatCard icon={CheckCircle2} label="Tasks" value={`${doneTasks} / ${totalTasks}`} />
+        <StatCard icon={Timer} label="Total Hours" value={`${totalHours.toFixed(1)}h`} />
+        <StatCard icon={TrendingUp} label="Avg Tasks/Dev" value={avgTasksPerDev} />
+        <StatCard icon={Clock} label="Avg Hours/Dev" value={`${avgHoursPerDev}h`} />
       </div>
 
       {devStats.length > 0 && (
@@ -209,8 +209,8 @@ export default function TeamKPIs() {
       )}
 
       {velocityData.length > 0 && <SprintVelocityChart velocityData={velocityData} />}
-      {devStats.length >= 2   && <Insights devStats={devStats} />}
-      {devStats.length > 0    && <ProductivityTable devStats={devStats} />}
+      {devStats.length >= 2 && <Insights devStats={devStats} />}
+      {devStats.length > 0 && <ProductivityTable devStats={devStats} />}
     </div>
   )
 }
