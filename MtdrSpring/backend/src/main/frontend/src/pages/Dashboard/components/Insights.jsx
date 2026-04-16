@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Lightbulb } from 'lucide-react'
-import { cn } from '../../lib/utils'
+import { cn } from '../../../lib/utils'
 
 const INSIGHT_META = {
   gap: { icon: '📊', cls: 'border-amber-400/40 bg-amber-500/5' },
