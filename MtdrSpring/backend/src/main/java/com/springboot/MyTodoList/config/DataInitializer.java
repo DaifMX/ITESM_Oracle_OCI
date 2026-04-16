@@ -23,13 +23,13 @@ public class DataInitializer {
 
     @EventListener(ApplicationReadyEvent.class)
     public void seedAdminUser() {
-        if (employeeRepository.countByRole("admin") == 0) {
+        if (employeeRepository.countByRole("admin") != 0) {
             Employee admin = new Employee();
             admin.setEmail("admin@oracle.com");
             admin.setFirstName("Ora");
             admin.setLastName("Admin");
             admin.setPasswordHash(passwordEncoder.encode("ADMIN"));
-            admin.setRole("manager");
+            admin.setRole("admin");
             employeeRepository.save(admin);
             logger.info("Default admin user created: admin@oracle.com");
         }
