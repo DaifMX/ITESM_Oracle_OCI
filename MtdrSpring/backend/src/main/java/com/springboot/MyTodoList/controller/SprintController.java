@@ -7,6 +7,7 @@ import com.springboot.MyTodoList.service.SprintService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -78,6 +79,7 @@ public class SprintController {
         return sprintService.findByStatus(status);
     }
 
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     @PostMapping
     public ResponseEntity<?> create(@RequestBody Sprint sprint) {
         ResponseEntity<?> err = validateSprintDates(sprint);
@@ -85,6 +87,7 @@ public class SprintController {
         return ResponseEntity.status(HttpStatus.CREATED).body(sprintService.save(sprint));
     }
 
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable int id, @RequestBody Sprint sprint) {
         ResponseEntity<?> err = validateSprintDates(sprint);
@@ -94,6 +97,7 @@ public class SprintController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable int id) {
         return sprintService.delete(id)

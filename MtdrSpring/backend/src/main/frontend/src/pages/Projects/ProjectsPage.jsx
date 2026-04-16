@@ -5,7 +5,7 @@ import { createProject, updateProject, deleteProject } from '../../lib/api'
 import { fetcher } from '../../lib/fetcher'
 import { Button } from '../../components/ui/button'
 import { Skeleton } from '../../components/ui/Skeleton'
-import { Plus, Pencil, Trash2, ChevronRight, FolderKanban, AlertCircle, Loader2 } from 'lucide-react'
+import { Plus, Pencil, Trash2, ChevronRight, FolderKanban, AlertCircle, Loader2, Inbox } from 'lucide-react'
 import { cn, parseLocalDate } from '../../lib/utils'
 
 const STATUSES = ['planning', 'active', 'completed', 'on_hold']
@@ -206,6 +206,9 @@ export default function ProjectsPage() {
                   )}
                 </div>
                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button variant="ghost" size="icon-sm" onClick={(e) => { e.stopPropagation(); navigate(`/projects/${project.projectId}/backlog`) }} title="View backlog">
+                    <Inbox className="w-3.5 h-3.5" />
+                  </Button>
                   <Button variant="ghost" size="icon-sm" onClick={(e) => { e.stopPropagation(); setModal(project) }} title="Edit project">
                     <Pencil className="w-3.5 h-3.5" />
                   </Button>

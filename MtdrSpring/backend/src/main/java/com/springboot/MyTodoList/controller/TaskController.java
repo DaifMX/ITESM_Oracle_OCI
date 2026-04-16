@@ -9,6 +9,7 @@ import com.springboot.MyTodoList.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -86,6 +87,7 @@ public class TaskController {
         return taskService.findBySprintAndStatus(sprintId, status);
     }
 
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     @PostMapping
     public ResponseEntity<?> create(@RequestBody Task task) {
         ResponseEntity<?> err = validateTaskDates(task);
@@ -102,6 +104,7 @@ public class TaskController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable int id) {
         return taskService.delete(id)
@@ -123,6 +126,7 @@ public class TaskController {
         return employeeTaskService.findByTask(id);
     }
 
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     @PostMapping("/{id}/assignees/{employeeId}")
     public ResponseEntity<EmployeeTask> assign(@PathVariable int id, @PathVariable int employeeId) {
         return employeeTaskService.assign(id, employeeId)
@@ -130,6 +134,7 @@ public class TaskController {
                 .orElse(ResponseEntity.status(HttpStatus.CONFLICT).build());
     }
 
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     @DeleteMapping("/{id}/assignees/{employeeId}")
     public ResponseEntity<Void> unassign(@PathVariable int id, @PathVariable int employeeId) {
         return employeeTaskService.unassign(id, employeeId)

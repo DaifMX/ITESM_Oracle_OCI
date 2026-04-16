@@ -148,6 +148,12 @@ export async function createUser(data) {
   return body
 }
 
+export async function updateEmployee(id, data) {
+  const res = await authFetch(`/employees/${id}`, { method: 'PUT', body: JSON.stringify(data) })
+  if (!res.ok) throw new Error('Failed to update user')
+  return res.json()
+}
+
 export async function deleteEmployee(id) {
   const res = await authFetch(`/employees/${id}`, { method: 'DELETE' })
   const body = await res.json().catch(() => ({}))

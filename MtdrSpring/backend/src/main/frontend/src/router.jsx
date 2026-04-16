@@ -15,6 +15,7 @@ const ProjectsPage           = lazy(() => import('./pages/Projects/ProjectsPage'
 const SprintsPage            = lazy(() => import('./pages/Sprints/SprintsPage'))
 const KanbanPage             = lazy(() => import('./pages/Kanban/KanbanPage'))
 const UserManagementPage     = lazy(() => import('./pages/UserManagement/UserManagementPage'))
+const BacklogPage            = lazy(() => import('./pages/Projects/BacklogPage'))
 
 const pageFallback = (
   <div className="min-h-screen flex items-center justify-center">
@@ -92,6 +93,10 @@ const router = createBrowserRouter([
           {
             path: 'projects/:projectId/sprints/:sprintId/board',
             element: <Suspense fallback={pageFallback}><KanbanPage /></Suspense>,
+          },
+          {
+            path: 'projects/:projectId/backlog',
+            element: <Suspense fallback={pageFallback}><BacklogPage /></Suspense>,
           },
           {
             path: 'user-management',

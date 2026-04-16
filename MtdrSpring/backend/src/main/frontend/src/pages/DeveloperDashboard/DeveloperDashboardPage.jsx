@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import useSWR from 'swr'
-import { AlertCircle, ListTodo, Package, TrendingUp } from 'lucide-react'
+import { AlertCircle, CalendarRange, FolderKanban, ListTodo, Package, TrendingUp } from 'lucide-react'
 import { getUser } from '../../lib/auth'
 import { updateTask } from '../../lib/api'
 import { fetcher } from '../../lib/fetcher'
@@ -13,6 +13,60 @@ import TaskControls from './components/TaskControls'
 import TaskRow from './components/TaskRow'
 import KanbanBoard from './components/KanbanBoard'
 import BacklogView from './components/BacklogView'
+
+function SprintBanner({ tasks }) {
+  const sprints = [
+    ...new Map(
+      tasks
+        .filter((t) => t.sprint?.status === 'active')
+        .map((t) => [t.sprint.sprintId, t.sprint])
+    ).values(),
+  ]
+
+  if (sprints.length === 0) return null
+
+  const fmt = (d) =>
+    parseLocalDate(d).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+
+  return (
+    <div className="space-y-2">
+      {sprints.map((sprint) => (
+        <div
+          key={sprint.sprintId}
+          className="flex items-center gap-4 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3"
+        >
+          <div className="p-2 rounded-md bg-primary/10 shrink-0">
+            <CalendarRange className="w-4 h-4 text-primary" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-sm font-semibold text-foreground">{sprint.name}</span>
+              {sprint.project && (
+                <>
+                  <span className="text-muted-foreground">·</span>
+                  <span className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <FolderKanban className="w-3.5 h-3.5 shrink-0" />
+                    {sprint.project.name}
+                  </span>
+                </>
+              )}
+            </div>
+            {(sprint.startDate || sprint.endDate) && (
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {sprint.startDate && fmt(sprint.startDate)}
+                {sprint.startDate && sprint.endDate && ' → '}
+                {sprint.endDate && fmt(sprint.endDate)}
+              </p>
+            )}
+          </div>
+          <span className="shrink-0 text-xs font-medium px-2 py-0.5 rounded-full bg-green-500/10 text-green-600 dark:text-green-400">
+            Active
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+}
 
 function DashboardSkeleton() {
   return (
@@ -73,6 +127,7 @@ export default function DeveloperDashboardPage() {
         <DashboardSkeleton />
       ) : (
         <>
+          <SprintBanner tasks={tasks} />
           <KpiCards total={total} done={done} inProgress={inProgress} blocked={blocked} overdue={overdue} totalPoints={totalPoints} />
           <ProgressBar done={done} total={total} />
 

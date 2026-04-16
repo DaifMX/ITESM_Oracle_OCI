@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import useSWR from 'swr'
-import { createUser, deleteEmployee } from '../../lib/api'
+import { createUser, updateEmployee, deleteEmployee } from '../../lib/api'
 import { fetcher } from '../../lib/fetcher'
 import { getUser } from '../../lib/auth'
-import { Loader2, UserPlus, Trash2, AlertCircle, X, Shield, Users } from 'lucide-react'
+import { Loader2, UserPlus, Trash2, AlertCircle, X, Shield, Users, Pencil } from 'lucide-react'
 import { Button } from '../../components/ui/button'
 import { Skeleton } from '../../components/ui/Skeleton'
 import { cn } from '../../lib/utils'
@@ -109,8 +109,8 @@ function CreateUserModal({ creatableRoles, onClose, onCreated }) {
         </div>
         <form onSubmit={handleSubmit} className="overflow-y-auto px-6 py-4 space-y-3">
           <div className="grid grid-cols-2 gap-3">
-            <Field label="First name" required><TextInput value={form.firstName} onChange={set('firstName')} placeholder="Ana" /></Field>
-            <Field label="Last name" required><TextInput value={form.lastName} onChange={set('lastName')} placeholder="García" /></Field>
+            <Field label="First name" required><TextInput value={form.firstName} onChange={set('firstName')} placeholder="John" /></Field>
+            <Field label="Last name" required><TextInput value={form.lastName} onChange={set('lastName')} placeholder="Doe" /></Field>
           </div>
           <Field label="Email" required>
             <TextInput type="email" value={form.email} onChange={set('email')} placeholder="user@oracle.com" autoComplete="off" />
@@ -146,6 +146,101 @@ function CreateUserModal({ creatableRoles, onClose, onCreated }) {
           <Button size="sm" disabled={submitting} onClick={handleSubmit}>
             {submitting ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" /> : null}
             {submitting ? 'Creating…' : 'Create user'}
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function EditUserModal({ employee, onClose, onSaved }) {
+  const [form, setForm] = useState({
+    firstName:      employee.firstName      ?? '',
+    lastName:       employee.lastName       ?? '',
+    email:          employee.email          ?? '',
+    role:           employee.role           ?? 'developer',
+    position:       employee.position       ?? '',
+    modality:       employee.modality       ?? '',
+    phoneNumber:    employee.phoneNumber    ?? '',
+    telegramChatId: employee.telegramChatId ?? '',
+  })
+  const [error, setError]           = useState('')
+  const [submitting, setSubmitting] = useState(false)
+
+  function set(field) { return (e) => setForm((f) => ({ ...f, [field]: e.target.value })) }
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    if (!form.firstName.trim() || !form.lastName.trim() || !form.email.trim()) {
+      setError('First name, last name and email are required.'); return
+    }
+    setSubmitting(true); setError('')
+    try {
+      const saved = await updateEmployee(employee.employeeId, {
+        firstName:      form.firstName.trim(),
+        lastName:       form.lastName.trim(),
+        email:          form.email.trim(),
+        role:           form.role,
+        position:       form.position.trim()  || null,
+        modality:       form.modality         || null,
+        phoneNumber:    form.phoneNumber.trim()    || null,
+        telegramChatId: form.telegramChatId.trim() || null,
+      })
+      onSaved(saved)
+    } catch (err) { setError(err.message) }
+    finally { setSubmitting(false) }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="w-full max-w-md bg-card rounded-xl border shadow-lg flex flex-col max-h-[90vh]">
+        <div className="flex items-center justify-between px-6 py-4 border-b shrink-0">
+          <div className="flex items-center gap-2">
+            <Pencil className="w-4 h-4 text-muted-foreground" />
+            <h2 className="text-sm font-semibold text-foreground">Edit User</h2>
+          </div>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+        <form onSubmit={handleSubmit} className="overflow-y-auto px-6 py-4 space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="First name" required><TextInput value={form.firstName} onChange={set('firstName')} placeholder="John" /></Field>
+            <Field label="Last name" required><TextInput value={form.lastName} onChange={set('lastName')} placeholder="Doe" /></Field>
+          </div>
+          <Field label="Email" required>
+            <TextInput type="email" value={form.email} onChange={set('email')} placeholder="user@oracle.com" autoComplete="off" />
+          </Field>
+          <Field label="Role" required>
+            <SelectInput value={form.role} onChange={set('role')}>
+              {['developer', 'manager', 'admin'].map((r) => (
+                <option key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</option>
+              ))}
+            </SelectInput>
+          </Field>
+          <Field label="Position"><TextInput value={form.position} onChange={set('position')} placeholder="e.g. Backend Developer" /></Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Modality">
+              <SelectInput value={form.modality} onChange={set('modality')}>
+                <option value="">— Select —</option>
+                <option value="remote">Remote</option>
+                <option value="hybrid">Hybrid</option>
+              </SelectInput>
+            </Field>
+            <Field label="Phone"><TextInput value={form.phoneNumber} onChange={set('phoneNumber')} placeholder="+52 55 0000 0000" /></Field>
+          </div>
+          <Field label="Telegram Chat ID"><TextInput value={form.telegramChatId} onChange={set('telegramChatId')} placeholder="Optional" /></Field>
+          {error && (
+            <div className="flex items-center gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-destructive text-xs">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" /> {error}
+            </div>
+          )}
+        </form>
+        <div className="flex items-center justify-end gap-2 px-6 py-4 border-t shrink-0">
+          <Button type="button" variant="outline" size="sm" onClick={onClose} disabled={submitting}>Cancel</Button>
+          <Button size="sm" disabled={submitting} onClick={handleSubmit}>
+            {submitting ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" /> : null}
+            {submitting ? 'Saving…' : 'Save changes'}
           </Button>
         </div>
       </div>
@@ -206,6 +301,7 @@ export default function UserManagementPage() {
 
   const { data: employees = [], error, isLoading, mutate } = useSWR('/employees', fetcher)
   const [showCreate, setShowCreate]     = useState(false)
+  const [editTarget, setEditTarget]     = useState(null)
   const [deleteTarget, setDeleteTarget] = useState(null)
 
   function canDelete(emp) {
@@ -216,6 +312,10 @@ export default function UserManagementPage() {
   }
 
   function handleCreated() { setShowCreate(false); mutate() }
+  function handleSaved(saved) {
+    setEditTarget(null)
+    mutate(employees.map((e) => e.employeeId === saved.employeeId ? saved : e), { revalidate: false })
+  }
   function handleDeleted(id) {
     setDeleteTarget(null)
     mutate(employees.filter((e) => e.employeeId !== id), { revalidate: false })
@@ -305,12 +405,20 @@ export default function UserManagementPage() {
                           <td className="px-4 py-3 text-muted-foreground text-xs">{emp.position || '—'}</td>
                           <td className="px-4 py-3 text-muted-foreground text-xs capitalize">{emp.modality || '—'}</td>
                           <td className="px-4 py-3">
-                            {canDelete(emp) && (
-                              <button onClick={() => setDeleteTarget(emp)}
-                                className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors" title="Delete user">
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            )}
+                            <div className="flex items-center gap-1">
+                              {isAdmin && (
+                                <button onClick={() => setEditTarget(emp)}
+                                  className="p-1.5 rounded-md text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors" title="Edit user">
+                                  <Pencil className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                              {canDelete(emp) && (
+                                <button onClick={() => setDeleteTarget(emp)}
+                                  className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors" title="Delete user">
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       )
@@ -324,6 +432,7 @@ export default function UserManagementPage() {
       )}
 
       {showCreate && <CreateUserModal creatableRoles={creatableRoles} onClose={() => setShowCreate(false)} onCreated={handleCreated} />}
+      {editTarget && <EditUserModal employee={editTarget} onClose={() => setEditTarget(null)} onSaved={handleSaved} />}
       {deleteTarget && <DeleteConfirmModal employee={deleteTarget} onClose={() => setDeleteTarget(null)} onDeleted={handleDeleted} />}
     </div>
   )

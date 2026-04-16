@@ -73,27 +73,51 @@ public class BotActions {
 
     /** Single dispatch method — call this once per incoming message. */
     public void dispatch() {
-        // If in a conversation, handle the reply first
+        // /start, /help and /hide are always available — no auth needed
+        if (matches(BotCommands.START_COMMAND)) { fnStart(); return; }
+        if (matches(BotCommands.HELP))          { fnHelp();  return; }
+        if (matches(BotCommands.HIDE_COMMAND))  { fnHide();  return; }
+
+        // Every other command requires a registered account
+        Optional<Employee> empOpt = employeeRepository.findByTelegramChatId(String.valueOf(chatId));
+        if (empOpt.isEmpty()) {
+            send("🔒 *Access denied*\n\n" +
+                 "Your Telegram account is not linked to any user in the system\\.\n" +
+                 "Ask your administrator to register your Telegram Chat ID\\.");
+            return;
+        }
+        Employee employee = empOpt.get();
+
+        // If in a conversation flow (e.g. guided project wizard), continue it
         ConvState state = stateMap.getOrDefault(chatId, ConvState.NONE);
         if (state != ConvState.NONE && !requestText.startsWith("/")) {
-            handleConversationReply(state);
+            handleConversationReply(state, employee);
             return;
         }
 
-        // Command routing
-        if (matches(BotCommands.START_COMMAND))    { fnStart();        return; }
-        if (matches(BotCommands.HELP))             { fnHelp();         return; }
-        if (matches(BotCommands.HIDE_COMMAND))     { fnHide();         return; }
-        if (matches(BotCommands.MY_TASKS))         { fnMyTasks();      return; }
-        if (matches(BotCommands.SPRINT))           { fnActiveSprint(); return; }
-        if (startsWith(BotCommands.DONE_TASK))     { fnDoneTask();     return; }
-        if (startsWith(BotCommands.NEW_PROJECT))   { fnNewProject();   return; }
-        if (matches(BotCommands.LIST_PROJECTS))    { fnListProjects(); return; }
-        if (startsWith(BotCommands.NEW_SPRINT))    { fnNewSprint();    return; }
-        if (startsWith(BotCommands.LLM_REQ))       { fnLLM();          return; }
+        // Commands available to all registered users
+        if (matches(BotCommands.MY_TASKS))      { fnMyTasks(employee);      return; }
+        if (matches(BotCommands.SPRINT))        { fnActiveSprint(employee); return; }
+        if (startsWith(BotCommands.DONE_TASK))  { fnDoneTask();             return; }
+        if (matches(BotCommands.LIST_PROJECTS)) { fnListProjects();         return; }
+        if (startsWith(BotCommands.LLM_REQ))    { fnLLM();                  return; }
 
-        // Unknown command
-        send("❓ Unknown command. Type /help to see available commands.");
+        // Commands restricted to managers and admins
+        if (startsWith(BotCommands.NEW_PROJECT) || startsWith(BotCommands.NEW_SPRINT)) {
+            if (!isManagerOrAdmin(employee)) {
+                send("⛔ *Permission denied*\n\nThis command is only available to managers and admins\\.");
+                return;
+            }
+            if (startsWith(BotCommands.NEW_PROJECT)) { fnNewProject(); return; }
+            if (startsWith(BotCommands.NEW_SPRINT))  { fnNewSprint();  return; }
+        }
+
+        send("❓ Unknown command\\. Type /help to see available commands\\.");
+    }
+
+    private static boolean isManagerOrAdmin(Employee emp) {
+        String role = emp.getRole();
+        return "manager".equals(role) || "admin".equals(role);
     }
 
     // ─── /start ──────────────────────────────────────────────────────────────
@@ -143,14 +167,7 @@ public class BotActions {
 
     // ─── /mytasks ────────────────────────────────────────────────────────────
 
-    private void fnMyTasks() {
-        Optional<Employee> empOpt = employeeRepository.findByTelegramChatId(String.valueOf(chatId));
-        if (empOpt.isEmpty()) {
-            send("❌ No employee account is linked to this Telegram.\nAsk your manager to set your Telegram Chat ID in the system.");
-            return;
-        }
-
-        Employee employee = empOpt.get();
+    private void fnMyTasks(Employee employee) {
         List<EmployeeTask> assignments = employeeTaskService.findByEmployee(employee.getEmployeeId());
 
         if (assignments.isEmpty()) {
@@ -174,18 +191,14 @@ public class BotActions {
 
     // ─── /sprint ─────────────────────────────────────────────────────────────
 
-    private void fnActiveSprint() {
-        Optional<Employee> empOpt = employeeRepository.findByTelegramChatId(String.valueOf(chatId));
-
+    private void fnActiveSprint(Employee employee) {
         List<Sprint> activeSprints = sprintService.findByStatus("active");
         if (activeSprints.isEmpty()) {
             send("📅 No active sprints right now.");
             return;
         }
 
-        List<EmployeeTask> myAssignments = empOpt.map(emp ->
-                employeeTaskService.findByEmployee(emp.getEmployeeId())
-        ).orElse(List.of());
+        List<EmployeeTask> myAssignments = employeeTaskService.findByEmployee(employee.getEmployeeId());
 
         StringBuilder sb = new StringBuilder("🏃 *Active Sprints*\n\n");
         for (Sprint s : activeSprints) {
@@ -316,7 +329,7 @@ public class BotActions {
 
     // ─── Conversation reply handler ──────────────────────────────────────────
 
-    private void handleConversationReply(ConvState state) {
+    private void handleConversationReply(ConvState state, Employee employee) {
         Map<String, String> data = dataMap.getOrDefault(chatId, new HashMap<>());
 
         switch (state) {

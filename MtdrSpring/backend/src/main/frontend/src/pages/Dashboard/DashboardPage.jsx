@@ -1,12 +1,14 @@
 import { useState } from 'react'
-import { FolderKanban, BarChart3 } from 'lucide-react'
+import { FolderKanban, BarChart3, Inbox } from 'lucide-react'
 import { cn } from '../../lib/utils'
 import Overview from './Overview'
 import TeamKPIs from './TeamKPIs'
+import BacklogView from '../DeveloperDashboard/components/BacklogView'
 
 const TABS = [
   { key: 'overview', label: 'Overview',  icon: FolderKanban },
   { key: 'kpis',     label: 'Team KPIs', icon: BarChart3 },
+  { key: 'backlog',  label: 'Backlog',   icon: Inbox },
 ]
 
 export default function DashboardPage() {
@@ -41,6 +43,7 @@ export default function DashboardPage() {
 
       {tab === 'overview' && <Overview />}
       {tab === 'kpis'     && <TeamKPIs />}
+      {tab === 'backlog'  && <BacklogView />}
     </div>
   )
 }
