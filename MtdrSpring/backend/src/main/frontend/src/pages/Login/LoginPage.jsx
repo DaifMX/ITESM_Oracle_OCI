@@ -1,10 +1,12 @@
 import { useState } from 'react'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { setTokens, setUser, authFetch } from '@/lib/auth'
+import { useNavigate } from 'react-router-dom'
+import { Input } from '../../components/ui/input'
+import { Button } from '../../components/ui/button'
+import { Label } from '../../components/ui/label'
+import { setTokens, setUser, authFetch } from '../../lib/auth'
 
-export default function Login({ onLogin }) {
+export default function LoginPage() {
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -40,7 +42,7 @@ export default function Login({ onLogin }) {
       const user = meRes.ok ? await meRes.json() : null
       if (user) setUser(user)
 
-      onLogin(user?.role ?? 'developer')
+      navigate(user?.role === 'developer' ? '/developer-dashboard' : '/dashboard', { replace: true })
     } catch {
       setError('Unable to connect to the server')
     } finally {
@@ -107,7 +109,6 @@ export default function Login({ onLogin }) {
               {loading ? 'Signing in…' : 'Sign in'}
             </Button>
           </form>
-
         </div>
 
         <p className="mt-10 text-muted-foreground text-xs">

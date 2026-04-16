@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { getUser } from '../lib/auth'
-import { getTasksByEmployee, getProjects, getTasksByProject, updateTask } from '../lib/api'
+import { getUser } from '../../lib/auth'
+import { getTasksByEmployee, getProjects, getTasksByProject, updateTask } from '../../lib/api'
 import {
   Loader2, CheckCircle2, AlertCircle, CircleDot,
   ListTodo, TrendingUp, Zap, CalendarClock, ChevronDown,
   LayoutList, Columns, Package,
 } from 'lucide-react'
-import { cn, parseLocalDate } from '../lib/utils'
+import { cn, parseLocalDate } from '../../lib/utils'
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 

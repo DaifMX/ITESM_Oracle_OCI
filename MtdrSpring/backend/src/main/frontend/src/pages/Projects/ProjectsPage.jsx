@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getProjects, createProject, updateProject, deleteProject } from '../lib/api'
-import { Button } from '../components/ui/button'
-import { Badge } from '../components/ui/badge'
+import { getProjects, createProject, updateProject, deleteProject } from '../../lib/api'
+import { Button } from '../../components/ui/button'
+import { Badge } from '../../components/ui/badge'
 import { Loader2, Plus, Pencil, Trash2, ChevronRight, FolderKanban, AlertCircle } from 'lucide-react'
-import { cn, parseLocalDate } from '../lib/utils'
+import { cn, parseLocalDate } from '../../lib/utils'
 
 const STATUSES = ['planning', 'active', 'completed', 'on_hold']
 

@@ -6,15 +6,15 @@ import AppLayout from './layouts/AppLayout'
 import { getAccessToken, getRefreshToken, refreshAccessToken, getUser } from './lib/auth'
 
 // Public pages
-const LoginPage = lazy(() => import('./pages/LoginPage'))
+const LoginPage = lazy(() => import('./pages/Login/LoginPage'))
 
 // App pages (authenticated, wrapped in AppLayout)
-const DashboardPage          = lazy(() => import('./pages/DashboardPage'))
-const DeveloperDashboardPage = lazy(() => import('./pages/DeveloperDashboardPage'))
-const ProjectsPage           = lazy(() => import('./pages/ProjectsPage'))
-const SprintsPage            = lazy(() => import('./pages/SprintsPage'))
-const KanbanPage             = lazy(() => import('./pages/KanbanPage'))
-const UserManagementPage     = lazy(() => import('./pages/UserManagementPage'))
+const DashboardPage          = lazy(() => import('./pages/Dashboard/DashboardPage'))
+const DeveloperDashboardPage = lazy(() => import('./pages/DeveloperDashboard/DeveloperDashboardPage'))
+const ProjectsPage           = lazy(() => import('./pages/Projects/ProjectsPage'))
+const SprintsPage            = lazy(() => import('./pages/Sprints/SprintsPage'))
+const KanbanPage             = lazy(() => import('./pages/Kanban/KanbanPage'))
+const UserManagementPage     = lazy(() => import('./pages/UserManagement/UserManagementPage'))
 
 const pageFallback = (
   <div className="min-h-screen flex items-center justify-center">

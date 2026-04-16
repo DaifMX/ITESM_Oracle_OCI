@@ -6,13 +6,13 @@ import {
   createSprint,
   updateSprint,
   deleteSprint,
-} from '../lib/api'
-import { Button } from '../components/ui/button'
+} from '../../lib/api'
+import { Button } from '../../components/ui/button'
 import {
   Loader2, Plus, Pencil, Trash2, ChevronRight, ChevronLeft,
   Zap, AlertCircle, Calendar
 } from 'lucide-react'
-import { cn, parseLocalDate } from '../lib/utils'
+import { cn, parseLocalDate } from '../../lib/utils'
 
 const SPRINT_STATUSES = ['planned', 'active', 'completed']
 

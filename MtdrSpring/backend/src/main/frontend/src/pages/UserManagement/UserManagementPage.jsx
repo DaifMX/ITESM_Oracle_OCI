@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
-import { getEmployees, createUser, deleteEmployee } from '../lib/api'
-import { getUser } from '../lib/auth'
+import { getEmployees, createUser, deleteEmployee } from '../../lib/api'
+import { getUser } from '../../lib/auth'
 import {
   Loader2, UserPlus, Trash2, AlertCircle, X, Shield, Users,
 } from 'lucide-react'
-import { Button } from '../components/ui/button'
-import { cn } from '../lib/utils'
+import { Button } from '../../components/ui/button'
+import { cn } from '../../lib/utils'
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 

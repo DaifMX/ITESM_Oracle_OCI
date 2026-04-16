@@ -6,13 +6,13 @@ import {
   getTaskAssignees, assignEmployee, unassignEmployee,
   getComments, createComment, deleteComment,
   getEmployees,
-} from '../lib/api'
-import { Button } from '../components/ui/button'
+} from '../../lib/api'
+import { Button } from '../../components/ui/button'
 import {
   Loader2, Plus, Trash2, ChevronRight,
   AlertCircle, X, Check, Flag, Hash, User, MessageSquare,
 } from 'lucide-react'
-import { cn, parseLocalDate } from '../lib/utils'
+import { cn, parseLocalDate } from '../../lib/utils'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 

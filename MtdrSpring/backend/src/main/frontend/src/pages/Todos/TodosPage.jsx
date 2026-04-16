@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-import NewItem from '../NewItem'
-import { Button } from '../components/ui/button'
-import { Badge } from '../components/ui/badge'
+import NewItem from '../../NewItem'
+import { Button } from '../../components/ui/button'
+import { Badge } from '../../components/ui/badge'
 import { Trash2, CheckCircle, RotateCcw, Loader2 } from 'lucide-react'
-import { authFetch } from '../lib/auth'
-import { cn } from '../lib/utils'
+import { authFetch } from '../../lib/auth'
+import { cn } from '../../lib/utils'
 
 const API_LIST = '/todolist'
 
