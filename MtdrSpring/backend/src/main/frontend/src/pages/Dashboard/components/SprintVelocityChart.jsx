@@ -3,7 +3,7 @@ export default function SprintVelocityChart({ velocityData }) {
 
   return (
     <div>
-      <h2 className="text-sm font-semibold text-foreground mb-3">Sprint Velocity (Story Points)</h2>
+      <h2 className="text-sm font-semibold text-foreground mb-3">Sprint Velocity</h2>
       <div className="rounded-lg border bg-card p-5">
         <div className="flex gap-3">
           {velocityData.map(({ sprint, completedPts, totalPts }) => {
