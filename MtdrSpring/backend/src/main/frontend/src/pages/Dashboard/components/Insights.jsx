@@ -26,7 +26,7 @@ export default function Insights({ devStats }) {
     if (top.rate - low.rate > 15) {
       list.push({
         type: 'gap',
-        msg: `Brecha de ${top.rate - low.rate}% en tasa de completado: ${top.emp.firstName} (${top.rate}%) vs ${low.emp.firstName} (${low.rate}%). Considerar redistribución de carga o sesión de pair programming.`,
+        msg: `${top.rate - low.rate}% completion rate gap: ${top.emp.firstName} (${top.rate}%) vs ${low.emp.firstName} (${low.rate}%). Consider rebalancing workload or scheduling a pair programming session.`,
       })
     }
 
@@ -34,7 +34,7 @@ export default function Insights({ devStats }) {
     if (mostDone.done > 0) {
       list.push({
         type: 'top',
-        msg: `${mostDone.emp.firstName} completó más tareas (${mostDone.done}). Reconocer el desempeño y compartir buenas prácticas con el equipo.`,
+        msg: `${mostDone.emp.firstName} completed the most tasks (${mostDone.done}). Acknowledge their performance and share best practices with the team.`,
       })
     }
 
@@ -42,7 +42,7 @@ export default function Insights({ devStats }) {
     if (mostHours.hours > 0) {
       list.push({
         type: 'hours',
-        msg: `${mostHours.emp.firstName} registró el mayor número de horas reales (${mostHours.hours.toFixed(1)}h). Verificar si la carga de trabajo está bien balanceada entre el equipo.`,
+        msg: `${mostHours.emp.firstName} logged the most actual hours (${mostHours.hours.toFixed(1)}h). Verify whether the workload is well balanced across the team.`,
       })
     }
 
@@ -51,7 +51,7 @@ export default function Insights({ devStats }) {
       const names = blockedDevs.map((d) => `${d.emp.firstName} (${d.blocked})`).join(', ')
       list.push({
         type: 'blocked',
-        msg: `Tareas bloqueadas en: ${names}. Agendar standup enfocado en remover impedimentos para desbloquear el progreso.`,
+        msg: `Blocked tasks for: ${names}. Schedule a focused standup to remove impediments and unblock progress.`,
       })
     }
 
@@ -60,7 +60,7 @@ export default function Insights({ devStats }) {
       const efficient = [...withHours].sort((a, b) => (a.hours / a.done) - (b.hours / b.done))[0]
       list.push({
         type: 'efficiency',
-        msg: `${efficient.emp.firstName} tiene el mejor ratio de eficiencia (~${(efficient.hours / efficient.done).toFixed(1)}h/tarea). Documentar su flujo de trabajo como referencia del equipo.`,
+        msg: `${efficient.emp.firstName} has the best efficiency ratio (~${(efficient.hours / efficient.done).toFixed(1)}h/task). Document their workflow as a team reference.`,
       })
     }
 
@@ -73,7 +73,7 @@ export default function Insights({ devStats }) {
     <div>
       <div className="flex items-center gap-2 mb-3">
         <Lightbulb className="w-4 h-4 text-amber-500" />
-        <h2 className="text-sm font-semibold text-foreground">Insights & Acciones de Mejora</h2>
+        <h2 className="text-sm font-semibold text-foreground">Insights & Improvement Actions</h2>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {insights.map((ins, i) => {

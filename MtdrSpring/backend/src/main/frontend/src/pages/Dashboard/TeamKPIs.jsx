@@ -132,21 +132,21 @@ export default function TeamKPIs({ projects, sprintMap }) {
     return (
       <div className="text-center py-14 rounded-lg border bg-card">
         <BarChart3 className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
-        <p className="text-sm text-muted-foreground">No hay datos de tareas para calcular KPIs.</p>
+        <p className="text-sm text-muted-foreground">No task data available to calculate KPIs.</p>
       </div>
     )
   }
 
   const sprintLabel = selectedSprintId === 'all'
-    ? 'Todos los sprints'
-    : (allSprints.find((s) => s.sprintId === selectedSprintId)?.name ?? 'Sprint seleccionado')
+    ? 'All sprints'
+    : (allSprints.find((s) => s.sprintId === selectedSprintId)?.name ?? 'Selected sprint')
 
   return (
     <div className="space-y-6">
       {/* Sprint filter + title */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div>
-          <h2 className="text-sm font-semibold text-foreground">Resumen de Indicadores</h2>
+          <h2 className="text-sm font-semibold text-foreground">KPI Summary</h2>
           <p className="text-xs text-muted-foreground mt-0.5">{sprintLabel}</p>
         </div>
         <select
@@ -156,7 +156,7 @@ export default function TeamKPIs({ projects, sprintMap }) {
           }
           className="text-xs border rounded-md px-3 py-1.5 bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
         >
-          <option value="all">Todos los sprints</option>
+          <option value="all">All sprints</option>
           {allSprints.map((s) => (
             <option key={s.sprintId} value={String(s.sprintId)}>{s.name}</option>
           ))}
@@ -165,17 +165,17 @@ export default function TeamKPIs({ projects, sprintMap }) {
 
       {/* Summary KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatCard icon={CheckCircle2} label="# Tasks" value={totalTasks} sub={`${doneTasks} completadas`} />
-        <StatCard icon={Timer} label="# Horas Reales" value={`${totalHours.toFixed(1)}h`} sub="horas registradas" />
-        <StatCard icon={TrendingUp} label="Promedio Tasks/Dev" value={avgTasksPerDev} sub="tasks completadas" />
-        <StatCard icon={Clock} label="Promedio Horas/Dev" value={`${avgHoursPerDev}h`} sub="horas reales" />
+        <StatCard icon={CheckCircle2} label="# Tasks" value={totalTasks} sub={`${doneTasks} completed`} />
+        <StatCard icon={Timer} label="# Actual Hours" value={`${totalHours.toFixed(1)}h`} sub="logged hours" />
+        <StatCard icon={TrendingUp} label="Avg Tasks/Dev" value={avgTasksPerDev} sub="completed tasks" />
+        <StatCard icon={Clock} label="Avg Hours/Dev" value={`${avgHoursPerDev}h`} sub="actual hours" />
       </div>
 
       {/* Bar Charts */}
       {devStats.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="rounded-lg border bg-card p-4">
-            <h2 className="text-sm font-semibold text-foreground">Tasks Completadas por Developer</h2>
+            <h2 className="text-sm font-semibold text-foreground">Completed Tasks by Developer</h2>
             <p className="text-xs text-muted-foreground mb-4 mt-0.5">{sprintLabel}</p>
             <BarChart
               bars={devStats.map((d) => ({ label: d.emp.firstName, value: d.done, color: d.color }))}
@@ -186,7 +186,7 @@ export default function TeamKPIs({ projects, sprintMap }) {
           </div>
 
           <div className="rounded-lg border bg-card p-4">
-            <h2 className="text-sm font-semibold text-foreground">Horas Reales por Developer</h2>
+            <h2 className="text-sm font-semibold text-foreground">Actual Hours by Developer</h2>
             <p className="text-xs text-muted-foreground mb-4 mt-0.5">{sprintLabel}</p>
             <BarChart
               bars={devStats.map((d) => ({ label: d.emp.firstName, value: parseFloat(d.hours.toFixed(1)), color: d.color }))}

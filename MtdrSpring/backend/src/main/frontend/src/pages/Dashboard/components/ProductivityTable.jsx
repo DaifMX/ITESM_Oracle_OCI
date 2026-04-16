@@ -1,7 +1,7 @@
 export default function ProductivityTable({ devStats }) {
   return (
     <div>
-      <h2 className="text-sm font-semibold text-foreground mb-3">Resumen de Productividad</h2>
+      <h2 className="text-sm font-semibold text-foreground mb-3">Productivity Summary</h2>
       <div className="rounded-lg border bg-card overflow-auto">
         <table className="w-full text-sm">
           <thead>
@@ -9,11 +9,11 @@ export default function ProductivityTable({ devStats }) {
               <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">Developer</th>
               <th className="px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground">Total</th>
               <th className="px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground">Done</th>
-              <th className="px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground">En&nbsp;Progreso</th>
-              <th className="px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground">Bloqueadas</th>
-              <th className="px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground">Hrs&nbsp;Reales</th>
+              <th className="px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground">In&nbsp;Progress</th>
+              <th className="px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground">Blocked</th>
+              <th className="px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground">Actual&nbsp;Hrs</th>
               <th className="px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground">h/Task</th>
-              <th className="px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground">Completado</th>
+              <th className="px-4 py-2.5 text-center text-xs font-semibold text-muted-foreground">Completed</th>
             </tr>
           </thead>
           <tbody>

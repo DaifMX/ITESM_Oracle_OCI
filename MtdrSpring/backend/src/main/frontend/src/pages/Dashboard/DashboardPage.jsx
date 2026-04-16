@@ -50,7 +50,7 @@ export default function DashboardPage() {
       <div>
         <h1 className="text-xl font-bold text-foreground">Dashboard</h1>
         <p className="text-sm text-muted-foreground mt-0.5">
-          Overview de proyectos, sprints y productividad del equipo
+          Overview of projects, sprints and team productivity
         </p>
       </div>
 
