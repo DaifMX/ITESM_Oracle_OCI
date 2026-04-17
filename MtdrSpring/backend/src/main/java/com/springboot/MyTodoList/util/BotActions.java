@@ -201,7 +201,7 @@ public class BotActions {
                 sb.append(" — ").append(escapeMarkdown(s.getProject().getName()));
             sb.append("\n");
             if (s.getGoal() != null) sb.append("Goal: ").append(escapeMarkdown(s.getGoal())).append("\n");
-            if (s.getEndDate() != null) sb.append("Ends: ").append(s.getEndDate()).append("\n");
+            if (s.getEndDate() != null) sb.append("Ends: ").append(escapeMarkdown(s.getEndDate().toString())).append("\n");
 
             long myCount = myTasks.stream()
                     .filter(t -> t.getSprint() != null

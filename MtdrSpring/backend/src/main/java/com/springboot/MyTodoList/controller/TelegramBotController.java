@@ -111,5 +111,7 @@ public class TelegramBotController implements SpringLongPollingBot, LongPollingS
     @AfterBotRegistration
     public void afterRegistration(BotSession botSession) {
         logger.info("TelegramBotController registered, running: {}", botSession.isRunning());
+        logger.info("Bot token prefix: {}...", getBotToken() != null && getBotToken().length() > 10
+                ? getBotToken().substring(0, 10) : "(empty/null)");
     }
 }
