@@ -1,10 +1,10 @@
 package com.springboot.MyTodoList.controller;
 
-import com.springboot.MyTodoList.model.EmployeeTask;
+import com.springboot.MyTodoList.model.Employee;
 import com.springboot.MyTodoList.model.Sprint;
 import com.springboot.MyTodoList.model.Task;
+import com.springboot.MyTodoList.repository.EmployeeRepository;
 import com.springboot.MyTodoList.repository.SprintRepository;
-import com.springboot.MyTodoList.service.EmployeeTaskService;
 import com.springboot.MyTodoList.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,7 +26,7 @@ public class TaskController {
     private TaskService taskService;
 
     @Autowired
-    private EmployeeTaskService employeeTaskService;
+    private EmployeeRepository employeeRepository;
 
     @Autowired
     private SprintRepository sprintRepository;
@@ -114,31 +115,55 @@ public class TaskController {
 
     @GetMapping("/employee/{employeeId}")
     public List<Task> getByEmployee(@PathVariable int employeeId) {
-        return employeeTaskService.findByEmployee(employeeId).stream()
-                .map(et -> et.getTask())
-                .collect(java.util.stream.Collectors.toList());
+        return taskService.findByAssignee(employeeId);
     }
 
-    // Assignee management
+    // ── Assignee management (single developer) ───────────────────────────────
 
+    /** Returns a list with 0 or 1 elements: the current assignee. */
     @GetMapping("/{id}/assignees")
-    public List<EmployeeTask> getAssignees(@PathVariable int id) {
-        return employeeTaskService.findByTask(id);
+    public ResponseEntity<List<Employee>> getAssignees(@PathVariable int id) {
+        return taskService.findById(id).map(task -> {
+            if (task.getAssignee() == null) return ResponseEntity.ok(Collections.<Employee>emptyList());
+            return ResponseEntity.ok(List.of(task.getAssignee()));
+        }).orElse(ResponseEntity.notFound().build());
     }
 
+    /** Assigns a developer to the task, replacing any previous assignee. */
     @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     @PostMapping("/{id}/assignees/{employeeId}")
-    public ResponseEntity<EmployeeTask> assign(@PathVariable int id, @PathVariable int employeeId) {
-        return employeeTaskService.assign(id, employeeId)
-                .map(et -> ResponseEntity.status(HttpStatus.CREATED).body(et))
-                .orElse(ResponseEntity.status(HttpStatus.CONFLICT).build());
+    public ResponseEntity<?> assign(@PathVariable int id, @PathVariable int employeeId) {
+        Optional<Task> taskOpt = taskService.findById(id);
+        if (taskOpt.isEmpty()) return ResponseEntity.notFound().build();
+
+        Optional<Employee> empOpt = employeeRepository.findById(employeeId);
+        if (empOpt.isEmpty()) return ResponseEntity.notFound().build();
+
+        Employee emp = empOpt.get();
+        if (!"developer".equalsIgnoreCase(emp.getRole())) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Only developers can be assigned to tasks"));
+        }
+
+        Task task = taskOpt.get();
+        task.setAssignee(emp);
+        taskService.save(task);
+        return ResponseEntity.status(HttpStatus.CREATED).body(emp);
     }
 
+    /** Removes the assignee from the task. */
     @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     @DeleteMapping("/{id}/assignees/{employeeId}")
     public ResponseEntity<Void> unassign(@PathVariable int id, @PathVariable int employeeId) {
-        return employeeTaskService.unassign(id, employeeId)
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+        Optional<Task> taskOpt = taskService.findById(id);
+        if (taskOpt.isEmpty()) return ResponseEntity.notFound().build();
+
+        Task task = taskOpt.get();
+        if (task.getAssignee() == null || task.getAssignee().getEmployeeId() != employeeId)
+            return ResponseEntity.notFound().build();
+
+        task.setAssignee(null);
+        taskService.save(task);
+        return ResponseEntity.noContent().build();
     }
 }

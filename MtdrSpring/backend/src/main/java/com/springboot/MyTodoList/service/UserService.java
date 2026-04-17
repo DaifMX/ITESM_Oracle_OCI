@@ -1,11 +1,12 @@
 package com.springboot.MyTodoList.service;
 
 import com.springboot.MyTodoList.model.Employee;
+import com.springboot.MyTodoList.model.Task;
 import com.springboot.MyTodoList.repository.CommentRepository;
 import com.springboot.MyTodoList.repository.EmployeeRepository;
-import com.springboot.MyTodoList.repository.EmployeeTaskRepository;
 import com.springboot.MyTodoList.repository.EmployeeTeamRepository;
 import com.springboot.MyTodoList.repository.RefreshTokenRepository;
+import com.springboot.MyTodoList.repository.TaskRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ public class UserService {
     private EmployeeRepository employeeRepository;
 
     @Autowired
-    private EmployeeTaskRepository employeeTaskRepository;
+    private TaskRepository taskRepository;
 
     @Autowired
     private EmployeeTeamRepository employeeTeamRepository;
@@ -57,7 +58,12 @@ public class UserService {
         Employee employee = found.get();
         refreshTokenRepository.deleteByEmployee(employee);
         commentRepository.deleteAll(commentRepository.findByEmployee_EmployeeId(id));
-        employeeTaskRepository.deleteAll(employeeTaskRepository.findById_EmployeeId(id));
+        // Unassign this employee from any tasks they are assigned to
+        List<Task> assignedTasks = taskRepository.findByAssignee_EmployeeId(id);
+        for (Task task : assignedTasks) {
+            task.setAssignee(null);
+            taskRepository.save(task);
+        }
         employeeTeamRepository.deleteAll(employeeTeamRepository.findById_EmployeeId(id));
         employeeRepository.deleteById(id);
         return true;

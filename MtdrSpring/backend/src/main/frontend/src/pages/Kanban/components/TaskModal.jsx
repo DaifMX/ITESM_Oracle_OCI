@@ -77,12 +77,12 @@ export default function TaskModal({ task, sprint, sprintId, projectId, employees
 
   async function handleUnassign(employeeId) {
     await unassignEmployee(task.taskId, employeeId)
-    setAssignees((prev) => prev.filter((a) => a.employee?.employeeId !== employeeId))
+    setAssignees([])
   }
 
   const tabs = [
     { id: 'details',   label: 'Details' },
-    { id: 'assignees', label: `Assignees${assignees.length ? ` (${assignees.length})` : ''}` },
+    { id: 'assignees', label: `Assignee${assignees.length ? ' (1)' : ''}` },
     { id: 'comments',  label: `Comments${comments.length ? ` (${comments.length})` : ''}` },
   ]
 

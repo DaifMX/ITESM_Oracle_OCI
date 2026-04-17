@@ -1,13 +1,11 @@
 package com.springboot.MyTodoList.util;
 
 import com.springboot.MyTodoList.model.Employee;
-import com.springboot.MyTodoList.model.EmployeeTask;
 import com.springboot.MyTodoList.model.Project;
 import com.springboot.MyTodoList.model.Sprint;
 import com.springboot.MyTodoList.model.Task;
 import com.springboot.MyTodoList.repository.EmployeeRepository;
 import com.springboot.MyTodoList.service.DeepSeekService;
-import com.springboot.MyTodoList.service.EmployeeTaskService;
 import com.springboot.MyTodoList.service.ProjectService;
 import com.springboot.MyTodoList.service.SprintService;
 import com.springboot.MyTodoList.service.TaskService;
@@ -48,19 +46,16 @@ public class BotActions {
     private final TaskService taskService;
     private final SprintService sprintService;
     private final ProjectService projectService;
-    private final EmployeeTaskService employeeTaskService;
     private final EmployeeRepository employeeRepository;
     private final DeepSeekService deepSeekService;
 
     public BotActions(TelegramClient tc,
                       TaskService ts, SprintService ss, ProjectService ps,
-                      EmployeeTaskService ets, EmployeeRepository er,
-                      DeepSeekService ds) {
+                      EmployeeRepository er, DeepSeekService ds) {
         this.telegramClient = tc;
         this.taskService = ts;
         this.sprintService = ss;
         this.projectService = ps;
-        this.employeeTaskService = ets;
         this.employeeRepository = er;
         this.deepSeekService = ds;
         this.handled = false;
@@ -168,16 +163,15 @@ public class BotActions {
     // ─── /mytasks ────────────────────────────────────────────────────────────
 
     private void fnMyTasks(Employee employee) {
-        List<EmployeeTask> assignments = employeeTaskService.findByEmployee(employee.getEmployeeId());
+        List<Task> tasks = taskService.findByAssignee(employee.getEmployeeId());
 
-        if (assignments.isEmpty()) {
+        if (tasks.isEmpty()) {
             send("✅ You have no tasks assigned right now.");
             return;
         }
 
         StringBuilder sb = new StringBuilder("📋 *Your Tasks*\n\n");
-        for (EmployeeTask et : assignments) {
-            Task t = et.getTask();
+        for (Task t : tasks) {
             sb.append(statusEmoji(t.getStatus())).append(" *[").append(t.getTaskId()).append("]* ")
               .append(escapeMarkdown(t.getTitle())).append("\n");
             sb.append("   Status: `").append(t.getStatus()).append("`");
@@ -198,7 +192,7 @@ public class BotActions {
             return;
         }
 
-        List<EmployeeTask> myAssignments = employeeTaskService.findByEmployee(employee.getEmployeeId());
+        List<Task> myTasks = taskService.findByAssignee(employee.getEmployeeId());
 
         StringBuilder sb = new StringBuilder("🏃 *Active Sprints*\n\n");
         for (Sprint s : activeSprints) {
@@ -209,9 +203,9 @@ public class BotActions {
             if (s.getGoal() != null) sb.append("Goal: ").append(escapeMarkdown(s.getGoal())).append("\n");
             if (s.getEndDate() != null) sb.append("Ends: ").append(s.getEndDate()).append("\n");
 
-            long myCount = myAssignments.stream()
-                    .filter(et -> et.getTask().getSprint() != null
-                            && et.getTask().getSprint().getSprintId() == s.getSprintId())
+            long myCount = myTasks.stream()
+                    .filter(t -> t.getSprint() != null
+                            && t.getSprint().getSprintId() == s.getSprintId())
                     .count();
             if (myCount > 0) sb.append("Your tasks: ").append(myCount).append("\n");
             sb.append("\n");

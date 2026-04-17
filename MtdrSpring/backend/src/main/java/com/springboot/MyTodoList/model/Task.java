@@ -55,6 +55,10 @@ public class Task {
     @Column(name = "CREATED_AT")
     private LocalDateTime createdAt;
 
+    @ManyToOne
+    @JoinColumn(name = "ASSIGNEE_ID")
+    private Employee assignee;
+
     @PrePersist
     protected void onCreate() {
         if (createdAt == null) createdAt = LocalDateTime.now();
@@ -103,4 +107,7 @@ public class Task {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public Employee getAssignee() { return assignee; }
+    public void setAssignee(Employee assignee) { this.assignee = assignee; }
 }

@@ -3,7 +3,6 @@ package com.springboot.MyTodoList.controller;
 import com.springboot.MyTodoList.config.BotProps;
 import com.springboot.MyTodoList.repository.EmployeeRepository;
 import com.springboot.MyTodoList.service.DeepSeekService;
-import com.springboot.MyTodoList.service.EmployeeTaskService;
 import com.springboot.MyTodoList.service.ProjectService;
 import com.springboot.MyTodoList.service.SprintService;
 import com.springboot.MyTodoList.service.TaskService;
@@ -45,7 +44,6 @@ public class TelegramBotController implements SpringLongPollingBot, LongPollingS
     private final TaskService taskService;
     private final SprintService sprintService;
     private final ProjectService projectService;
-    private final EmployeeTaskService employeeTaskService;
     private final EmployeeRepository employeeRepository;
     private final DeepSeekService deepSeekService;
 
@@ -57,14 +55,12 @@ public class TelegramBotController implements SpringLongPollingBot, LongPollingS
             TaskService taskService,
             SprintService sprintService,
             ProjectService projectService,
-            EmployeeTaskService employeeTaskService,
             EmployeeRepository employeeRepository,
             DeepSeekService deepSeekService) {
         this.botProps = botProps;
         this.taskService = taskService;
         this.sprintService = sprintService;
         this.projectService = projectService;
-        this.employeeTaskService = employeeTaskService;
         this.employeeRepository = employeeRepository;
         this.deepSeekService = deepSeekService;
         this.telegramClient = new OkHttpTelegramClient(getBotToken());
@@ -101,7 +97,6 @@ public class TelegramBotController implements SpringLongPollingBot, LongPollingS
                     taskService,
                     sprintService,
                     projectService,
-                    employeeTaskService,
                     employeeRepository,
                     deepSeekService
             );
