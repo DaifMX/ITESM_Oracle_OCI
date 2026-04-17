@@ -23,7 +23,7 @@ public class DataInitializer {
 
     @EventListener(ApplicationReadyEvent.class)
     public void seedAdminUser() {
-        if (employeeRepository.countByRole("admin") != 0) {
+        if (employeeRepository.countByRole("admin") == 0) {
             Employee admin = new Employee();
             admin.setEmail("admin@oracle.com");
             admin.setFirstName("Ora");
