@@ -77,8 +77,8 @@ public class BotActions {
         Optional<Employee> empOpt = employeeRepository.findByTelegramChatId(String.valueOf(chatId));
         if (empOpt.isEmpty()) {
             send("🔒 *Access denied*\n\n" +
-                 "Your Telegram account is not linked to any user in the system\\.\n" +
-                 "Ask your administrator to register your Telegram Chat ID\\.");
+                 "Your Telegram account is not linked to any user in the system\.\n" +
+                 "Ask your administrator to register your Telegram Chat ID\.");
             return;
         }
         Employee employee = empOpt.get();
@@ -118,9 +118,9 @@ public class BotActions {
     // ─── /start ──────────────────────────────────────────────────────────────
 
     private void fnStart() {
-        String welcome = "👋 *Welcome to the Project Manager Bot!*\n\n" +
-                "I help you manage your agile projects directly from Telegram.\n\n" +
-                "Use the buttons below or type /help for all commands.";
+        String welcome = "👋 *Welcome to the Project Manager Bot\\!*\n\n" +
+                "I help you manage your agile projects directly from Telegram\\.\n\n" +
+                "Use the buttons below or type /help for all commands\\.";
 
         send(welcome, ReplyKeyboardMarkup.builder()
                 .resizeKeyboard(true)
@@ -142,7 +142,7 @@ public class BotActions {
                 "  /newsprint \\<projectId\\> \\<name\\> — create a sprint\n\n" +
                 "📁 *Projects*\n" +
                 "  /listprojects — list all projects\n" +
-                "  /newproject — create a new project (guided)\n" +
+                "  /newproject — create a new project \\(guided\\)\n" +
                 "  /newproject \\<name\\> — create project instantly\n\n" +
                 "🤖 *AI*\n" +
                 "  /llm \\<prompt\\> — ask the AI assistant\n\n" +
@@ -157,7 +157,7 @@ public class BotActions {
     private void fnHide() {
         clearState();
         // BotHelper default overload already uses ReplyKeyboardRemove(true)
-        send("👋 Keyboard hidden. Type /start to show it again.");
+        send("👋 Keyboard hidden\. Type /start to show it again\.");
     }
 
     // ─── /mytasks ────────────────────────────────────────────────────────────
@@ -166,20 +166,20 @@ public class BotActions {
         List<Task> tasks = taskService.findByAssignee(employee.getEmployeeId());
 
         if (tasks.isEmpty()) {
-            send("✅ You have no tasks assigned right now.");
+            send("✅ You have no tasks assigned right now\\.");
             return;
         }
 
         StringBuilder sb = new StringBuilder("📋 *Your Tasks*\n\n");
         for (Task t : tasks) {
-            sb.append(statusEmoji(t.getStatus())).append(" *[").append(t.getTaskId()).append("]* ")
+            sb.append(statusEmoji(t.getStatus())).append(" *\\[").append(t.getTaskId()).append("\\]* ")
               .append(escapeMarkdown(t.getTitle())).append("\n");
             sb.append("   Status: `").append(t.getStatus()).append("`");
             if (t.getPriority() != null) sb.append("  Priority: `").append(t.getPriority()).append("`");
             if (t.getStoryPoints() != null) sb.append("  SP: `").append(t.getStoryPoints()).append("`");
             sb.append("\n\n");
         }
-        sb.append("Tip: `/done <taskId>` to mark a task as done.");
+        sb.append("Tip: `/done <taskId>` to mark a task as done\\.");
         send(sb.toString());
     }
 
@@ -188,7 +188,7 @@ public class BotActions {
     private void fnActiveSprint(Employee employee) {
         List<Sprint> activeSprints = sprintService.findByStatus("active");
         if (activeSprints.isEmpty()) {
-            send("📅 No active sprints right now.");
+            send("📅 No active sprints right now\\.");
             return;
         }
 
@@ -225,19 +225,19 @@ public class BotActions {
             int taskId = Integer.parseInt(parts[1]);
             Optional<Task> taskOpt = taskService.findById(taskId);
             if (taskOpt.isEmpty()) {
-                send("❌ Task #" + taskId + " not found.");
+                send("❌ Task \\#" + taskId + " not found\\.");
                 return;
             }
             Task task = taskOpt.get();
             if ("done".equals(task.getStatus())) {
-                send("ℹ️ Task *" + escapeMarkdown(task.getTitle()) + "* is already done.");
+                send("ℹ️ Task *" + escapeMarkdown(task.getTitle()) + "* is already done\\.");
                 return;
             }
             task.setStatus("done");
             taskService.update(taskId, task);
-            send("✅ Task *[" + taskId + "] " + escapeMarkdown(task.getTitle()) + "* marked as done!");
+            send("✅ Task *\\[" + taskId + "\\] " + escapeMarkdown(task.getTitle()) + "* marked as done\\!");
         } catch (NumberFormatException e) {
-            send("❌ Invalid task ID. Usage: `/done <taskId>`");
+            send("❌ Invalid task ID\\. Usage: `/done <taskId>`");
         }
     }
 
@@ -246,17 +246,17 @@ public class BotActions {
     private void fnListProjects() {
         List<Project> projects = projectService.findAll();
         if (projects.isEmpty()) {
-            send("📁 No projects yet. Use /newproject to create one.");
+            send("📁 No projects yet\\. Use /newproject to create one\\.");
             return;
         }
         StringBuilder sb = new StringBuilder("📁 *Projects*\n\n");
         for (Project p : projects) {
             sb.append(projectEmoji(p.getStatus()))
-              .append(" *[").append(p.getProjectId()).append("]* ")
+              .append(" *\\[").append(p.getProjectId()).append("\\]* ")
               .append(escapeMarkdown(p.getName()))
               .append(" — `").append(p.getStatus()).append("`\n");
         }
-        sb.append("\nUse `/newsprint <projectId> <name>` to create a sprint.");
+        sb.append("\nUse `/newsprint <projectId> <name>` to create a sprint\\.");
         send(sb.toString());
     }
 
@@ -289,7 +289,7 @@ public class BotActions {
 
             Optional<Project> projOpt = projectService.findById(projectId);
             if (projOpt.isEmpty()) {
-                send("❌ Project #" + projectId + " not found. Use /listprojects to see all projects.");
+                send("❌ Project \\#" + projectId + " not found\\. Use /listprojects to see all projects\\.");
                 return;
             }
 
@@ -300,10 +300,10 @@ public class BotActions {
             Sprint saved = sprintService.save(sprint);
 
             send("✅ Sprint *" + escapeMarkdown(saved.getName()) + "* created for project *"
-                    + escapeMarkdown(projOpt.get().getName()) + "*!\n"
+                    + escapeMarkdown(projOpt.get().getName()) + "*\\!\n"
                     + "Sprint ID: `" + saved.getSprintId() + "`  Status: `planned`");
         } catch (NumberFormatException e) {
-            send("❌ Invalid project ID. Usage: `/newsprint <projectId> <name>`");
+            send("❌ Invalid project ID\\. Usage: `/newsprint <projectId> <name>`");
         }
     }
 
@@ -331,7 +331,7 @@ public class BotActions {
                 data.put("name", requestText);
                 dataMap.put(chatId, data);
                 stateMap.put(chatId, ConvState.AWAITING_PROJECT_DESCRIPTION);
-                send("Got it! Now enter a description (or send `/skip` to leave it empty):");
+                send("Got it\\! Now enter a description \\(or send `/skip` to leave it empty\\):");
             }
             case AWAITING_PROJECT_DESCRIPTION -> {
                 String description = requestText.equals("/skip") ? null : requestText;
@@ -341,7 +341,7 @@ public class BotActions {
             }
             default -> {
                 clearState();
-                send("❓ Unexpected input. Type /start to return to the main menu.");
+                send("❓ Unexpected input\\. Type /start to return to the main menu\\.");
             }
         }
     }
@@ -355,12 +355,12 @@ public class BotActions {
             project.setDescription(description);
             project.setStatus("planning");
             Project saved = projectService.save(project);
-            send("✅ Project *" + escapeMarkdown(saved.getName()) + "* created!\n" +
+            send("✅ Project *" + escapeMarkdown(saved.getName()) + "* created\\!\n" +
                     "ID: `" + saved.getProjectId() + "`  Status: `planning`\n\n" +
-                    "Use `/newsprint " + saved.getProjectId() + " Sprint 1` to create your first sprint.");
+                    "Use `/newsprint " + saved.getProjectId() + " Sprint 1` to create your first sprint\.");
         } catch (Exception e) {
             logger.error("Error creating project", e);
-            send("❌ Failed to create project. Please try again.");
+            send("❌ Failed to create project\. Please try again\.");
         }
     }
 
