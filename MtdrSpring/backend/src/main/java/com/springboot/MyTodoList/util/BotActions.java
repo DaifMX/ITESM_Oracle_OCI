@@ -77,8 +77,8 @@ public class BotActions {
         Optional<Employee> empOpt = employeeRepository.findByTelegramChatId(String.valueOf(chatId));
         if (empOpt.isEmpty()) {
             send("🔒 *Access denied*\n\n" +
-                 "Your Telegram account is not linked to any user in the system\.\n" +
-                 "Ask your administrator to register your Telegram Chat ID\.");
+                 "Your Telegram account is not linked to any user in the system\\.\n" +
+                 "Ask your administrator to register your Telegram Chat ID\\.");
             return;
         }
         Employee employee = empOpt.get();
@@ -157,7 +157,7 @@ public class BotActions {
     private void fnHide() {
         clearState();
         // BotHelper default overload already uses ReplyKeyboardRemove(true)
-        send("👋 Keyboard hidden\. Type /start to show it again\.");
+        send("👋 Keyboard hidden\\. Type /start to show it again\\.");
     }
 
     // ─── /mytasks ────────────────────────────────────────────────────────────
@@ -357,10 +357,10 @@ public class BotActions {
             Project saved = projectService.save(project);
             send("✅ Project *" + escapeMarkdown(saved.getName()) + "* created\\!\n" +
                     "ID: `" + saved.getProjectId() + "`  Status: `planning`\n\n" +
-                    "Use `/newsprint " + saved.getProjectId() + " Sprint 1` to create your first sprint\.");
+                    "Use `/newsprint " + saved.getProjectId() + " Sprint 1` to create your first sprint\\.");
         } catch (Exception e) {
             logger.error("Error creating project", e);
-            send("❌ Failed to create project\. Please try again\.");
+            send("❌ Failed to create project\\. Please try again\\.");
         }
     }
 
