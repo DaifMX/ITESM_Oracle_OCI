@@ -1,0 +1,43 @@
+name: Docs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/docs.yml'
+
+jobs:
+  sync-wiki:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sync docs to wiki
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name  "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          REPO="${{ github.repository }}"
+          WIKI_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.wiki.git"
+
+          if ! git clone --depth 1 "${WIKI_URL}" wiki 2>/dev/null; then
+            echo "Wiki not initialised. Please create at least one page in the GitHub wiki UI first."
+            exit 1
+          fi
+
+          # docs/Home.md → wiki Home page; all other docs/*.md keep their name
+          for f in docs/*.md; do
+            name=$(basename "$f")
+            cp "$f" "wiki/$name"
+          done
+
+          cd wiki
+          git add .
+          git diff --cached --quiet && echo "No changes." && exit 0
+          git commit -m "docs: sync from ${GITHUB_SHA::7}"
+          git push
