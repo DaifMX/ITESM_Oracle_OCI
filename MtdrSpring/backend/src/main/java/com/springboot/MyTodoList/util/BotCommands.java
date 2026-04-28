@@ -19,7 +19,8 @@ public enum BotCommands {
     NEW_PROJECT("/newproject"),
 
     // AI
-    LLM_REQ("/llm");
+    LLM_REQ("/llm"),
+    ASK("/ask");
 
     private final String command;
 

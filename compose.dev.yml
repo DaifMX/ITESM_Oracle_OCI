@@ -6,7 +6,7 @@ services:
       - "1521:1521"
     environment:
       ORACLE_PASSWORD: ADMIN
-      APP_USER: ADMIN
+      APP_USER: TODOUSER
       APP_USER_PASSWORD: ADMIN
     volumes:
       - oracle-data:/opt/oracle/oradata
@@ -28,7 +28,6 @@ services:
       - ./MtdrSpring/backend/.env
     environment:
       SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db:1521/FREEPDB1
-      SPRING_DATASOURCE_USERNAME: ADMIN
     depends_on:
       oracle-db:
         condition: service_healthy

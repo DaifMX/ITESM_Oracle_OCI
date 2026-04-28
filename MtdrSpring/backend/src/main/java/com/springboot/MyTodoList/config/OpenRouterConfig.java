@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class DeepSeekConfig {
+public class OpenRouterConfig {
     
-    @Value("${deepseek.api.key}")
+    @Value("${llm.api.key}")
     private String apiKey;
 
     @Bean
@@ -19,7 +19,7 @@ public class DeepSeekConfig {
     }
 
     @Bean
-    public HttpPost deepSeekRequest(@Value("${deepseek.api.url}") String apiUrl) {
+    public HttpPost openRouterRequest(@Value("${llm.api.url}") String apiUrl) {
         HttpPost request = new HttpPost(apiUrl);
         request.addHeader("Content-Type", "application/json");
         request.addHeader("Authorization", "Bearer " + apiKey);

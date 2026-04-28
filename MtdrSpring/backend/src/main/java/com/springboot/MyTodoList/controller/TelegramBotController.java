@@ -2,7 +2,8 @@ package com.springboot.MyTodoList.controller;
 
 import com.springboot.MyTodoList.config.BotProps;
 import com.springboot.MyTodoList.repository.EmployeeRepository;
-import com.springboot.MyTodoList.service.DeepSeekService;
+import com.springboot.MyTodoList.service.BotAgentService;
+import com.springboot.MyTodoList.service.OpenRouterService;
 import com.springboot.MyTodoList.service.ProjectService;
 import com.springboot.MyTodoList.service.SprintService;
 import com.springboot.MyTodoList.service.TaskService;
@@ -45,7 +46,8 @@ public class TelegramBotController implements SpringLongPollingBot, LongPollingS
     private final SprintService sprintService;
     private final ProjectService projectService;
     private final EmployeeRepository employeeRepository;
-    private final DeepSeekService deepSeekService;
+    private final OpenRouterService openRouterService;
+    private final BotAgentService botAgentService;
 
     @Value("${telegram.bot.token}")
     private String telegramBotToken;
@@ -56,13 +58,15 @@ public class TelegramBotController implements SpringLongPollingBot, LongPollingS
             SprintService sprintService,
             ProjectService projectService,
             EmployeeRepository employeeRepository,
-            DeepSeekService deepSeekService) {
+            OpenRouterService openRouterService,
+            BotAgentService botAgentService) {
         this.botProps = botProps;
         this.taskService = taskService;
         this.sprintService = sprintService;
         this.projectService = projectService;
         this.employeeRepository = employeeRepository;
-        this.deepSeekService = deepSeekService;
+        this.openRouterService = openRouterService;
+        this.botAgentService = botAgentService;
         this.telegramClient = new OkHttpTelegramClient(getBotToken());
     }
 
@@ -98,7 +102,8 @@ public class TelegramBotController implements SpringLongPollingBot, LongPollingS
                     sprintService,
                     projectService,
                     employeeRepository,
-                    deepSeekService
+                    openRouterService,
+                    botAgentService
             );
             actions.setRequestText(messageText);
             actions.setChatId(chatId);

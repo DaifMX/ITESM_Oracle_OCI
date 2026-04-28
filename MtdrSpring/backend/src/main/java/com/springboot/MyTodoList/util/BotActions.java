@@ -5,7 +5,8 @@ import com.springboot.MyTodoList.model.Project;
 import com.springboot.MyTodoList.model.Sprint;
 import com.springboot.MyTodoList.model.Task;
 import com.springboot.MyTodoList.repository.EmployeeRepository;
-import com.springboot.MyTodoList.service.DeepSeekService;
+import com.springboot.MyTodoList.service.BotAgentService;
+import com.springboot.MyTodoList.service.OpenRouterService;
 import com.springboot.MyTodoList.service.ProjectService;
 import com.springboot.MyTodoList.service.SprintService;
 import com.springboot.MyTodoList.service.TaskService;
@@ -47,17 +48,20 @@ public class BotActions {
     private final SprintService sprintService;
     private final ProjectService projectService;
     private final EmployeeRepository employeeRepository;
-    private final DeepSeekService deepSeekService;
+    private final OpenRouterService openRouterService;
+    private final BotAgentService botAgentService;
 
     public BotActions(TelegramClient tc,
                       TaskService ts, SprintService ss, ProjectService ps,
-                      EmployeeRepository er, DeepSeekService ds) {
+                      EmployeeRepository er, OpenRouterService ors,
+                      BotAgentService bas) {
         this.telegramClient = tc;
         this.taskService = ts;
         this.sprintService = ss;
         this.projectService = ps;
         this.employeeRepository = er;
-        this.deepSeekService = ds;
+        this.openRouterService = ors;
+        this.botAgentService = bas;
         this.handled = false;
     }
 
@@ -96,6 +100,7 @@ public class BotActions {
         if (startsWith(BotCommands.DONE_TASK))  { fnDoneTask();             return; }
         if (matches(BotCommands.LIST_PROJECTS)) { fnListProjects();         return; }
         if (startsWith(BotCommands.LLM_REQ))    { fnLLM();                  return; }
+        if (startsWith(BotCommands.ASK))         { fnAsk(employee);          return; }
 
         // Commands restricted to managers and admins
         if (startsWith(BotCommands.NEW_PROJECT) || startsWith(BotCommands.NEW_SPRINT)) {
@@ -126,7 +131,8 @@ public class BotActions {
                 .resizeKeyboard(true)
                 .keyboardRow(new KeyboardRow("/mytasks", "/sprint"))
                 .keyboardRow(new KeyboardRow("/listprojects", "/newproject"))
-                .keyboardRow(new KeyboardRow("/help", "/hide"))
+                .keyboardRow(new KeyboardRow("/ask", "/help"))
+                .keyboardRow(new KeyboardRow("/hide"))
                 .build());
     }
 
@@ -145,7 +151,8 @@ public class BotActions {
                 "  /newproject — create a new project \\(guided\\)\n" +
                 "  /newproject \\<name\\> — create project instantly\n\n" +
                 "🤖 *AI*\n" +
-                "  /llm \\<prompt\\> — ask the AI assistant\n\n" +
+                "  /ask \\<question\\> — smart agent \\(uses your data\\)\n" +
+                "  /llm \\<prompt\\> — raw AI assistant\n\n" +
                 "⚙️ *Other*\n" +
                 "  /start — main menu\n" +
                 "  /hide — hide keyboard";
@@ -314,11 +321,26 @@ public class BotActions {
         String prompt = parts.length >= 2 ? parts[1] : "What can you do?";
         String out = "<no response>";
         try {
-            out = deepSeekService.generateText(prompt);
+            out = openRouterService.generateText(prompt);
         } catch (Exception e) {
             logger.error("LLM error", e);
         }
         send("🤖 " + out);
+    }
+
+    // ─── /ask <question> — smart agent ───────────────────────────────────────
+
+    private void fnAsk(Employee employee) {
+        String[] parts = requestText.split("\\s+", 2);
+        if (parts.length < 2 || parts[1].isBlank()) {
+            send("Usage: `/ask <question>`\n" +
+                 "Example: `/ask What tasks should I prioritize this sprint?`");
+            return;
+        }
+        String question = parts[1].trim();
+        send("🔍 Analyzing your data\\.\\.\\. please wait\\.");
+        String answer = botAgentService.processQuery(employee, question);
+        send("🤖 " + escapeMarkdown(answer));
     }
 
     // ─── Conversation reply handler ──────────────────────────────────────────
