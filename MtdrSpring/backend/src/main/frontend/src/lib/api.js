@@ -168,3 +168,14 @@ export async function getTeams() {
   if (!res.ok) throw new Error('Failed to load teams')
   return res.json()
 }
+
+// ─── Chat / AI Assistant ─────────────────────────────────────────────────────
+
+export async function sendChatMessage(message) {
+  const res = await authFetch('/chat', {
+    method: 'POST',
+    body: JSON.stringify({ message }),
+  })
+  if (!res.ok) throw new Error('Failed to send message')
+  return res.json()
+}

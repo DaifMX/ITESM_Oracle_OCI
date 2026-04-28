@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
+import ChatWidget from '../components/ChatWidget'
 import { Menu, X } from 'lucide-react'
 import { Button } from '../components/ui/button'
 import { cn } from '../lib/utils'
@@ -44,6 +45,8 @@ export default function AppLayout() {
           <Outlet />
         </main>
       </div>
+
+      <ChatWidget />
     </div>
   )
 }
