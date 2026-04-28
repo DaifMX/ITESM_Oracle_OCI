@@ -80,10 +80,22 @@ public class BotAgentService {
         sb.append("\nRules:\n");
         sb.append("- Answer ONLY based on the DATA section provided. Never invent data.\n");
         sb.append("- Be concise — short paragraphs or bullet lists.\n");
-        sb.append("- When listing tasks, include task ID, title, status, priority and description if it exists.\n");
-        sb.append("- Use plain text (no Markdown), suitable for Telegram.\n");
+        sb.append("- Use plain text only (no Markdown, no asterisks, no backticks).\n");
+        sb.append("- NEVER use Key:Value or Key: Value format. Write naturally like a human.\n");
         sb.append("- If the data doesn't contain enough information to answer, say so.\n");
         sb.append("- Answer in the same language the user writes in.\n");
+        sb.append("\nFormatting guidelines:\n");
+        sb.append("- Use emojis to make the output visually clear and scannable.\n");
+        sb.append("- Status emojis: in_progress = 🔄, todo = 📋, done = ✅, blocked = 🚫\n");
+        sb.append("- Priority emojis: high = 🔴, medium = 🟡, low = 🟢\n");
+        sb.append("- When listing tasks, format each like:\n");
+        sb.append("  [status emoji] #ID Title\n");
+        sb.append("     [priority emoji] priority  |  X story points  |  ~Xh estimated\n");
+        sb.append("     Sprint name  |  Due date\n");
+        sb.append("- Separate items with a blank line.\n");
+        sb.append("- Use section headers with emojis (e.g. '📌 Your Active Tasks').\n");
+        sb.append("- Write conversationally. Don't just dump data — present it clearly.\n");
+        sb.append("- Keep it clean and easy to read on a phone screen.\n");
         return sb.toString();
     }
 
@@ -183,42 +195,47 @@ public class BotAgentService {
     // ─── Formatting helpers ──────────────────────────────────────────────────
 
     private void appendTask(StringBuilder sb, Task t) {
-        sb.append("TaskID:").append(t.getTaskId())
-          .append(" Title:").append(t.getTitle())
-          .append(" Status:").append(t.getStatus())
-          .append(" Priority:").append(t.getPriority());
-        if (t.getStoryPoints() != null) sb.append(" SP:").append(t.getStoryPoints());
-        if (t.getEstimatedHours() != null) sb.append(" EstHrs:").append(t.getEstimatedHours());
+        sb.append("#").append(t.getTaskId())
+          .append(" \"").append(t.getTitle()).append("\"");
+        sb.append(" (").append(t.getStatus()).append(", ").append(t.getPriority()).append(" priority)");
+        if (t.getStoryPoints() != null) sb.append(", ").append(t.getStoryPoints()).append(" story points");
+        if (t.getEstimatedHours() != null) sb.append(", ~").append(t.getEstimatedHours()).append("h estimated");
         if (t.getAssignee() != null) {
-            sb.append(" Assignee:").append(t.getAssignee().getFirstName())
-              .append(" ").append(t.getAssignee().getLastName())
-              .append("(ID:").append(t.getAssignee().getEmployeeId()).append(")");
+            sb.append(", assigned to ").append(t.getAssignee().getFirstName())
+              .append(" ").append(t.getAssignee().getLastName());
         } else {
-            sb.append(" Assignee:unassigned");
+            sb.append(", unassigned");
         }
-        if (t.getSprint() != null) sb.append(" SprintID:").append(t.getSprint().getSprintId());
-        if (t.getProject() != null) sb.append(" ProjectID:").append(t.getProject().getProjectId());
-        if (t.getExpectedEndDate() != null) sb.append(" Due:").append(t.getExpectedEndDate());
+        if (t.getSprint() != null) sb.append(", in ").append(t.getSprint().getName());
+        if (t.getProject() != null) sb.append(", project \"").append(t.getProject().getName()).append("\"");
+        if (t.getExpectedEndDate() != null) sb.append(", due ").append(t.getExpectedEndDate());
+        if (t.getDescription() != null && !t.getDescription().isBlank()) {
+            sb.append("\n  Description: ").append(t.getDescription());
+        }
         sb.append("\n");
     }
 
     private void appendSprint(StringBuilder sb, Sprint s) {
-        sb.append("SprintID:").append(s.getSprintId())
-          .append(" Name:").append(s.getName())
-          .append(" Status:").append(s.getStatus());
-        if (s.getProject() != null) sb.append(" ProjectID:").append(s.getProject().getProjectId());
-        if (s.getStartDate() != null) sb.append(" Start:").append(s.getStartDate());
-        if (s.getEndDate() != null) sb.append(" End:").append(s.getEndDate());
-        if (s.getGoal() != null) sb.append(" Goal:").append(s.getGoal());
+        sb.append("\"").append(s.getName()).append("\" (ID #").append(s.getSprintId()).append(")");
+        sb.append(" — ").append(s.getStatus());
+        if (s.getProject() != null) sb.append(", project \"").append(s.getProject().getName()).append("\"");
+        if (s.getStartDate() != null && s.getEndDate() != null) {
+            sb.append(", ").append(s.getStartDate()).append(" to ").append(s.getEndDate());
+        } else if (s.getEndDate() != null) {
+            sb.append(", ends ").append(s.getEndDate());
+        }
+        if (s.getGoal() != null) sb.append(", goal: ").append(s.getGoal());
         sb.append("\n");
     }
 
     private void appendProject(StringBuilder sb, Project p) {
-        sb.append("ProjectID:").append(p.getProjectId())
-          .append(" Name:").append(p.getName())
-          .append(" Status:").append(p.getStatus());
-        if (p.getStartDate() != null) sb.append(" Start:").append(p.getStartDate());
-        if (p.getEndDate() != null) sb.append(" End:").append(p.getEndDate());
+        sb.append("\"").append(p.getName()).append("\" (ID #").append(p.getProjectId()).append(")");
+        sb.append(" — ").append(p.getStatus());
+        if (p.getStartDate() != null && p.getEndDate() != null) {
+            sb.append(", ").append(p.getStartDate()).append(" to ").append(p.getEndDate());
+        } else if (p.getEndDate() != null) {
+            sb.append(", ends ").append(p.getEndDate());
+        }
         sb.append("\n");
     }
 }

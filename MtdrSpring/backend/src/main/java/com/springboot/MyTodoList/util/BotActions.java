@@ -124,8 +124,14 @@ public class BotActions {
 
     private void fnStart() {
         String welcome = "👋 *Welcome to the Project Manager Bot\\!*\n\n" +
-                "I help you manage your agile projects directly from Telegram\\.\n\n" +
-                "Use the buttons below or type /help for all commands\\.";
+                "I help you manage your agile projects right from Telegram\\.\n\n" +
+                "━━━━━━━━━━━━━━━━━━━━\n" +
+                "📋  /mytasks — view your tasks\n" +
+                "🏃  /sprint — active sprints\n" +
+                "📁  /listprojects — all projects\n" +
+                "🤖  /ask — AI assistant\n" +
+                "━━━━━━━━━━━━━━━━━━━━\n\n" +
+                "Use the keyboard below or type /help for more\\.";
 
         send(welcome, ReplyKeyboardMarkup.builder()
                 .resizeKeyboard(true)
@@ -139,23 +145,25 @@ public class BotActions {
     // ─── /help ───────────────────────────────────────────────────────────────
 
     private void fnHelp() {
-        String help = "*Available Commands*\n\n" +
+        String help = "📖 *Help \\— All Commands*\n\n" +
+                "━━━━━━━━━━━━━━━━━━━━\n" +
                 "📋 *Tasks*\n" +
-                "  /mytasks — your assigned tasks\n" +
-                "  /done \\<taskId\\> — mark a task as done\n\n" +
+                "  /mytasks — view your assigned tasks\n" +
+                "  /done `<taskId>` — mark a task as done\n\n" +
                 "🏃 *Sprints*\n" +
-                "  /sprint — your active sprints\n" +
-                "  /newsprint \\<projectId\\> \\<name\\> — create a sprint\n\n" +
+                "  /sprint — view your active sprints\n" +
+                "  /newsprint `<projectId>` `<name>` — create a sprint\n\n" +
                 "📁 *Projects*\n" +
-                "  /listprojects — list all projects\n" +
-                "  /newproject — create a new project \\(guided\\)\n" +
-                "  /newproject \\<name\\> — create project instantly\n\n" +
-                "🤖 *AI*\n" +
-                "  /ask \\<question\\> — smart agent \\(uses your data\\)\n" +
-                "  /llm \\<prompt\\> — raw AI assistant\n\n" +
+                "  /listprojects — view all projects\n" +
+                "  /newproject — guided project creation\n" +
+                "  /newproject `<name>` — quick create\n\n" +
+                "🤖 *AI Assistant*\n" +
+                "  /ask `<question>` — smart agent \\(uses your data\\)\n" +
+                "  /llm `<prompt>` — direct LLM prompt\n\n" +
                 "⚙️ *Other*\n" +
                 "  /start — main menu\n" +
-                "  /hide — hide keyboard";
+                "  /hide — hide keyboard\n" +
+                "━━━━━━━━━━━━━━━━━━━━";
         send(help);
     }
 
@@ -173,20 +181,26 @@ public class BotActions {
         List<Task> tasks = taskService.findByAssignee(employee.getEmployeeId());
 
         if (tasks.isEmpty()) {
-            send("✅ You have no tasks assigned right now\\.");
+            send("🎉 *No tasks\\!* You have no tasks assigned right now\\.");
             return;
         }
 
-        StringBuilder sb = new StringBuilder("📋 *Your Tasks*\n\n");
+        StringBuilder sb = new StringBuilder("📋 *Your Tasks* \\(").append(tasks.size()).append("\\)\n");
+        sb.append("━━━━━━━━━━━━━━━━━━━━\n\n");
         for (Task t : tasks) {
-            sb.append(statusEmoji(t.getStatus())).append(" *\\[").append(t.getTaskId()).append("\\]* ")
-              .append(escapeMarkdown(t.getTitle())).append("\n");
-            sb.append("   Status: `").append(t.getStatus()).append("`");
-            if (t.getPriority() != null) sb.append("  Priority: `").append(t.getPriority()).append("`");
-            if (t.getStoryPoints() != null) sb.append("  SP: `").append(t.getStoryPoints()).append("`");
-            sb.append("\n\n");
+            sb.append(statusEmoji(t.getStatus())).append(" *\\#").append(t.getTaskId())
+              .append(" \\— ").append(escapeMarkdown(t.getTitle())).append("*\n");
+            sb.append("     ").append(priorityLabel(t.getPriority()));
+            if (t.getStoryPoints() != null) sb.append(" \\| SP: `").append(t.getStoryPoints()).append("`");
+            if (t.getEstimatedHours() != null) sb.append(" \\| Est: `").append(t.getEstimatedHours()).append("h`");
+            sb.append("\n");
+            if (t.getSprint() != null) sb.append("     🏃 ").append(escapeMarkdown(t.getSprint().getName()));
+            if (t.getExpectedEndDate() != null) sb.append(" \\| 📅 Due: `").append(t.getExpectedEndDate()).append("`");
+            if (t.getSprint() != null || t.getExpectedEndDate() != null) sb.append("\n");
+            sb.append("\n");
         }
-        sb.append("Tip: `/done <taskId>` to mark a task as done\\.");
+        sb.append("━━━━━━━━━━━━━━━━━━━━\n");
+        sb.append("💡 Use `/done <taskId>` to complete a task");
         send(sb.toString());
     }
 
@@ -201,22 +215,30 @@ public class BotActions {
 
         List<Task> myTasks = taskService.findByAssignee(employee.getEmployeeId());
 
-        StringBuilder sb = new StringBuilder("🏃 *Active Sprints*\n\n");
+        StringBuilder sb = new StringBuilder("🏃 *Active Sprints*\n");
+        sb.append("━━━━━━━━━━━━━━━━━━━━\n\n");
         for (Sprint s : activeSprints) {
-            sb.append("*").append(escapeMarkdown(s.getName())).append("*");
+            sb.append("🔵 *").append(escapeMarkdown(s.getName())).append("*");
             if (s.getProject() != null)
                 sb.append(" — ").append(escapeMarkdown(s.getProject().getName()));
             sb.append("\n");
-            if (s.getGoal() != null) sb.append("Goal: ").append(escapeMarkdown(s.getGoal())).append("\n");
-            if (s.getEndDate() != null) sb.append("Ends: ").append(escapeMarkdown(s.getEndDate().toString())).append("\n");
+            if (s.getGoal() != null) sb.append("     🎯 ").append(escapeMarkdown(s.getGoal())).append("\n");
+            if (s.getStartDate() != null || s.getEndDate() != null) {
+                sb.append("     📅 ");
+                if (s.getStartDate() != null) sb.append(escapeMarkdown(s.getStartDate().toString()));
+                if (s.getStartDate() != null && s.getEndDate() != null) sb.append(" → ");
+                if (s.getEndDate() != null) sb.append(escapeMarkdown(s.getEndDate().toString()));
+                sb.append("\n");
+            }
 
             long myCount = myTasks.stream()
                     .filter(t -> t.getSprint() != null
                             && t.getSprint().getSprintId() == s.getSprintId())
                     .count();
-            if (myCount > 0) sb.append("Your tasks: ").append(myCount).append("\n");
+            if (myCount > 0) sb.append("     📋 Your tasks: ").append(myCount).append("\n");
             sb.append("\n");
         }
+        sb.append("━━━━━━━━━━━━━━━━━━━━");
         send(sb.toString());
     }
 
@@ -242,7 +264,9 @@ public class BotActions {
             }
             task.setStatus("done");
             taskService.update(taskId, task);
-            send("✅ Task *\\[" + taskId + "\\] " + escapeMarkdown(task.getTitle()) + "* marked as done\\!");
+            send("🎉 *Task completed\\!*\n\n" +
+                 "✅ *\\#" + taskId + " \\— " + escapeMarkdown(task.getTitle()) + "*\n\n" +
+                 "Great work\\! Keep it up 💪");
         } catch (NumberFormatException e) {
             send("❌ Invalid task ID\\. Usage: `/done <taskId>`");
         }
@@ -256,14 +280,19 @@ public class BotActions {
             send("📁 No projects yet\\. Use /newproject to create one\\.");
             return;
         }
-        StringBuilder sb = new StringBuilder("📁 *Projects*\n\n");
+        StringBuilder sb = new StringBuilder("📁 *Projects* \\(").append(projects.size()).append("\\)\n");
+        sb.append("━━━━━━━━━━━━━━━━━━━━\n\n");
         for (Project p : projects) {
             sb.append(projectEmoji(p.getStatus()))
-              .append(" *\\[").append(p.getProjectId()).append("\\]* ")
-              .append(escapeMarkdown(p.getName()))
-              .append(" — `").append(p.getStatus()).append("`\n");
+              .append(" *\\#").append(p.getProjectId())
+              .append(" \\— ").append(escapeMarkdown(p.getName())).append("*\n");
+            sb.append("     Status: `").append(p.getStatus()).append("`");
+            if (p.getStartDate() != null) sb.append(" \\| Start: `").append(p.getStartDate()).append("`");
+            if (p.getEndDate() != null) sb.append(" \\| End: `").append(p.getEndDate()).append("`");
+            sb.append("\n\n");
         }
-        sb.append("\nUse `/newsprint <projectId> <name>` to create a sprint\\.");
+        sb.append("━━━━━━━━━━━━━━━━━━━━\n");
+        sb.append("💡 Use `/newsprint <projectId> <name>` to add a sprint");
         send(sb.toString());
     }
 
@@ -306,9 +335,11 @@ public class BotActions {
             sprint.setProject(projOpt.get());
             Sprint saved = sprintService.save(sprint);
 
-            send("✅ Sprint *" + escapeMarkdown(saved.getName()) + "* created for project *"
-                    + escapeMarkdown(projOpt.get().getName()) + "*\\!\n"
-                    + "Sprint ID: `" + saved.getSprintId() + "`  Status: `planned`");
+            send("🎉 *Sprint created\\!*\n\n" +
+                    "🏃 *" + escapeMarkdown(saved.getName()) + "*\n" +
+                    "     📁 Project: " + escapeMarkdown(projOpt.get().getName()) + "\n" +
+                    "     🆔 Sprint ID: `" + saved.getSprintId() + "`\n" +
+                    "     📊 Status: `planned`");
         } catch (NumberFormatException e) {
             send("❌ Invalid project ID\\. Usage: `/newsprint <projectId> <name>`");
         }
@@ -377,9 +408,11 @@ public class BotActions {
             project.setDescription(description);
             project.setStatus("planning");
             Project saved = projectService.save(project);
-            send("✅ Project *" + escapeMarkdown(saved.getName()) + "* created\\!\n" +
-                    "ID: `" + saved.getProjectId() + "`  Status: `planning`\n\n" +
-                    "Use `/newsprint " + saved.getProjectId() + " Sprint 1` to create your first sprint\\.");
+            send("🎉 *Project created\\!*\n\n" +
+                    "📁 *" + escapeMarkdown(saved.getName()) + "*\n" +
+                    "     🆔 ID: `" + saved.getProjectId() + "`\n" +
+                    "     📊 Status: `planning`\n\n" +
+                    "💡 Next: `/newsprint " + saved.getProjectId() + " Sprint 1` to create your first sprint");
         } catch (Exception e) {
             logger.error("Error creating project", e);
             send("❌ Failed to create project\\. Please try again\\.");
@@ -414,11 +447,21 @@ public class BotActions {
     private static String statusEmoji(String status) {
         if (status == null) return "⬜";
         return switch (status.toLowerCase()) {
-            case "todo"        -> "📝";
+            case "todo"        -> "�";
             case "in_progress" -> "🔄";
             case "done"        -> "✅";
             case "blocked"     -> "🚫";
             default            -> "⬜";
+        };
+    }
+
+    private static String priorityLabel(String priority) {
+        if (priority == null) return "⬜ unknown";
+        return switch (priority.toLowerCase()) {
+            case "high"   -> "🔴 High";
+            case "medium" -> "🟡 Medium";
+            case "low"    -> "🟢 Low";
+            default       -> "⬜ " + priority;
         };
     }
 
