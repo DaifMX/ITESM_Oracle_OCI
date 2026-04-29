@@ -87,13 +87,9 @@ export default function TeamKPIs() {
 
   const [selectedSprintId, setSelectedSprintId] = useState('all')
 
-  const allSprints = useMemo(() => {
-    const map = new Map()
-    Object.values(empTasksMap ?? {}).flat().forEach((t) => {
-      if (t.sprint?.sprintId) map.set(t.sprint.sprintId, t.sprint)
-    })
-    return Array.from(map.values()).sort((a, b) => a.sprintId - b.sprintId)
-  }, [empTasksMap])
+  const allSprints = useMemo(() =>
+    Object.values(sprintMap ?? {}).flat().sort((a, b) => a.sprintId - b.sprintId),
+  [sprintMap])
 
   const uniqueTasks = useMemo(() => {
     const seen = new Set()
@@ -110,7 +106,7 @@ export default function TeamKPIs() {
       : uniqueTasks.filter((t) => t.sprint?.sprintId === selectedSprintId),
     [uniqueTasks, selectedSprintId])
 
-  const developers = useMemo(() => (employees ?? []).filter((e) => e.role === 'developer'), [employees])
+  const developers = useMemo(() => (employees ?? []).filter((e) => e.role === 'developer' || e.role === 'manager'), [employees])
   const numDevs = developers.length || 1
 
   const totalTasks = filteredTasks.length

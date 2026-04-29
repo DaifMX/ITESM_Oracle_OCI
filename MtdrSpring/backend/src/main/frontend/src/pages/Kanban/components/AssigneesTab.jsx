@@ -9,7 +9,7 @@ export default function AssigneesTab({ assignees, employees, loading, onAssign, 
   const assignee = assignees[0] ?? null
 
   // Only developers can be assigned to tasks
-  const developers = employees.filter((e) => e.role === 'developer')
+  const developers = employees.filter((e) => e.role === 'developer' || e.role === 'manager')
 
   if (loading) return <Spinner />
 

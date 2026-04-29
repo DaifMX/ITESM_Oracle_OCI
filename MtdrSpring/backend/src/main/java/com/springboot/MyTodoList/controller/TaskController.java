@@ -140,7 +140,7 @@ public class TaskController {
         if (empOpt.isEmpty()) return ResponseEntity.notFound().build();
 
         Employee emp = empOpt.get();
-        if (!"developer".equalsIgnoreCase(emp.getRole())) {
+        if (!"developer".equalsIgnoreCase(emp.getRole()) && !"manager".equalsIgnoreCase(emp.getRole())) {
             return ResponseEntity.badRequest()
                     .body(Map.of("error", "Only developers can be assigned to tasks"));
         }

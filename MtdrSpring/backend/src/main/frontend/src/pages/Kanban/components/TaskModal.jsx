@@ -12,7 +12,9 @@ import CommentsTab from './CommentsTab'
 export default function TaskModal({ task, sprint, sprintId, projectId, employees, onClose, onSave }) {
   const isEdit = !!task
   const isManager = ['manager', 'admin'].includes(getUser()?.role)
-  const developers = (employees ?? []).filter((e) => e.role === 'developer')
+  const developers = (employees ?? []).filter((e) => 
+    e.role === 'developer' || e.role === 'manager'
+  );
 
   const [form, setForm] = useState(task ? {
     title: task.title || '',
