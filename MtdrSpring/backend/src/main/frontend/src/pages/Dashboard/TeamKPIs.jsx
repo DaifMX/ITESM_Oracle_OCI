@@ -6,6 +6,7 @@ import { Skeleton } from '../../components/ui/Skeleton'
 import { DEV_COLORS } from './constants'
 import StatCard from './components/StatCard'
 import BarChart from './components/BarChart'
+import GroupedBarChart from './components/GroupedBarChart'
 import Insights from './components/Insights'
 import DevLegend from './components/DevLegend'
 import SprintVelocityChart from './components/SprintVelocityChart'
@@ -131,6 +132,25 @@ export default function TeamKPIs() {
     }),
     [developers, empTasksMap, selectedSprintId])
 
+  const groupedChartData = useMemo(() => {
+    if (selectedSprintId !== 'all' || allSprints.length === 0) return null
+    const groups = developers.map((emp, i) => ({
+      label: emp.firstName,
+      color: DEV_COLORS[i % DEV_COLORS.length],
+      values: allSprints.map((sprint) => {
+        const tasks = (empTasksMap?.[emp.employeeId] ?? []).filter(
+          (t) => t.sprint?.sprintId === sprint.sprintId
+        )
+        const done = tasks.filter((t) => t.status === 'done').length
+        const hours = tasks
+          .filter((t) => t.status === 'done' && t.totalHours)
+          .reduce((s, t) => s + Number(t.totalHours), 0)
+        return { sprintId: sprint.sprintId, done, hours }
+      }),
+    }))
+    return { groups, sprints: allSprints }
+  }, [selectedSprintId, allSprints, developers, empTasksMap])
+
   const allProjTasks = useMemo(() => Object.values(projTasksMap ?? {}).flat(), [projTasksMap])
   const allSprintsVel = useMemo(() => Object.values(sprintMap ?? {}).flat(), [sprintMap])
   const velocityData = useMemo(() => {
@@ -142,6 +162,10 @@ export default function TeamKPIs() {
       return { sprint, completedPts, totalPts }
     }).slice(-8)
   }, [allSprintsVel, allProjTasks])
+
+  velocityData.forEach((e) => console.log(e));
+
+  velocityData.sort((a, b) => a.sprint.startDate.localeCompare(b.sprint.startDate));
 
   // Still loading employees or tasks
   if (isLoading || !empTasksMap) return <KpiSkeleton />
@@ -196,13 +220,37 @@ export default function TeamKPIs() {
           <div className="rounded-lg border bg-card p-4">
             <h2 className="text-sm font-semibold text-foreground">Completed Tasks by Developer</h2>
             <p className="text-xs text-muted-foreground mb-4 mt-0.5">{sprintLabel}</p>
-            <BarChart bars={devStats.map((d) => ({ label: d.emp.firstName, value: d.done, color: d.color }))} unit="" chartHeight={180} />
+            {groupedChartData ? (
+              <GroupedBarChart
+                sprints={groupedChartData.sprints}
+                groups={groupedChartData.groups.map((g) => ({
+                  ...g,
+                  values: g.values.map((v) => ({ sprintId: v.sprintId, value: v.done })),
+                }))}
+                unit=""
+                chartHeight={200}
+              />
+            ) : (
+              <BarChart bars={devStats.map((d) => ({ label: d.emp.firstName, value: d.done, color: d.color }))} unit="" chartHeight={180} />
+            )}
             <DevLegend devStats={devStats} />
           </div>
           <div className="rounded-lg border bg-card p-4">
             <h2 className="text-sm font-semibold text-foreground">Hours by Developer</h2>
             <p className="text-xs text-muted-foreground mb-4 mt-0.5">{sprintLabel}</p>
-            <BarChart bars={devStats.map((d) => ({ label: d.emp.firstName, value: parseFloat(d.hours.toFixed(1)), color: d.color }))} unit="h" chartHeight={180} />
+            {groupedChartData ? (
+              <GroupedBarChart
+                sprints={groupedChartData.sprints}
+                groups={groupedChartData.groups.map((g) => ({
+                  ...g,
+                  values: g.values.map((v) => ({ sprintId: v.sprintId, value: parseFloat(v.hours.toFixed(1)) })),
+                }))}
+                unit="h"
+                chartHeight={200}
+              />
+            ) : (
+              <BarChart bars={devStats.map((d) => ({ label: d.emp.firstName, value: parseFloat(d.hours.toFixed(1)), color: d.color }))} unit="h" chartHeight={180} />
+            )}
             <DevLegend devStats={devStats} />
           </div>
         </div>

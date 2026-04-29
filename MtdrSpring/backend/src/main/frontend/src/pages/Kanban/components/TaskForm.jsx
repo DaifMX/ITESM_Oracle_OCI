@@ -2,7 +2,7 @@ import { COLUMNS, PRIORITIES, PRIORITY_CONFIG } from '../constants'
 import Field from './Field'
 import ErrorMsg from './ErrorMsg'
 
-export default function TaskForm({ form, setForm, onSubmit, error }) {
+export default function TaskForm({ form, setForm, onSubmit, error, developers, assigneeId, onAssigneeChange }) {
   return (
     <form id="task-form" onSubmit={onSubmit} className="px-5 py-4 space-y-4">
       <Field label="Title *">
@@ -65,6 +65,23 @@ export default function TaskForm({ form, setForm, onSubmit, error }) {
             onChange={(e) => setForm((f) => ({ ...f, expectedEndDate: e.target.value }))} />
         </Field>
       </div>
+
+      {developers?.length > 0 && (
+        <Field label="Assignee">
+          <select
+            className="field"
+            value={assigneeId ?? ''}
+            onChange={(e) => onAssigneeChange(e.target.value ? Number(e.target.value) : null)}
+          >
+            <option value="">Unassigned</option>
+            {developers.map((d) => (
+              <option key={d.employeeId} value={d.employeeId}>
+                {d.firstName} {d.lastName}
+              </option>
+            ))}
+          </select>
+        </Field>
+      )}
 
       {error && <ErrorMsg>{error}</ErrorMsg>}
     </form>

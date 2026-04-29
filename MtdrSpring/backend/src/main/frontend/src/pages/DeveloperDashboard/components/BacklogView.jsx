@@ -5,7 +5,7 @@ import { getProjects, getTasksByProject } from '../../../lib/api'
 import PriorityBadge from './PriorityBadge'
 import StatusBadge from './StatusBadge'
 
-export default function BacklogView({ projectId = null }) {
+export default function BacklogView({ projectId = null, refreshKey = 0 }) {
   const [projects, setProjects]               = useState([])
   const [tasksByProject, setTasksByProject]   = useState({})
   const [loading, setLoading]                 = useState(true)
@@ -46,7 +46,7 @@ export default function BacklogView({ projectId = null }) {
     }
 
     return () => { cancelled = true }
-  }, [projectId])
+  }, [projectId, refreshKey])
 
   function toggleProject(id) {
     setExpandedProjs((prev) => ({ ...prev, [id]: !prev[id] }))

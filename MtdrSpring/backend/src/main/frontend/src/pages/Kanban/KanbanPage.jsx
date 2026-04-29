@@ -1,14 +1,32 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import useSWR from 'swr'
-import { Plus, ChevronRight, AlertCircle, X } from 'lucide-react'
+import { Plus, ChevronRight, AlertCircle, X, Calendar } from 'lucide-react'
 import { updateTask, deleteTask } from '../../lib/api'
 import { fetcher } from '../../lib/fetcher'
+import { cn, parseLocalDate } from '../../lib/utils'
 import { Button } from '../../components/ui/button'
 import { Skeleton } from '../../components/ui/Skeleton'
 import { COLUMNS } from './constants'
 import KanbanColumn from './components/KanbanColumn'
 import TaskModal from './components/TaskModal'
+
+const DATE_CHIP_CONFIG = {
+  planned:   'bg-muted/60 text-muted-foreground',
+  active:    'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400',
+  completed: 'bg-green-500/10 text-green-600 dark:text-green-400',
+}
+
+function getDaysLeft(endDate, status) {
+  if (status === 'completed') return null
+  if (!endDate) return null
+  const end = parseLocalDate(endDate)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const diff = Math.ceil((end - today) / (1000 * 60 * 60 * 24))
+  if (diff <= 0) return null
+  return diff === 1 ? '1 day left' : `${diff} days left`
+}
 
 function KanbanSkeleton() {
   return (
@@ -42,7 +60,6 @@ export default function KanbanPage() {
     return { projs, sprintsData, tasksData, emps }
   })
 
-  // Local task state for drag-and-drop (synced from SWR)
   const [tasks, setTasks]       = useState([])
   const [mutateError, setMutateError] = useState(null)
   const [modal, setModal]       = useState(null)
@@ -58,8 +75,6 @@ export default function KanbanPage() {
   const project  = data?.projs?.find((p) => p.projectId === Number(projectId)) ?? null
   const sprint   = data?.sprintsData?.find((s) => s.sprintId === Number(sprintId)) ?? null
   const employees = data?.emps ?? []
-
-  // ─── Drag handlers ──────────────────────────────────────────────────���─────
 
   function handleDragStart(taskId) { setDraggedTaskId(taskId) }
 
@@ -92,8 +107,6 @@ export default function KanbanPage() {
     }
   }
 
-  // ─── CRUD ─────────────────────────────────────────────────────────────────
-
   async function handleDelete(task) {
     if (!confirm(`Delete task "${task.title}"?`)) return
     try {
@@ -109,8 +122,6 @@ export default function KanbanPage() {
     )
     setModal(null)
   }
-
-  // ─── Derived ──────────────────────────────────────────────────────────────
 
   const totalSP  = tasks.reduce((s, t) => s + (t.storyPoints ?? 0), 0)
   const doneSP   = tasks.filter((t) => t.status === 'done').reduce((s, t) => s + (t.storyPoints ?? 0), 0)
@@ -144,6 +155,32 @@ export default function KanbanPage() {
             <>
               <h1 className="text-xl font-bold text-foreground">{sprint?.name ?? 'Sprint Board'}</h1>
               {sprint?.goal && <p className="text-xs text-muted-foreground mt-0.5">{sprint.goal}</p>}
+              {sprint && (() => {
+                const chipClass = DATE_CHIP_CONFIG[sprint.status] ?? DATE_CHIP_CONFIG.planned
+                const daysLeft = getDaysLeft(sprint.endDate, sprint.status)
+                return (
+                  <div className="flex items-center gap-2 flex-wrap mt-2">
+                    {(sprint.startDate || sprint.endDate) && (
+                      <span className={cn('inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full', chipClass)}>
+                        <Calendar className="w-3 h-3 shrink-0" />
+                        {sprint.startDate ? parseLocalDate(sprint.startDate).toLocaleDateString() : '—'}
+                        {' → '}
+                        {sprint.endDate ? parseLocalDate(sprint.endDate).toLocaleDateString() : '—'}
+                      </span>
+                    )}
+                    {daysLeft && (
+                      <span className={cn(
+                        'text-xs font-medium px-2 py-0.5 rounded-full',
+                        daysLeft.startsWith('1 ')
+                          ? 'bg-red-500/10 text-red-600 dark:text-red-400'
+                          : 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                      )}>
+                        {daysLeft}
+                      </span>
+                    )}
+                  </div>
+                )
+              })()}
               {totalSP > 0 && (
                 <div className="flex items-center gap-3 mt-2">
                   <div className="flex-1 max-w-xs h-1.5 bg-muted rounded-full overflow-hidden">

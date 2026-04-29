@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Loader2, X } from 'lucide-react'
 import { Button } from '../../../components/ui/button'
 import { cn } from '../../../lib/utils'
+import { getUser } from '../../../lib/auth'
 import { createTask, updateTask, getTaskAssignees, assignEmployee, unassignEmployee, getComments } from '../../../lib/api'
 import { EMPTY_TASK_FORM } from '../constants'
 import TaskForm from './TaskForm'
@@ -10,6 +11,9 @@ import CommentsTab from './CommentsTab'
 
 export default function TaskModal({ task, sprint, sprintId, projectId, employees, onClose, onSave }) {
   const isEdit = !!task
+  const isManager = ['manager', 'admin'].includes(getUser()?.role)
+  const developers = (employees ?? []).filter((e) => e.role === 'developer')
+
   const [form, setForm] = useState(task ? {
     title: task.title || '',
     description: task.description || '',
@@ -21,12 +25,13 @@ export default function TaskModal({ task, sprint, sprintId, projectId, employees
     startDate: task.startDate || '',
     expectedEndDate: task.expectedEndDate || '',
   } : EMPTY_TASK_FORM)
-  const [saving, setSaving]           = useState(false)
-  const [error, setError]             = useState(null)
-  const [tab, setTab]                 = useState('details')
-  const [assignees, setAssignees]     = useState([])
-  const [comments, setComments]       = useState([])
-  const [loadingMeta, setLoadingMeta] = useState(false)
+  const [assigneeId, setAssigneeId]    = useState(null)
+  const [saving, setSaving]            = useState(false)
+  const [error, setError]              = useState(null)
+  const [tab, setTab]                  = useState('details')
+  const [assignees, setAssignees]      = useState([])
+  const [comments, setComments]        = useState([])
+  const [loadingMeta, setLoadingMeta]  = useState(false)
 
   useEffect(() => {
     if (!isEdit) return
@@ -56,8 +61,8 @@ export default function TaskModal({ task, sprint, sprintId, projectId, employees
     try {
       const payload = {
         ...form,
-        sprint: { sprintId: Number(sprintId) },
         project: { projectId: Number(projectId) },
+        sprint: sprintId ? { sprintId: Number(sprintId) } : null,
         storyPoints: form.storyPoints !== '' ? Number(form.storyPoints) : null,
         estimatedHours: form.estimatedHours !== '' ? Number(form.estimatedHours) : null,
         totalHours: form.totalHours !== '' ? Number(form.totalHours) : null,
@@ -65,6 +70,9 @@ export default function TaskModal({ task, sprint, sprintId, projectId, employees
         expectedEndDate: form.expectedEndDate || null,
       }
       const saved = isEdit ? await updateTask(task.taskId, payload) : await createTask(payload)
+      if (!isEdit && assigneeId) {
+        await assignEmployee(saved.taskId, assigneeId)
+      }
       onSave(saved, isEdit)
     } catch (err) { setError(err.message) }
     finally { setSaving(false) }
@@ -89,13 +97,11 @@ export default function TaskModal({ task, sprint, sprintId, projectId, employees
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
       <div className="bg-card rounded-xl border shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col">
-        {/* Header */}
         <div className="px-5 py-4 border-b flex items-center justify-between shrink-0">
           <h2 className="font-semibold text-foreground">{isEdit ? 'Edit Task' : 'New Task'}</h2>
           <Button variant="ghost" size="icon-sm" onClick={onClose}><X className="w-4 h-4" /></Button>
         </div>
 
-        {/* Tabs (edit only) */}
         {isEdit && (
           <div className="flex border-b shrink-0">
             {tabs.map((t) => (
@@ -115,10 +121,17 @@ export default function TaskModal({ task, sprint, sprintId, projectId, employees
           </div>
         )}
 
-        {/* Body */}
         <div className="flex-1 overflow-y-auto">
           {(tab === 'details' || !isEdit) && (
-            <TaskForm form={form} setForm={setForm} onSubmit={handleSubmit} error={error} />
+            <TaskForm
+              form={form}
+              setForm={setForm}
+              onSubmit={handleSubmit}
+              error={error}
+              developers={!isEdit && isManager ? developers : undefined}
+              assigneeId={assigneeId}
+              onAssigneeChange={setAssigneeId}
+            />
           )}
           {tab === 'assignees' && isEdit && (
             <AssigneesTab
@@ -134,7 +147,6 @@ export default function TaskModal({ task, sprint, sprintId, projectId, employees
           )}
         </div>
 
-        {/* Footer */}
         {(tab === 'details' || !isEdit) && (
           <div className="border-t px-5 py-3 flex justify-end gap-2 shrink-0">
             <Button type="button" variant="ghost" size="sm" onClick={onClose}>Cancel</Button>
