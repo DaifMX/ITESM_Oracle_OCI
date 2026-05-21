@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { AlertCircle, BarChart3, CheckCircle2, Timer, TrendingUp, Clock } from 'lucide-react'
 import { fetcher } from '../../lib/fetcher'
@@ -85,11 +85,20 @@ export default function TeamKPIs() {
     }
   )
 
+  const [selectedProjectId, setSelectedProjectId] = useState('all')
   const [selectedSprintId, setSelectedSprintId] = useState('all')
+
+  useEffect(() => { setSelectedSprintId('all') }, [selectedProjectId])
 
   const allSprints = useMemo(() =>
     Object.values(sprintMap ?? {}).flat().sort((a, b) => a.sprintId - b.sprintId),
   [sprintMap])
+
+  const filteredSprints = useMemo(() =>
+    selectedProjectId === 'all'
+      ? allSprints
+      : (sprintMap?.[selectedProjectId] ?? []).slice().sort((a, b) => a.sprintId - b.sprintId),
+  [allSprints, selectedProjectId, sprintMap])
 
   const uniqueTasks = useMemo(() => {
     const seen = new Set()
@@ -100,11 +109,17 @@ export default function TeamKPIs() {
     })
   }, [empTasksMap])
 
+  const projectFilteredTasks = useMemo(() =>
+    selectedProjectId === 'all'
+      ? uniqueTasks
+      : uniqueTasks.filter((t) => t.project?.projectId === selectedProjectId),
+  [uniqueTasks, selectedProjectId])
+
   const filteredTasks = useMemo(() =>
     selectedSprintId === 'all'
-      ? uniqueTasks
-      : uniqueTasks.filter((t) => t.sprint?.sprintId === selectedSprintId),
-    [uniqueTasks, selectedSprintId])
+      ? projectFilteredTasks
+      : projectFilteredTasks.filter((t) => t.sprint?.sprintId === selectedSprintId),
+    [projectFilteredTasks, selectedSprintId])
 
   const developers = useMemo(() => (employees ?? []).filter((e) => e.role === 'developer' || e.role === 'manager'), [employees])
   const numDevs = developers.length || 1
@@ -117,7 +132,9 @@ export default function TeamKPIs() {
 
   const devStats = useMemo(() =>
     developers.map((emp, i) => {
-      const tasks = (empTasksMap?.[emp.employeeId] ?? []).filter((t) => selectedSprintId === 'all' || t.sprint?.sprintId === selectedSprintId)
+      let tasks = empTasksMap?.[emp.employeeId] ?? []
+      if (selectedProjectId !== 'all') tasks = tasks.filter((t) => t.project?.projectId === selectedProjectId)
+      if (selectedSprintId !== 'all') tasks = tasks.filter((t) => t.sprint?.sprintId === selectedSprintId)
       const done = tasks.filter((t) => t.status === 'done').length
       const inProg = tasks.filter((t) => t.status === 'in_progress').length
       const blocked = tasks.filter((t) => t.status === 'blocked').length
@@ -126,17 +143,18 @@ export default function TeamKPIs() {
       const color = DEV_COLORS[i % DEV_COLORS.length]
       return { emp, total: tasks.length, done, inProg, blocked, hours, rate, color }
     }),
-    [developers, empTasksMap, selectedSprintId])
+    [developers, empTasksMap, selectedSprintId, selectedProjectId])
 
   const groupedChartData = useMemo(() => {
-    if (selectedSprintId !== 'all' || allSprints.length === 0) return null
+    if (selectedSprintId !== 'all' || filteredSprints.length === 0) return null
     const groups = developers.map((emp, i) => ({
       label: emp.firstName,
       color: DEV_COLORS[i % DEV_COLORS.length],
-      values: allSprints.map((sprint) => {
-        const tasks = (empTasksMap?.[emp.employeeId] ?? []).filter(
+      values: filteredSprints.map((sprint) => {
+        let tasks = (empTasksMap?.[emp.employeeId] ?? []).filter(
           (t) => t.sprint?.sprintId === sprint.sprintId
         )
+        if (selectedProjectId !== 'all') tasks = tasks.filter((t) => t.project?.projectId === selectedProjectId)
         const done = tasks.filter((t) => t.status === 'done').length
         const hours = tasks
           .filter((t) => t.status === 'done' && t.totalHours)
@@ -144,11 +162,20 @@ export default function TeamKPIs() {
         return { sprintId: sprint.sprintId, done, hours }
       }),
     }))
-    return { groups, sprints: allSprints }
-  }, [selectedSprintId, allSprints, developers, empTasksMap])
+    return { groups, sprints: filteredSprints }
+  }, [selectedSprintId, filteredSprints, developers, empTasksMap, selectedProjectId])
 
-  const allProjTasks = useMemo(() => Object.values(projTasksMap ?? {}).flat(), [projTasksMap])
-  const allSprintsVel = useMemo(() => Object.values(sprintMap ?? {}).flat(), [sprintMap])
+  const allProjTasks = useMemo(() =>
+    selectedProjectId === 'all'
+      ? Object.values(projTasksMap ?? {}).flat()
+      : (projTasksMap?.[selectedProjectId] ?? []),
+  [projTasksMap, selectedProjectId])
+
+  const allSprintsVel = useMemo(() =>
+    selectedProjectId === 'all'
+      ? Object.values(sprintMap ?? {}).flat()
+      : (sprintMap?.[selectedProjectId] ?? []),
+  [sprintMap, selectedProjectId])
   const velocityData = useMemo(() => {
     const relevant = allSprintsVel.filter((s) => s.status === 'completed' || s.status === 'active')
     return relevant.map((sprint) => {
@@ -183,25 +210,39 @@ export default function TeamKPIs() {
     )
   }
 
+  const projectLabel = selectedProjectId === 'all'
+    ? 'All projects'
+    : ((projects ?? []).find((p) => p.projectId === selectedProjectId)?.name ?? 'Selected project')
+
   const sprintLabel = selectedSprintId === 'all'
     ? 'All sprints'
-    : (allSprints.find((s) => s.sprintId === selectedSprintId)?.name ?? 'Selected sprint')
+    : (filteredSprints.find((s) => s.sprintId === selectedSprintId)?.name ?? 'Selected sprint')
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div>
           <h2 className="text-sm font-semibold text-foreground">KPI Summary</h2>
-          <p className="text-xs text-muted-foreground mt-0.5">{sprintLabel}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">{projectLabel} · {sprintLabel}</p>
         </div>
-        <select
-          value={selectedSprintId === 'all' ? 'all' : String(selectedSprintId)}
-          onChange={(e) => setSelectedSprintId(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-          className="text-xs border rounded-md px-3 py-1.5 bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-        >
-          <option value="all">All sprints</option>
-          {allSprints.map((s) => <option key={s.sprintId} value={String(s.sprintId)}>{s.name}</option>)}
-        </select>
+        <div className="flex items-center gap-2 flex-wrap">
+          <select
+            value={selectedProjectId === 'all' ? 'all' : String(selectedProjectId)}
+            onChange={(e) => setSelectedProjectId(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+            className="text-xs border rounded-md px-3 py-1.5 bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+          >
+            <option value="all">All projects</option>
+            {(projects ?? []).map((p) => <option key={p.projectId} value={String(p.projectId)}>{p.name}</option>)}
+          </select>
+          <select
+            value={selectedSprintId === 'all' ? 'all' : String(selectedSprintId)}
+            onChange={(e) => setSelectedSprintId(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+            className="text-xs border rounded-md px-3 py-1.5 bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+          >
+            <option value="all">All sprints</option>
+            {filteredSprints.map((s) => <option key={s.sprintId} value={String(s.sprintId)}>{s.name}</option>)}
+          </select>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -252,7 +293,7 @@ export default function TeamKPIs() {
         </div>
       )}
 
-      {velocityData.length > 0 && <SprintVelocityChart velocityData={velocityData} />}
+      {selectedSprintId === 'all' && velocityData.length > 0 && <SprintVelocityChart velocityData={velocityData} />}
       {devStats.length >= 2 && <Insights devStats={devStats} />}
       {devStats.length > 0 && <ProductivityTable devStats={devStats} />}
     </div>

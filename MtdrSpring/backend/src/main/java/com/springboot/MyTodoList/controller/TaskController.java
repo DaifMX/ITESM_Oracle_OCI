@@ -88,6 +88,11 @@ public class TaskController {
         return taskService.findBySprintAndStatus(sprintId, status);
     }
 
+    @GetMapping("/project/{projectId}/sprint/{sprintId}")
+    public List<Task> getByProjectAndSprint(@PathVariable int projectId, @PathVariable int sprintId) {
+        return taskService.findByProjectAndSprint(projectId, sprintId);
+    }
+
     @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     @PostMapping
     public ResponseEntity<?> create(@RequestBody Task task) {

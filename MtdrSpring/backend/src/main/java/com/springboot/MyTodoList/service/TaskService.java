@@ -47,6 +47,10 @@ public class TaskService {
         return taskRepository.findBySprint_SprintIdAndStatus(sprintId, status);
     }
 
+    public List<Task> findByProjectAndSprint(int projectId, int sprintId) {
+        return taskRepository.findByProject_ProjectIdAndSprint_SprintId(projectId, sprintId);
+    }
+
     public List<Task> findByAssignee(int employeeId) {
         return taskRepository.findByAssignee_EmployeeId(employeeId);
     }
