@@ -82,6 +82,8 @@ spec:
             - name: http
               containerPort: 8080
       restartPolicy: Always
+      imagePullSecrets:
+        - name: oci-registry-secret
       volumes:
         - name: creds
           secret:
@@ -89,7 +91,7 @@ spec:
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
+          whenUnsatisfiable: ScheduleAnyway
           labelSelector:
             matchLabels:
               app: todolistapp-springboot

@@ -80,6 +80,14 @@ jobs:
                 mkdir -p $HOME/.kube
                 echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > $HOME/.kube/config
 
+          - name: Ensure imagePullSecrets
+            run: |
+                kubectl patch deployment todolistapp-springboot-deployment \
+                    -n mtdrworkshop \
+                    --type=json \
+                    -p='[{"op":"add","path":"/spec/template/spec/imagePullSecrets","value":[{"name":"oci-registry-secret"}]}]' \
+                    || true
+
           - name: Update deployment image
             run: |
                 kubectl set image deployment/todolistapp-springboot-deployment \
