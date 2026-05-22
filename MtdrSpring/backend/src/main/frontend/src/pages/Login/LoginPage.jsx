@@ -62,7 +62,7 @@ export default function LoginPage() {
             TEAM31
           </span>
           <span className="text-muted-foreground text-xs tracking-wide uppercase">
-            Agile Project Management
+            Project Management
           </span>
         </div>
 
