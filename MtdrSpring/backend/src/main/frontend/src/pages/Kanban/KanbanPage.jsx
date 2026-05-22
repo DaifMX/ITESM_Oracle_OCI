@@ -11,6 +11,12 @@ import { COLUMNS } from './constants'
 import KanbanColumn from './components/KanbanColumn'
 import TaskModal from './components/TaskModal'
 
+const SPRINT_STATUS_CONFIG = {
+  planned:   { label: 'To Do',       className: 'bg-muted/60 text-muted-foreground' },
+  active:    { label: 'In Progress', className: 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400' },
+  completed: { label: 'Done',        className: 'bg-green-500/10 text-green-600 dark:text-green-400' },
+}
+
 const DATE_CHIP_CONFIG = {
   planned:   'bg-muted/60 text-muted-foreground',
   active:    'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400',
@@ -153,7 +159,14 @@ export default function KanbanPage() {
             </div>
           ) : (
             <>
-              <h1 className="text-xl font-bold text-foreground">{sprint?.name ?? 'Sprint Board'}</h1>
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl font-bold text-foreground">{sprint?.name ?? 'Sprint Board'}</h1>
+                {sprint && SPRINT_STATUS_CONFIG[sprint.status] && (
+                  <span className={cn('text-xs px-2.5 py-0.5 rounded-full font-medium shrink-0', SPRINT_STATUS_CONFIG[sprint.status].className)}>
+                    {SPRINT_STATUS_CONFIG[sprint.status].label}
+                  </span>
+                )}
+              </div>
               {sprint?.goal && <p className="text-xs text-muted-foreground mt-0.5">{sprint.goal}</p>}
               {sprint && (() => {
                 const chipClass = DATE_CHIP_CONFIG[sprint.status] ?? DATE_CHIP_CONFIG.planned

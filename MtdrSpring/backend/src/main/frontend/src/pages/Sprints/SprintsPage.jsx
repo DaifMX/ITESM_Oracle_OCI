@@ -11,8 +11,9 @@ import { cn, parseLocalDate } from '../../lib/utils'
 const SPRINT_STATUSES = ['planned', 'active', 'completed']
 
 const STATUS_CONFIG = {
-  planned:   { label: 'Planned',   className: 'bg-muted/60 text-muted-foreground' },
-  completed: { label: 'Completed', className: 'bg-green-500/10 text-green-600 dark:text-green-400' },
+  planned:   { label: 'To Do',       className: 'bg-muted/60 text-muted-foreground' },
+  active:    { label: 'In Progress', className: 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400' },
+  completed: { label: 'Done',        className: 'bg-green-500/10 text-green-600 dark:text-green-400' },
 }
 
 // Date chip colors follow the Kanban column color scheme
@@ -184,6 +185,13 @@ export default function SprintsPage() {
     setModal(null)
   }
 
+  const sortedSprints = [...sprints].sort((a, b) => {
+    if (!a.startDate && !b.startDate) return 0
+    if (!a.startDate) return 1
+    if (!b.startDate) return -1
+    return a.startDate.localeCompare(b.startDate)
+  })
+
   return (
     <div className="px-6 py-6 max-w-4xl mx-auto space-y-5">
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -232,7 +240,7 @@ export default function SprintsPage() {
         </div>
       ) : (
         <div className="rounded-lg border bg-card overflow-hidden">
-          {sprints.map((sprint, idx) => {
+          {sortedSprints.map((sprint, idx) => {
             const cfg = STATUS_CONFIG[sprint.status] ?? null
             const chipClass = DATE_CHIP_CONFIG[sprint.status] ?? DATE_CHIP_CONFIG.planned
             const daysLeft = getDaysLeft(sprint.endDate, sprint.status)
@@ -241,14 +249,14 @@ export default function SprintsPage() {
                 key={sprint.sprintId}
                 className={cn(
                   'group flex items-center gap-4 px-5 py-4 cursor-pointer hover:bg-muted/30 transition-colors',
-                  idx < sprints.length - 1 && 'border-b'
+                  idx < sortedSprints.length - 1 && 'border-b'
                 )}
                 onClick={() => navigate(`/projects/${projectId}/sprints/${sprint.sprintId}/board`)}
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2.5 flex-wrap">
                     <span className="font-semibold text-sm text-foreground">{sprint.name}</span>
-                    {sprint.status !== 'active' && cfg && (
+                    {cfg && (
                       <span className={cn('text-xs px-2.5 py-0.5 rounded-full font-medium shrink-0', cfg.className)}>{cfg.label}</span>
                     )}
                     {daysLeft && (

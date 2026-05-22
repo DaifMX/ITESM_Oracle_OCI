@@ -12,8 +12,8 @@ const STATUSES = ['planning', 'active', 'completed', 'on_hold']
 
 const STATUS_CONFIG = {
   planning:  { label: 'Planning',  className: 'bg-muted text-muted-foreground' },
-  active:    { label: 'Active',    className: 'bg-green-500/10 text-green-600 dark:text-green-400' },
-  completed: { label: 'Completed', className: 'bg-blue-500/10 text-blue-600 dark:text-blue-400' },
+  active:    { label: 'In Progress', className: 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400' },
+  completed: { label: 'Done',      className: 'bg-green-500/10 text-green-600 dark:text-green-400' },
   on_hold:   { label: 'On Hold',   className: 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400' },
 }
 
@@ -148,6 +148,13 @@ export default function ProjectsPage() {
     setModal(null)
   }
 
+  const sortedProjects = [...projects].sort((a, b) => {
+    if (!a.startDate && !b.startDate) return 0
+    if (!a.startDate) return 1
+    if (!b.startDate) return -1
+    return a.startDate.localeCompare(b.startDate)
+  })
+
   return (
     <div className="px-6 py-6 max-w-4xl mx-auto space-y-5">
       <div className="flex items-center justify-between">
@@ -177,14 +184,14 @@ export default function ProjectsPage() {
         </div>
       ) : (
         <div className="rounded-lg border bg-card overflow-hidden">
-          {projects.map((project, idx) => {
+          {sortedProjects.map((project, idx) => {
             const cfg = STATUS_CONFIG[project.status] || STATUS_CONFIG.planning
             return (
               <div
                 key={project.projectId}
                 className={cn(
                   'group flex items-center gap-4 px-5 py-4 cursor-pointer hover:bg-muted/30 transition-colors',
-                  idx < projects.length - 1 && 'border-b'
+                  idx < sortedProjects.length - 1 && 'border-b'
                 )}
                 onClick={() => navigate(`/projects/${project.projectId}/sprints`)}
               >

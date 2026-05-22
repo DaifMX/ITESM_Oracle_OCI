@@ -146,7 +146,7 @@ export default function TodosPage() {
       {/* Completed tasks */}
       {!isLoading && done.length > 0 && (
         <div className="rounded-lg border bg-card shadow-sm overflow-hidden">
-          <SectionHeader label="Completed" count={done.length} />
+          <SectionHeader label="Done" count={done.length} />
           <ul>
             {done.map((item, idx) => (
               <li
