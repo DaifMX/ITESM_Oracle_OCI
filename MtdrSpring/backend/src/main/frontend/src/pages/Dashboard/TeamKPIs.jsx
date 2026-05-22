@@ -253,7 +253,7 @@ export default function TeamKPIs() {
       </div>
 
       {devStats.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-4">
           <div className="rounded-lg border bg-card p-4">
             <h2 className="text-sm font-semibold text-foreground">Completed Tasks by Developer</h2>
             <p className="text-xs text-muted-foreground mb-4 mt-0.5">{sprintLabel}</p>
