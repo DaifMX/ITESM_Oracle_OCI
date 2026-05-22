@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/DaifMX/ITESM_Oracle_OCI/compare/v1.0.1...v1.0.2) (2026-05-22)
+
+
+### Bug Fixes
+
+* login screen message ([c35daad](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/c35daadcbd2564c28498ee0f2c675c1ae1b22af7))
+
 ## [1.0.1](https://github.com/DaifMX/ITESM_Oracle_OCI/compare/v1.0.0...v1.0.1) (2026-05-22)
 
 
