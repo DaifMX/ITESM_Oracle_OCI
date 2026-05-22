@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/DaifMX/ITESM_Oracle_OCI/compare/v1.0.0...v1.0.1) (2026-05-22)
+
+
+### Bug Fixes
+
+* color code to status and status names. Order in which sprints and projects appeared is now displayed by start date. ([62f731a](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/62f731adb32b87992b715ced8676a6f775eda463))
+
 # 1.0.0 (2026-05-21)
 
 
