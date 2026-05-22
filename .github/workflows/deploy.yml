@@ -32,11 +32,11 @@ jobs:
             working-directory: MtdrSpring/backend/src/main/frontend
             run: npm ci --ignore-scripts
 
-        #   - name: Build and test with Maven
-        #     working-directory: MtdrSpring/backend
-        #     run: |
-        #         chmod +x mvnw
-        #         ./mvnw verify -B
+          - name: Build and test with Maven
+            working-directory: MtdrSpring/backend
+            run: |
+                chmod +x mvnw
+                ./mvnw verify -B
 
           - name: Set up Docker Buildx
             uses: docker/setup-buildx-action@v3
