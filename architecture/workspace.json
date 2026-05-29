@@ -1,0 +1,2647 @@
+{
+  "configuration" : { },
+  "description" : "Team sprint tracking system deployed on Oracle Kubernetes Engine",
+  "documentation" : { },
+  "id" : 1,
+  "lastModifiedDate" : "2026-05-29T05:20:19Z",
+  "model" : {
+    "deploymentNodes" : [ {
+      "children" : [ {
+        "children" : [ {
+          "children" : [ {
+            "containerInstances" : [ {
+              "containerId" : "31",
+              "environment" : "Production",
+              "id" : "183",
+              "instanceId" : 1,
+              "properties" : {
+                "structurizr.dsl.identifier" : "apiInstance"
+              },
+              "relationships" : [ {
+                "description" : "Reads and writes all entities",
+                "destinationId" : "188",
+                "id" : "189",
+                "linkedRelationshipId" : "101",
+                "sourceId" : "183",
+                "technology" : "JDBC / TLS"
+              } ],
+              "tags" : "Container Instance"
+            } ],
+            "description" : "Spring Boot deployment (rolling update)",
+            "environment" : "Production",
+            "id" : "182",
+            "instances" : "1",
+            "name" : "todolistapp-springboot-deployment",
+            "properties" : {
+              "structurizr.dsl.identifier" : "da22dfc6-d587-4fc8-9cdd-2fd2c21682d3"
+            },
+            "tags" : "Element,Deployment Node",
+            "technology" : "Kubernetes Deployment"
+          }, {
+            "containerInstances" : [ {
+              "containerId" : "12",
+              "environment" : "Production",
+              "id" : "185",
+              "instanceId" : 1,
+              "properties" : {
+                "structurizr.dsl.identifier" : "spaInstance"
+              },
+              "relationships" : [ {
+                "description" : "REST API calls",
+                "destinationId" : "183",
+                "id" : "186",
+                "linkedRelationshipId" : "100",
+                "sourceId" : "185",
+                "technology" : "JSON / HTTPS"
+              } ],
+              "tags" : "Container Instance"
+            } ],
+            "description" : "React SPA compiled into Spring Boot static resources",
+            "environment" : "Production",
+            "id" : "184",
+            "instances" : "1",
+            "name" : "react-static-resources",
+            "properties" : {
+              "structurizr.dsl.identifier" : "25ff73ae-dd1c-4ae3-a735-815b732aa19e"
+            },
+            "tags" : "Element,Deployment Node",
+            "technology" : "Embedded in Spring Boot"
+          }, {
+            "containerInstances" : [ {
+              "containerId" : "83",
+              "environment" : "Production",
+              "id" : "188",
+              "instanceId" : 1,
+              "properties" : {
+                "structurizr.dsl.identifier" : "dbInstance"
+              },
+              "tags" : "Container Instance"
+            } ],
+            "description" : "Oracle ATP accessed via K8s service and wallet secret",
+            "environment" : "Production",
+            "id" : "187",
+            "instances" : "1",
+            "name" : "oracle-atp-service",
+            "properties" : {
+              "structurizr.dsl.identifier" : "05f7bbf9-0fda-46a0-8fd2-493176096f82"
+            },
+            "tags" : "Element,Deployment Node",
+            "technology" : "Kubernetes Service"
+          } ],
+          "description" : "Production namespace",
+          "environment" : "Production",
+          "id" : "181",
+          "instances" : "1",
+          "name" : "mtdrworkshop namespace",
+          "properties" : {
+            "structurizr.dsl.identifier" : "e35ca62b-6d2a-4901-87f3-3f09425a73ae"
+          },
+          "tags" : "Element,Deployment Node",
+          "technology" : "Kubernetes Namespace"
+        } ],
+        "description" : "Managed Kubernetes cluster",
+        "environment" : "Production",
+        "id" : "180",
+        "instances" : "1",
+        "name" : "Oracle Kubernetes Engine",
+        "properties" : {
+          "structurizr.dsl.identifier" : "b8b6c97f-faa0-4c05-815f-0e9703210668"
+        },
+        "tags" : "Element,Deployment Node",
+        "technology" : "OKE"
+      }, {
+        "containerInstances" : [ {
+          "containerId" : "10",
+          "environment" : "Production",
+          "id" : "191",
+          "instanceId" : 1,
+          "properties" : {
+            "structurizr.dsl.identifier" : "iacInstance"
+          },
+          "relationships" : [ {
+            "description" : "Supports provisioning",
+            "destinationId" : "193",
+            "id" : "195",
+            "linkedRelationshipId" : "98",
+            "sourceId" : "191"
+          } ],
+          "tags" : "Container Instance"
+        } ],
+        "description" : "Terraform and OCI CLI execution environment",
+        "environment" : "Production",
+        "id" : "190",
+        "instances" : "1",
+        "name" : "OCI Terraform Runner",
+        "properties" : {
+          "structurizr.dsl.identifier" : "5686c2d6-d37d-4bff-8f54-c23133db263d"
+        },
+        "tags" : "Element,Deployment Node",
+        "technology" : "OCI Cloud Shell"
+      } ],
+      "description" : "OCI production region",
+      "environment" : "Production",
+      "id" : "179",
+      "instances" : "1",
+      "name" : "Oracle Cloud Infrastructure",
+      "properties" : {
+        "structurizr.dsl.identifier" : "d2f2a43d-4b9c-438a-9241-caccf85c95bc"
+      },
+      "tags" : "Element,Deployment Node",
+      "technology" : "Oracle Cloud"
+    }, {
+      "containerInstances" : [ {
+        "containerId" : "11",
+        "environment" : "Production",
+        "id" : "193",
+        "instanceId" : 1,
+        "properties" : {
+          "structurizr.dsl.identifier" : "ciInstance"
+        },
+        "relationships" : [ {
+          "description" : "Builds and deploys Docker image",
+          "destinationId" : "183",
+          "id" : "194",
+          "linkedRelationshipId" : "99",
+          "sourceId" : "193"
+        } ],
+        "tags" : "Container Instance"
+      } ],
+      "description" : "ubuntu-latest hosted runner",
+      "environment" : "Production",
+      "id" : "192",
+      "instances" : "1",
+      "name" : "GitHub Actions Runner",
+      "properties" : {
+        "structurizr.dsl.identifier" : "dafba151-edb6-47eb-8a2a-452bf4c9015a"
+      },
+      "tags" : "Element,Deployment Node",
+      "technology" : "CI/CD"
+    } ],
+    "people" : [ {
+      "description" : "Team member who manages tasks, logs hours and tracks personal KPIs",
+      "id" : "1",
+      "name" : "Developer",
+      "properties" : {
+        "structurizr.dsl.identifier" : "developer"
+      },
+      "relationships" : [ {
+        "description" : "Creates and updates tasks, logs work hours",
+        "destinationId" : "9",
+        "id" : "84",
+        "sourceId" : "1",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Uses via browser",
+        "destinationId" : "12",
+        "id" : "95",
+        "sourceId" : "1",
+        "tags" : "Relationship",
+        "technology" : "HTTPS"
+      } ],
+      "tags" : "Element,Person"
+    }, {
+      "description" : "Manages sprints, reviews team KPIs and monitors velocity",
+      "id" : "2",
+      "name" : "Scrum Master",
+      "properties" : {
+        "structurizr.dsl.identifier" : "scrumMaster"
+      },
+      "relationships" : [ {
+        "description" : "Manages sprints and monitors team KPIs",
+        "destinationId" : "9",
+        "id" : "85",
+        "sourceId" : "2",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Uses via browser",
+        "destinationId" : "12",
+        "id" : "96",
+        "sourceId" : "2",
+        "tags" : "Relationship",
+        "technology" : "HTTPS"
+      } ],
+      "tags" : "Element,Person"
+    }, {
+      "description" : "Manages users, teams and projects via User Management page",
+      "id" : "3",
+      "name" : "Admin",
+      "properties" : {
+        "structurizr.dsl.identifier" : "admin"
+      },
+      "relationships" : [ {
+        "description" : "Manages users and team assignments",
+        "destinationId" : "9",
+        "id" : "86",
+        "sourceId" : "3",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Uses via browser",
+        "destinationId" : "12",
+        "id" : "97",
+        "sourceId" : "3",
+        "tags" : "Relationship",
+        "technology" : "HTTPS"
+      } ],
+      "tags" : "Element,Person"
+    }, {
+      "description" : "Interacts with the bot to query tasks and receive notifications",
+      "id" : "4",
+      "name" : "Telegram User",
+      "properties" : {
+        "structurizr.dsl.identifier" : "telegramUser"
+      },
+      "relationships" : [ {
+        "description" : "Sends commands to bot",
+        "destinationId" : "5",
+        "id" : "87",
+        "sourceId" : "4",
+        "tags" : "Relationship"
+      } ],
+      "tags" : "Element,Person"
+    } ],
+    "softwareSystems" : [ {
+      "description" : "External Telegram platform; receives webhook events and outbound bot messages",
+      "documentation" : { },
+      "id" : "5",
+      "name" : "Telegram Bot API",
+      "properties" : {
+        "structurizr.dsl.identifier" : "telegramApi"
+      },
+      "relationships" : [ {
+        "description" : "Delivers bot replies and notifications",
+        "destinationId" : "4",
+        "id" : "88",
+        "sourceId" : "5",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Delivers webhook events",
+        "destinationId" : "9",
+        "id" : "90",
+        "sourceId" : "5",
+        "tags" : "Relationship",
+        "technology" : "HTTPS"
+      }, {
+        "description" : "Delivers webhook updates",
+        "destinationId" : "31",
+        "id" : "103",
+        "sourceId" : "5",
+        "tags" : "Relationship",
+        "technology" : "HTTPS"
+      } ],
+      "tags" : "Element,Software System,External"
+    }, {
+      "description" : "External LLM gateway used by the AI chat agent",
+      "documentation" : { },
+      "id" : "6",
+      "name" : "OpenRouter",
+      "properties" : {
+        "structurizr.dsl.identifier" : "openRouterAI"
+      },
+      "relationships" : [ {
+        "description" : "Returns LLM completions",
+        "destinationId" : "9",
+        "id" : "92",
+        "sourceId" : "6",
+        "tags" : "Relationship",
+        "technology" : "HTTPS"
+      }, {
+        "description" : "Returns LLM completions",
+        "destinationId" : "31",
+        "id" : "105",
+        "sourceId" : "6",
+        "tags" : "Relationship",
+        "technology" : "HTTPS"
+      } ],
+      "tags" : "Element,Software System,External"
+    }, {
+      "description" : "Oracle Cloud image registry storing built Docker images",
+      "documentation" : { },
+      "id" : "7",
+      "name" : "OCI Container Registry",
+      "properties" : {
+        "structurizr.dsl.identifier" : "ociRegistry"
+      },
+      "tags" : "Element,Software System,External"
+    }, {
+      "description" : "CI/CD pipeline: build, test, push image and kubectl rollout",
+      "documentation" : { },
+      "id" : "8",
+      "name" : "GitHub Actions",
+      "properties" : {
+        "structurizr.dsl.identifier" : "githubCI"
+      },
+      "relationships" : [ {
+        "description" : "Pushes built Docker image",
+        "destinationId" : "7",
+        "id" : "93",
+        "sourceId" : "8",
+        "tags" : "Relationship",
+        "technology" : "HTTPS"
+      }, {
+        "description" : "Triggers kubectl rollout restart",
+        "destinationId" : "9",
+        "id" : "94",
+        "sourceId" : "8",
+        "tags" : "Relationship"
+      } ],
+      "tags" : "Element,Software System,External"
+    }, {
+      "containers" : [ {
+        "description" : "Provisions OCI resources: VCN, OKE cluster, ATP database, API Gateway, Object Storage, Container Registry",
+        "documentation" : { },
+        "id" : "10",
+        "name" : "Terraform IaC",
+        "properties" : {
+          "structurizr.dsl.identifier" : "terraformIaC"
+        },
+        "relationships" : [ {
+          "description" : "Supports provisioning",
+          "destinationId" : "11",
+          "id" : "98",
+          "sourceId" : "10",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,IaC",
+        "technology" : "Terraform / HCL"
+      }, {
+        "description" : "Shell and PowerShell scripts for building, deploying and managing the Kubernetes workload",
+        "documentation" : { },
+        "id" : "11",
+        "name" : "Deploy Scripts",
+        "properties" : {
+          "structurizr.dsl.identifier" : "deployScripts"
+        },
+        "relationships" : [ {
+          "description" : "Builds and deploys Docker image",
+          "destinationId" : "31",
+          "id" : "99",
+          "sourceId" : "11",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,CI Tool",
+        "technology" : "Shell / kubectl"
+      }, {
+        "components" : [ {
+          "description" : "Root component; sets up React Router and ThemeContext provider",
+          "documentation" : { },
+          "id" : "13",
+          "name" : "App.jsx",
+          "properties" : {
+            "structurizr.dsl.identifier" : "appJsx"
+          },
+          "relationships" : [ {
+            "description" : "Uses",
+            "destinationId" : "14",
+            "id" : "106",
+            "sourceId" : "13",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Renders",
+            "destinationId" : "18",
+            "id" : "107",
+            "sourceId" : "13",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Client-side route definitions mapping paths to page components",
+          "documentation" : { },
+          "id" : "14",
+          "name" : "router.jsx",
+          "properties" : {
+            "structurizr.dsl.identifier" : "routerJsx"
+          },
+          "relationships" : [ {
+            "description" : "Wraps unauthenticated routes",
+            "destinationId" : "16",
+            "id" : "108",
+            "sourceId" : "14",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Wraps authenticated routes",
+            "destinationId" : "15",
+            "id" : "109",
+            "sourceId" : "14",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Authenticated layout wrapper with Sidebar navigation",
+          "documentation" : { },
+          "id" : "15",
+          "name" : "AppLayout",
+          "properties" : {
+            "structurizr.dsl.identifier" : "appLayout"
+          },
+          "relationships" : [ {
+            "description" : "Renders",
+            "destinationId" : "17",
+            "id" : "110",
+            "sourceId" : "15",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Routes to",
+            "destinationId" : "20",
+            "id" : "111",
+            "sourceId" : "15",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Routes to",
+            "destinationId" : "21",
+            "id" : "112",
+            "sourceId" : "15",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Routes to",
+            "destinationId" : "22",
+            "id" : "113",
+            "sourceId" : "15",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Routes to",
+            "destinationId" : "23",
+            "id" : "114",
+            "sourceId" : "15",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Routes to",
+            "destinationId" : "24",
+            "id" : "115",
+            "sourceId" : "15",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Routes to",
+            "destinationId" : "26",
+            "id" : "116",
+            "sourceId" : "15",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Routes to",
+            "destinationId" : "27",
+            "id" : "117",
+            "sourceId" : "15",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Root layout; handles unauthenticated redirect to login",
+          "documentation" : { },
+          "id" : "16",
+          "name" : "RootLayout",
+          "properties" : {
+            "structurizr.dsl.identifier" : "rootLayout"
+          },
+          "relationships" : [ {
+            "description" : "Routes to",
+            "destinationId" : "19",
+            "id" : "118",
+            "sourceId" : "16",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Navigation sidebar with links to all pages",
+          "documentation" : { },
+          "id" : "17",
+          "name" : "Sidebar",
+          "properties" : {
+            "structurizr.dsl.identifier" : "sidebar"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Floating AI chat widget; calls /api/chat endpoint",
+          "documentation" : { },
+          "id" : "18",
+          "name" : "ChatWidget",
+          "properties" : {
+            "structurizr.dsl.identifier" : "chatWidget"
+          },
+          "relationships" : [ {
+            "description" : "Uses",
+            "destinationId" : "28",
+            "id" : "126",
+            "sourceId" : "18",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "JWT login form; stores access and refresh tokens",
+          "documentation" : { },
+          "id" : "19",
+          "name" : "LoginPage",
+          "properties" : {
+            "structurizr.dsl.identifier" : "loginPage"
+          },
+          "relationships" : [ {
+            "description" : "Stores tokens via",
+            "destinationId" : "29",
+            "id" : "127",
+            "sourceId" : "19",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Sprint Kanban board with columns: To Do, In Progress, Done",
+          "documentation" : { },
+          "id" : "20",
+          "name" : "KanbanPage",
+          "properties" : {
+            "structurizr.dsl.identifier" : "kanbanPage"
+          },
+          "relationships" : [ {
+            "description" : "Uses",
+            "destinationId" : "28",
+            "id" : "119",
+            "sourceId" : "20",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Scrum Master dashboard: sprint velocity, grouped bar charts, team KPIs",
+          "documentation" : { },
+          "id" : "21",
+          "name" : "DashboardPage",
+          "properties" : {
+            "structurizr.dsl.identifier" : "dashboardPage"
+          },
+          "relationships" : [ {
+            "description" : "Uses",
+            "destinationId" : "28",
+            "id" : "120",
+            "sourceId" : "21",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Developer view: personal KPI cards, Kanban board and backlog",
+          "documentation" : { },
+          "id" : "22",
+          "name" : "DeveloperDashboardPage",
+          "properties" : {
+            "structurizr.dsl.identifier" : "devDashboard"
+          },
+          "relationships" : [ {
+            "description" : "Uses",
+            "destinationId" : "28",
+            "id" : "121",
+            "sourceId" : "22",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Sprint management: create, view and close sprints",
+          "documentation" : { },
+          "id" : "23",
+          "name" : "SprintsPage",
+          "properties" : {
+            "structurizr.dsl.identifier" : "sprintsPage"
+          },
+          "relationships" : [ {
+            "description" : "Uses",
+            "destinationId" : "28",
+            "id" : "122",
+            "sourceId" : "23",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Projects listing and backlog management",
+          "documentation" : { },
+          "id" : "24",
+          "name" : "ProjectsPage",
+          "properties" : {
+            "structurizr.dsl.identifier" : "projectsPage"
+          },
+          "relationships" : [ {
+            "description" : "Uses",
+            "destinationId" : "28",
+            "id" : "123",
+            "sourceId" : "24",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Backlog view for a given project",
+          "documentation" : { },
+          "id" : "25",
+          "name" : "BacklogPage",
+          "properties" : {
+            "structurizr.dsl.identifier" : "backlogPage"
+          },
+          "relationships" : [ {
+            "description" : "Uses",
+            "destinationId" : "28",
+            "id" : "124",
+            "sourceId" : "25",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Admin page for managing employees and team assignments",
+          "documentation" : { },
+          "id" : "26",
+          "name" : "UserManagementPage",
+          "properties" : {
+            "structurizr.dsl.identifier" : "userMgmtPage"
+          },
+          "relationships" : [ {
+            "description" : "Uses",
+            "destinationId" : "28",
+            "id" : "125",
+            "sourceId" : "26",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Simple to-do list view",
+          "documentation" : { },
+          "id" : "27",
+          "name" : "TodosPage",
+          "properties" : {
+            "structurizr.dsl.identifier" : "todosPage"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Axios HTTP client with JWT auth headers and base URL config",
+          "documentation" : { },
+          "id" : "28",
+          "name" : "api.js",
+          "properties" : {
+            "structurizr.dsl.identifier" : "apiLib"
+          },
+          "relationships" : [ {
+            "description" : "Reads JWT from",
+            "destinationId" : "29",
+            "id" : "128",
+            "sourceId" : "28",
+            "tags" : "Relationship"
+          }, {
+            "description" : "HTTP requests",
+            "destinationId" : "31",
+            "id" : "130",
+            "sourceId" : "28",
+            "tags" : "Relationship",
+            "technology" : "JSON / HTTPS"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Helpers for reading and storing JWT tokens in localStorage",
+          "documentation" : { },
+          "id" : "29",
+          "name" : "auth.js",
+          "properties" : {
+            "structurizr.dsl.identifier" : "authLib"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "SWR-compatible fetcher wrapper around api.js",
+          "documentation" : { },
+          "id" : "30",
+          "name" : "fetcher.js",
+          "properties" : {
+            "structurizr.dsl.identifier" : "fetcherLib"
+          },
+          "relationships" : [ {
+            "description" : "Wraps",
+            "destinationId" : "28",
+            "id" : "129",
+            "sourceId" : "30",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        } ],
+        "description" : "Single-page application built with Vite and React; served as static assets from Spring Boot",
+        "documentation" : { },
+        "id" : "12",
+        "name" : "React SPA",
+        "properties" : {
+          "structurizr.dsl.identifier" : "frontendSPA"
+        },
+        "relationships" : [ {
+          "description" : "REST API calls",
+          "destinationId" : "31",
+          "id" : "100",
+          "sourceId" : "12",
+          "tags" : "Relationship",
+          "technology" : "JSON / HTTPS"
+        } ],
+        "tags" : "Element,Container,Web Browser",
+        "technology" : "React 18 / Vite / Tailwind"
+      }, {
+        "components" : [ {
+          "description" : "Spring Boot entry point; bootstraps application context",
+          "documentation" : { },
+          "id" : "32",
+          "name" : "MyTodoListApplication",
+          "properties" : {
+            "structurizr.dsl.identifier" : "appMain"
+          },
+          "relationships" : [ {
+            "description" : "Loads",
+            "destinationId" : "33",
+            "id" : "131",
+            "sourceId" : "32",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Triggers on startup",
+            "destinationId" : "37",
+            "id" : "132",
+            "sourceId" : "32",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Configures Oracle JDBC DataSource from application.properties",
+          "documentation" : { },
+          "id" : "33",
+          "name" : "OracleConfiguration",
+          "properties" : {
+            "structurizr.dsl.identifier" : "oracleConfig"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Global CORS rules allowing React dev server and production origin",
+          "documentation" : { },
+          "id" : "34",
+          "name" : "CorsConfig",
+          "properties" : {
+            "structurizr.dsl.identifier" : "corsConfig"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Binds Telegram bot token and username from config",
+          "documentation" : { },
+          "id" : "35",
+          "name" : "BotProps",
+          "properties" : {
+            "structurizr.dsl.identifier" : "botProps"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Binds OpenRouter API key and model from config",
+          "documentation" : { },
+          "id" : "36",
+          "name" : "OpenRouterConfig",
+          "properties" : {
+            "structurizr.dsl.identifier" : "openRouterCfg"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Seeds default roles and admin user on first startup",
+          "documentation" : { },
+          "id" : "37",
+          "name" : "DataInitializer",
+          "properties" : {
+            "structurizr.dsl.identifier" : "dataInit"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "OncePerRequestFilter; validates Bearer JWT on every request",
+          "documentation" : { },
+          "id" : "38",
+          "name" : "JwtAuthFilter",
+          "properties" : {
+            "structurizr.dsl.identifier" : "jwtAuthFilter"
+          },
+          "relationships" : [ {
+            "description" : "Validates token via",
+            "destinationId" : "39",
+            "id" : "133",
+            "sourceId" : "38",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Loads user via",
+            "destinationId" : "41",
+            "id" : "134",
+            "sourceId" : "38",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Generates and validates JWT access tokens",
+          "documentation" : { },
+          "id" : "39",
+          "name" : "JwtUtil",
+          "properties" : {
+            "structurizr.dsl.identifier" : "jwtUtil"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Spring Security filter chain; public routes and JWT integration",
+          "documentation" : { },
+          "id" : "40",
+          "name" : "WebSecurityConfiguration",
+          "properties" : {
+            "structurizr.dsl.identifier" : "webSecurity"
+          },
+          "relationships" : [ {
+            "description" : "Registers filter",
+            "destinationId" : "38",
+            "id" : "135",
+            "sourceId" : "40",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Loads UserDetails from EmployeeRepository for Spring Security",
+          "documentation" : { },
+          "id" : "41",
+          "name" : "UserDetailsServiceImpl",
+          "properties" : {
+            "structurizr.dsl.identifier" : "userDetailsSvc"
+          },
+          "relationships" : [ {
+            "description" : "Queries employee by email",
+            "destinationId" : "65",
+            "id" : "136",
+            "sourceId" : "41",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "POST /api/auth/login and /api/auth/refresh",
+          "documentation" : { },
+          "id" : "42",
+          "name" : "AuthController",
+          "properties" : {
+            "structurizr.dsl.identifier" : "authController"
+          },
+          "relationships" : [ {
+            "description" : "Authenticates via",
+            "destinationId" : "58",
+            "id" : "137",
+            "sourceId" : "42",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Issues refresh token via",
+            "destinationId" : "59",
+            "id" : "138",
+            "sourceId" : "42",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "CRUD REST endpoints for Task resources",
+          "documentation" : { },
+          "id" : "43",
+          "name" : "TaskController",
+          "properties" : {
+            "structurizr.dsl.identifier" : "taskController"
+          },
+          "relationships" : [ {
+            "description" : "Delegates to",
+            "destinationId" : "52",
+            "id" : "139",
+            "sourceId" : "43",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "CRUD REST endpoints for Sprint resources",
+          "documentation" : { },
+          "id" : "44",
+          "name" : "SprintController",
+          "properties" : {
+            "structurizr.dsl.identifier" : "sprintController"
+          },
+          "relationships" : [ {
+            "description" : "Delegates to",
+            "destinationId" : "53",
+            "id" : "140",
+            "sourceId" : "44",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "CRUD REST endpoints for Project resources",
+          "documentation" : { },
+          "id" : "45",
+          "name" : "ProjectController",
+          "properties" : {
+            "structurizr.dsl.identifier" : "projectController"
+          },
+          "relationships" : [ {
+            "description" : "Delegates to",
+            "destinationId" : "54",
+            "id" : "141",
+            "sourceId" : "45",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "CRUD REST endpoints for Employee (user) resources",
+          "documentation" : { },
+          "id" : "46",
+          "name" : "EmployeeController",
+          "properties" : {
+            "structurizr.dsl.identifier" : "employeeController"
+          },
+          "relationships" : [ {
+            "description" : "Delegates to",
+            "destinationId" : "58",
+            "id" : "142",
+            "sourceId" : "46",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "REST endpoints for Team management",
+          "documentation" : { },
+          "id" : "47",
+          "name" : "TeamController",
+          "properties" : {
+            "structurizr.dsl.identifier" : "teamController"
+          },
+          "relationships" : [ {
+            "description" : "Delegates to",
+            "destinationId" : "56",
+            "id" : "143",
+            "sourceId" : "47",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "REST endpoints for Task comments",
+          "documentation" : { },
+          "id" : "48",
+          "name" : "CommentController",
+          "properties" : {
+            "structurizr.dsl.identifier" : "commentController"
+          },
+          "relationships" : [ {
+            "description" : "Delegates to",
+            "destinationId" : "57",
+            "id" : "144",
+            "sourceId" : "48",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "REST endpoints for user profile and role management",
+          "documentation" : { },
+          "id" : "49",
+          "name" : "UserController",
+          "properties" : {
+            "structurizr.dsl.identifier" : "userController"
+          },
+          "relationships" : [ {
+            "description" : "Delegates to",
+            "destinationId" : "58",
+            "id" : "145",
+            "sourceId" : "49",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "POST /api/chat; proxies message to BotAgentService",
+          "documentation" : { },
+          "id" : "50",
+          "name" : "ChatController",
+          "properties" : {
+            "structurizr.dsl.identifier" : "chatController"
+          },
+          "relationships" : [ {
+            "description" : "Delegates to",
+            "destinationId" : "60",
+            "id" : "146",
+            "sourceId" : "50",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Handles incoming Telegram webhook updates",
+          "documentation" : { },
+          "id" : "51",
+          "name" : "TelegramBotController",
+          "properties" : {
+            "structurizr.dsl.identifier" : "telegramController"
+          },
+          "relationships" : [ {
+            "description" : "Delegates to",
+            "destinationId" : "60",
+            "id" : "147",
+            "sourceId" : "51",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Sends replies via",
+            "destinationId" : "78",
+            "id" : "148",
+            "sourceId" : "51",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Builds payloads via",
+            "destinationId" : "80",
+            "id" : "176",
+            "sourceId" : "51",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Uses",
+            "destinationId" : "77",
+            "id" : "177",
+            "sourceId" : "51",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Uses",
+            "destinationId" : "79",
+            "id" : "178",
+            "sourceId" : "51",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Business logic for task lifecycle and state transitions",
+          "documentation" : { },
+          "id" : "52",
+          "name" : "TaskService",
+          "properties" : {
+            "structurizr.dsl.identifier" : "taskService"
+          },
+          "relationships" : [ {
+            "description" : "Persists via",
+            "destinationId" : "62",
+            "id" : "149",
+            "sourceId" : "52",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Reads sprint via",
+            "destinationId" : "63",
+            "id" : "150",
+            "sourceId" : "52",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Reads assignee via",
+            "destinationId" : "65",
+            "id" : "151",
+            "sourceId" : "52",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Sprint planning, activation and velocity calculation",
+          "documentation" : { },
+          "id" : "53",
+          "name" : "SprintService",
+          "properties" : {
+            "structurizr.dsl.identifier" : "sprintService"
+          },
+          "relationships" : [ {
+            "description" : "Persists via",
+            "destinationId" : "63",
+            "id" : "152",
+            "sourceId" : "53",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Reads project via",
+            "destinationId" : "64",
+            "id" : "153",
+            "sourceId" : "53",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Project creation and backlog management",
+          "documentation" : { },
+          "id" : "54",
+          "name" : "ProjectService",
+          "properties" : {
+            "structurizr.dsl.identifier" : "projectService"
+          },
+          "relationships" : [ {
+            "description" : "Persists via",
+            "destinationId" : "64",
+            "id" : "154",
+            "sourceId" : "54",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Manages employee-team membership records",
+          "documentation" : { },
+          "id" : "55",
+          "name" : "EmployeeTeamService",
+          "properties" : {
+            "structurizr.dsl.identifier" : "employeeTeamSvc"
+          },
+          "relationships" : [ {
+            "description" : "Persists via",
+            "destinationId" : "66",
+            "id" : "157",
+            "sourceId" : "55",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Team CRUD and membership orchestration",
+          "documentation" : { },
+          "id" : "56",
+          "name" : "TeamService",
+          "properties" : {
+            "structurizr.dsl.identifier" : "teamService"
+          },
+          "relationships" : [ {
+            "description" : "Persists via",
+            "destinationId" : "67",
+            "id" : "155",
+            "sourceId" : "56",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Manages members via",
+            "destinationId" : "55",
+            "id" : "156",
+            "sourceId" : "56",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Task comment creation and retrieval",
+          "documentation" : { },
+          "id" : "57",
+          "name" : "CommentService",
+          "properties" : {
+            "structurizr.dsl.identifier" : "commentService"
+          },
+          "relationships" : [ {
+            "description" : "Persists via",
+            "destinationId" : "68",
+            "id" : "158",
+            "sourceId" : "57",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Reads task via",
+            "destinationId" : "62",
+            "id" : "159",
+            "sourceId" : "57",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "User registration, role assignment and profile updates",
+          "documentation" : { },
+          "id" : "58",
+          "name" : "UserService",
+          "properties" : {
+            "structurizr.dsl.identifier" : "userService"
+          },
+          "relationships" : [ {
+            "description" : "Persists via",
+            "destinationId" : "65",
+            "id" : "160",
+            "sourceId" : "58",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Issues and validates JWT refresh tokens",
+          "documentation" : { },
+          "id" : "59",
+          "name" : "RefreshTokenService",
+          "properties" : {
+            "structurizr.dsl.identifier" : "refreshTokenSvc"
+          },
+          "relationships" : [ {
+            "description" : "Persists via",
+            "destinationId" : "69",
+            "id" : "161",
+            "sourceId" : "59",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Orchestrates AI chat: builds context and calls OpenRouterService",
+          "documentation" : { },
+          "id" : "60",
+          "name" : "BotAgentService",
+          "properties" : {
+            "structurizr.dsl.identifier" : "botAgentSvc"
+          },
+          "relationships" : [ {
+            "description" : "Calls for LLM reply",
+            "destinationId" : "61",
+            "id" : "162",
+            "sourceId" : "60",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Reads tasks for context",
+            "destinationId" : "62",
+            "id" : "163",
+            "sourceId" : "60",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "HTTP client that calls the OpenRouter LLM completion API",
+          "documentation" : { },
+          "id" : "61",
+          "name" : "OpenRouterService",
+          "properties" : {
+            "structurizr.dsl.identifier" : "openRouterSvc"
+          },
+          "relationships" : [ {
+            "description" : "POST /api/v1/chat/completions",
+            "destinationId" : "6",
+            "id" : "164",
+            "sourceId" : "61",
+            "tags" : "Relationship",
+            "technology" : "HTTPS"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Spring Data JPA repository for Task entities",
+          "documentation" : { },
+          "id" : "62",
+          "name" : "TaskRepository",
+          "properties" : {
+            "structurizr.dsl.identifier" : "taskRepo"
+          },
+          "relationships" : [ {
+            "description" : "SQL",
+            "destinationId" : "83",
+            "id" : "165",
+            "sourceId" : "62",
+            "tags" : "Relationship",
+            "technology" : "JDBC"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Spring Data JPA repository for Sprint entities",
+          "documentation" : { },
+          "id" : "63",
+          "name" : "SprintRepository",
+          "properties" : {
+            "structurizr.dsl.identifier" : "sprintRepo"
+          },
+          "relationships" : [ {
+            "description" : "SQL",
+            "destinationId" : "83",
+            "id" : "166",
+            "sourceId" : "63",
+            "tags" : "Relationship",
+            "technology" : "JDBC"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Spring Data JPA repository for Project entities",
+          "documentation" : { },
+          "id" : "64",
+          "name" : "ProjectRepository",
+          "properties" : {
+            "structurizr.dsl.identifier" : "projectRepo"
+          },
+          "relationships" : [ {
+            "description" : "SQL",
+            "destinationId" : "83",
+            "id" : "167",
+            "sourceId" : "64",
+            "tags" : "Relationship",
+            "technology" : "JDBC"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Spring Data JPA repository for Employee entities",
+          "documentation" : { },
+          "id" : "65",
+          "name" : "EmployeeRepository",
+          "properties" : {
+            "structurizr.dsl.identifier" : "employeeRepo"
+          },
+          "relationships" : [ {
+            "description" : "SQL",
+            "destinationId" : "83",
+            "id" : "168",
+            "sourceId" : "65",
+            "tags" : "Relationship",
+            "technology" : "JDBC"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Spring Data JPA repository for EmployeeTeam join entities",
+          "documentation" : { },
+          "id" : "66",
+          "name" : "EmployeeTeamRepository",
+          "properties" : {
+            "structurizr.dsl.identifier" : "employeeTeamRepo"
+          },
+          "relationships" : [ {
+            "description" : "SQL",
+            "destinationId" : "83",
+            "id" : "169",
+            "sourceId" : "66",
+            "tags" : "Relationship",
+            "technology" : "JDBC"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Spring Data JPA repository for Team entities",
+          "documentation" : { },
+          "id" : "67",
+          "name" : "TeamRepository",
+          "properties" : {
+            "structurizr.dsl.identifier" : "teamRepo"
+          },
+          "relationships" : [ {
+            "description" : "SQL",
+            "destinationId" : "83",
+            "id" : "170",
+            "sourceId" : "67",
+            "tags" : "Relationship",
+            "technology" : "JDBC"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Spring Data JPA repository for Comment entities",
+          "documentation" : { },
+          "id" : "68",
+          "name" : "CommentRepository",
+          "properties" : {
+            "structurizr.dsl.identifier" : "commentRepo"
+          },
+          "relationships" : [ {
+            "description" : "SQL",
+            "destinationId" : "83",
+            "id" : "171",
+            "sourceId" : "68",
+            "tags" : "Relationship",
+            "technology" : "JDBC"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Spring Data JPA repository for RefreshToken entities",
+          "documentation" : { },
+          "id" : "69",
+          "name" : "RefreshTokenRepository",
+          "properties" : {
+            "structurizr.dsl.identifier" : "refreshTokenRepo"
+          },
+          "relationships" : [ {
+            "description" : "SQL",
+            "destinationId" : "83",
+            "id" : "172",
+            "sourceId" : "69",
+            "tags" : "Relationship",
+            "technology" : "JDBC"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "JPA entity: id, title, status, priority, storyPoints, assignee, sprint",
+          "documentation" : { },
+          "id" : "70",
+          "name" : "Task",
+          "properties" : {
+            "structurizr.dsl.identifier" : "taskModel"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "JPA entity: id, name, startDate, endDate, status, project",
+          "documentation" : { },
+          "id" : "71",
+          "name" : "Sprint",
+          "properties" : {
+            "structurizr.dsl.identifier" : "sprintModel"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "JPA entity: id, name, description, team",
+          "documentation" : { },
+          "id" : "72",
+          "name" : "Project",
+          "properties" : {
+            "structurizr.dsl.identifier" : "projectModel"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "JPA entity: id, name, email, passwordHash, role",
+          "documentation" : { },
+          "id" : "73",
+          "name" : "Employee",
+          "properties" : {
+            "structurizr.dsl.identifier" : "employeeModel"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "JPA entity: id, name",
+          "documentation" : { },
+          "id" : "74",
+          "name" : "Team",
+          "properties" : {
+            "structurizr.dsl.identifier" : "teamModel"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "JPA entity: id, content, author, task, createdAt",
+          "documentation" : { },
+          "id" : "75",
+          "name" : "Comment",
+          "properties" : {
+            "structurizr.dsl.identifier" : "commentModel"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "JPA entity: id, token, employee, expiryDate",
+          "documentation" : { },
+          "id" : "76",
+          "name" : "RefreshToken",
+          "properties" : {
+            "structurizr.dsl.identifier" : "refreshTokenMdl"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Enum of Telegram bot action strings",
+          "documentation" : { },
+          "id" : "77",
+          "name" : "BotActions",
+          "properties" : {
+            "structurizr.dsl.identifier" : "botActions"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Low-level Telegram Bot API HTTP client",
+          "documentation" : { },
+          "id" : "78",
+          "name" : "BotClient",
+          "properties" : {
+            "structurizr.dsl.identifier" : "botClient"
+          },
+          "relationships" : [ {
+            "description" : "POST /bot{token}/sendMessage",
+            "destinationId" : "5",
+            "id" : "173",
+            "sourceId" : "78",
+            "tags" : "Relationship",
+            "technology" : "HTTPS"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Enum of slash command strings",
+          "documentation" : { },
+          "id" : "79",
+          "name" : "BotCommands",
+          "properties" : {
+            "structurizr.dsl.identifier" : "botCommands"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Builds Telegram message payloads",
+          "documentation" : { },
+          "id" : "80",
+          "name" : "BotHelper",
+          "properties" : {
+            "structurizr.dsl.identifier" : "botHelper"
+          },
+          "relationships" : [ {
+            "description" : "Uses",
+            "destinationId" : "81",
+            "id" : "174",
+            "sourceId" : "80",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Uses",
+            "destinationId" : "82",
+            "id" : "175",
+            "sourceId" : "80",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Display label constants for bot messages",
+          "documentation" : { },
+          "id" : "81",
+          "name" : "BotLabels",
+          "properties" : {
+            "structurizr.dsl.identifier" : "botLabels"
+          },
+          "tags" : "Element,Component"
+        }, {
+          "description" : "Outbound message templates",
+          "documentation" : { },
+          "id" : "82",
+          "name" : "BotMessages",
+          "properties" : {
+            "structurizr.dsl.identifier" : "botMessages"
+          },
+          "tags" : "Element,Component"
+        } ],
+        "description" : "REST API and Telegram bot backend; serves the compiled React SPA as static resources",
+        "documentation" : { },
+        "id" : "31",
+        "name" : "Spring Boot API",
+        "properties" : {
+          "structurizr.dsl.identifier" : "springBackend"
+        },
+        "relationships" : [ {
+          "description" : "Reads and writes all entities",
+          "destinationId" : "83",
+          "id" : "101",
+          "sourceId" : "31",
+          "tags" : "Relationship",
+          "technology" : "JDBC / TLS"
+        }, {
+          "description" : "Sends bot messages and handles webhooks",
+          "destinationId" : "5",
+          "id" : "102",
+          "sourceId" : "31",
+          "tags" : "Relationship",
+          "technology" : "HTTPS"
+        }, {
+          "description" : "Calls LLM for chat agent",
+          "destinationId" : "6",
+          "id" : "104",
+          "sourceId" : "31",
+          "tags" : "Relationship",
+          "technology" : "HTTPS"
+        } ],
+        "tags" : "Element,Container,Spring Boot App",
+        "technology" : "Java 17 / Spring Boot 3 / Maven"
+      }, {
+        "description" : "Relational store for all entities; accessed via JDBC with Oracle wallet",
+        "documentation" : { },
+        "id" : "83",
+        "name" : "Oracle Autonomous DB",
+        "properties" : {
+          "structurizr.dsl.identifier" : "oracleDB"
+        },
+        "tags" : "Element,Container,Database",
+        "technology" : "Oracle ATP 19c / SQL"
+      } ],
+      "description" : "Full-stack sprint tracker with React SPA, Spring Boot API, Oracle DB, Telegram bot and AI chat",
+      "documentation" : { },
+      "id" : "9",
+      "name" : "MtdrSpring Sprint Tracker",
+      "properties" : {
+        "structurizr.dsl.identifier" : "mtdrSystem"
+      },
+      "relationships" : [ {
+        "description" : "Sends notifications and bot replies",
+        "destinationId" : "5",
+        "id" : "89",
+        "sourceId" : "9",
+        "tags" : "Relationship",
+        "technology" : "HTTPS"
+      }, {
+        "description" : "Requests LLM completions",
+        "destinationId" : "6",
+        "id" : "91",
+        "sourceId" : "9",
+        "tags" : "Relationship",
+        "technology" : "HTTPS"
+      } ],
+      "tags" : "Element,Software System"
+    } ]
+  },
+  "name" : "MtdrSpring Sprint Tracker",
+  "properties" : {
+    "structurizr.inspection.error" : "85",
+    "structurizr.dsl" : "d29ya3NwYWNlICJNdGRyU3ByaW5nIFNwcmludCBUcmFja2VyIiAiVGVhbSBzcHJpbnQgdHJhY2tpbmcgc3lzdGVtIGRlcGxveWVkIG9uIE9yYWNsZSBLdWJlcm5ldGVzIEVuZ2luZSIgewoKICAgIG1vZGVsIHsKCiAgICAgICAgIyBBY3RvcnMKICAgICAgICBkZXZlbG9wZXIgICAgPSBwZXJzb24gIkRldmVsb3BlciIgICAgICJUZWFtIG1lbWJlciB3aG8gbWFuYWdlcyB0YXNrcywgbG9ncyBob3VycyBhbmQgdHJhY2tzIHBlcnNvbmFsIEtQSXMiCiAgICAgICAgc2NydW1NYXN0ZXIgID0gcGVyc29uICJTY3J1bSBNYXN0ZXIiICAiTWFuYWdlcyBzcHJpbnRzLCByZXZpZXdzIHRlYW0gS1BJcyBhbmQgbW9uaXRvcnMgdmVsb2NpdHkiCiAgICAgICAgYWRtaW4gICAgICAgID0gcGVyc29uICJBZG1pbiIgICAgICAgICAiTWFuYWdlcyB1c2VycywgdGVhbXMgYW5kIHByb2plY3RzIHZpYSBVc2VyIE1hbmFnZW1lbnQgcGFnZSIKICAgICAgICB0ZWxlZ3JhbVVzZXIgPSBwZXJzb24gIlRlbGVncmFtIFVzZXIiICJJbnRlcmFjdHMgd2l0aCB0aGUgYm90IHRvIHF1ZXJ5IHRhc2tzIGFuZCByZWNlaXZlIG5vdGlmaWNhdGlvbnMiCgogICAgICAgICMgRXh0ZXJuYWwgc3lzdGVtcwogICAgICAgIHRlbGVncmFtQXBpICA9IHNvZnR3YXJlU3lzdGVtICJUZWxlZ3JhbSBCb3QgQVBJIiAgICAgICAiRXh0ZXJuYWwgVGVsZWdyYW0gcGxhdGZvcm07IHJlY2VpdmVzIHdlYmhvb2sgZXZlbnRzIGFuZCBvdXRib3VuZCBib3QgbWVzc2FnZXMiICJFeHRlcm5hbCIKICAgICAgICBvcGVuUm91dGVyQUkgPSBzb2Z0d2FyZVN5c3RlbSAiT3BlblJvdXRlciIgICAgICAgICAgICAgIkV4dGVybmFsIExMTSBnYXRld2F5IHVzZWQgYnkgdGhlIEFJIGNoYXQgYWdlbnQiICJFeHRlcm5hbCIKICAgICAgICBvY2lSZWdpc3RyeSAgPSBzb2Z0d2FyZVN5c3RlbSAiT0NJIENvbnRhaW5lciBSZWdpc3RyeSIgIk9yYWNsZSBDbG91ZCBpbWFnZSByZWdpc3RyeSBzdG9yaW5nIGJ1aWx0IERvY2tlciBpbWFnZXMiICJFeHRlcm5hbCIKICAgICAgICBnaXRodWJDSSAgICAgPSBzb2Z0d2FyZVN5c3RlbSAiR2l0SHViIEFjdGlvbnMiICAgICAgICAgIkNJL0NEIHBpcGVsaW5lOiBidWlsZCwgdGVzdCwgcHVzaCBpbWFnZSBhbmQga3ViZWN0bCByb2xsb3V0IiAiRXh0ZXJuYWwiCgogICAgICAgICMgTWFpbiBzeXN0ZW0KICAgICAgICBtdGRyU3lzdGVtID0gc29mdHdhcmVTeXN0ZW0gIk10ZHJTcHJpbmcgU3ByaW50IFRyYWNrZXIiICJGdWxsLXN0YWNrIHNwcmludCB0cmFja2VyIHdpdGggUmVhY3QgU1BBLCBTcHJpbmcgQm9vdCBBUEksIE9yYWNsZSBEQiwgVGVsZWdyYW0gYm90IGFuZCBBSSBjaGF0IiB7CgogICAgICAgICAgICAjIEluZnJhc3RydWN0dXJlIGNvbnRhaW5lcnMKICAgICAgICAgICAgdGVycmFmb3JtSWFDID0gY29udGFpbmVyICJUZXJyYWZvcm0gSWFDIiAiUHJvdmlzaW9ucyBPQ0kgcmVzb3VyY2VzOiBWQ04sIE9LRSBjbHVzdGVyLCBBVFAgZGF0YWJhc2UsIEFQSSBHYXRld2F5LCBPYmplY3QgU3RvcmFnZSwgQ29udGFpbmVyIFJlZ2lzdHJ5IiAiVGVycmFmb3JtIC8gSENMIiAiSWFDIiAKICAgICAgICAgICAgZGVwbG95U2NyaXB0cyA9IGNvbnRhaW5lciAiRGVwbG95IFNjcmlwdHMiICJTaGVsbCBhbmQgUG93ZXJTaGVsbCBzY3JpcHRzIGZvciBidWlsZGluZywgZGVwbG95aW5nIGFuZCBtYW5hZ2luZyB0aGUgS3ViZXJuZXRlcyB3b3JrbG9hZCIgIlNoZWxsIC8ga3ViZWN0bCIgIkNJIFRvb2wiCgogICAgICAgICAgICAjIEZyb250ZW5kIFNQQQogICAgICAgICAgICBmcm9udGVuZFNQQSA9IGNvbnRhaW5lciAiUmVhY3QgU1BBIiAiU2luZ2xlLXBhZ2UgYXBwbGljYXRpb24gYnVpbHQgd2l0aCBWaXRlIGFuZCBSZWFjdDsgc2VydmVkIGFzIHN0YXRpYyBhc3NldHMgZnJvbSBTcHJpbmcgQm9vdCIgIlJlYWN0IDE4IC8gVml0ZSAvIFRhaWx3aW5kIiAiV2ViIEJyb3dzZXIiIHsKCiAgICAgICAgICAgICAgICBhcHBKc3ggICAgICAgICA9IGNvbXBvbmVudCAiQXBwLmpzeCIgICAgICAgICAgICAgICAiUm9vdCBjb21wb25lbnQ7IHNldHMgdXAgUmVhY3QgUm91dGVyIGFuZCBUaGVtZUNvbnRleHQgcHJvdmlkZXIiCiAgICAgICAgICAgICAgICByb3V0ZXJKc3ggICAgICA9IGNvbXBvbmVudCAicm91dGVyLmpzeCIgICAgICAgICAgICAiQ2xpZW50LXNpZGUgcm91dGUgZGVmaW5pdGlvbnMgbWFwcGluZyBwYXRocyB0byBwYWdlIGNvbXBvbmVudHMiCiAgICAgICAgICAgICAgICBhcHBMYXlvdXQgICAgICA9IGNvbXBvbmVudCAiQXBwTGF5b3V0IiAgICAgICAgICAgICAiQXV0aGVudGljYXRlZCBsYXlvdXQgd3JhcHBlciB3aXRoIFNpZGViYXIgbmF2aWdhdGlvbiIKICAgICAgICAgICAgICAgIHJvb3RMYXlvdXQgICAgID0gY29tcG9uZW50ICJSb290TGF5b3V0IiAgICAgICAgICAgICJSb290IGxheW91dDsgaGFuZGxlcyB1bmF1dGhlbnRpY2F0ZWQgcmVkaXJlY3QgdG8gbG9naW4iCiAgICAgICAgICAgICAgICBzaWRlYmFyICAgICAgICA9IGNvbXBvbmVudCAiU2lkZWJhciIgICAgICAgICAgICAgICAiTmF2aWdhdGlvbiBzaWRlYmFyIHdpdGggbGlua3MgdG8gYWxsIHBhZ2VzIgogICAgICAgICAgICAgICAgY2hhdFdpZGdldCAgICAgPSBjb21wb25lbnQgIkNoYXRXaWRnZXQiICAgICAgICAgICAgIkZsb2F0aW5nIEFJIGNoYXQgd2lkZ2V0OyBjYWxscyAvYXBpL2NoYXQgZW5kcG9pbnQiCiAgICAgICAgICAgICAgICBsb2dpblBhZ2UgICAgICA9IGNvbXBvbmVudCAiTG9naW5QYWdlIiAgICAgICAgICAgICAiSldUIGxvZ2luIGZvcm07IHN0b3JlcyBhY2Nlc3MgYW5kIHJlZnJlc2ggdG9rZW5zIgogICAgICAgICAgICAgICAga2FuYmFuUGFnZSAgICAgPSBjb21wb25lbnQgIkthbmJhblBhZ2UiICAgICAgICAgICAgIlNwcmludCBLYW5iYW4gYm9hcmQgd2l0aCBjb2x1bW5zOiBUbyBEbywgSW4gUHJvZ3Jlc3MsIERvbmUiCiAgICAgICAgICAgICAgICBkYXNoYm9hcmRQYWdlICA9IGNvbXBvbmVudCAiRGFzaGJvYXJkUGFnZSIgICAgICAgICAiU2NydW0gTWFzdGVyIGRhc2hib2FyZDogc3ByaW50IHZlbG9jaXR5LCBncm91cGVkIGJhciBjaGFydHMsIHRlYW0gS1BJcyIKICAgICAgICAgICAgICAgIGRldkRhc2hib2FyZCAgID0gY29tcG9uZW50ICJEZXZlbG9wZXJEYXNoYm9hcmRQYWdlIiAiRGV2ZWxvcGVyIHZpZXc6IHBlcnNvbmFsIEtQSSBjYXJkcywgS2FuYmFuIGJvYXJkIGFuZCBiYWNrbG9nIgogICAgICAgICAgICAgICAgc3ByaW50c1BhZ2UgICAgPSBjb21wb25lbnQgIlNwcmludHNQYWdlIiAgICAgICAgICAgIlNwcmludCBtYW5hZ2VtZW50OiBjcmVhdGUsIHZpZXcgYW5kIGNsb3NlIHNwcmludHMiCiAgICAgICAgICAgICAgICBwcm9qZWN0c1BhZ2UgICA9IGNvbXBvbmVudCAiUHJvamVjdHNQYWdlIiAgICAgICAgICAiUHJvamVjdHMgbGlzdGluZyBhbmQgYmFja2xvZyBtYW5hZ2VtZW50IgogICAgICAgICAgICAgICAgYmFja2xvZ1BhZ2UgICAgPSBjb21wb25lbnQgIkJhY2tsb2dQYWdlIiAgICAgICAgICAgIkJhY2tsb2cgdmlldyBmb3IgYSBnaXZlbiBwcm9qZWN0IgogICAgICAgICAgICAgICAgdXNlck1nbXRQYWdlICAgPSBjb21wb25lbnQgIlVzZXJNYW5hZ2VtZW50UGFnZSIgICAgIkFkbWluIHBhZ2UgZm9yIG1hbmFnaW5nIGVtcGxveWVlcyBhbmQgdGVhbSBhc3NpZ25tZW50cyIKICAgICAgICAgICAgICAgIHRvZG9zUGFnZSAgICAgID0gY29tcG9uZW50ICJUb2Rvc1BhZ2UiICAgICAgICAgICAgICJTaW1wbGUgdG8tZG8gbGlzdCB2aWV3IgogICAgICAgICAgICAgICAgYXBpTGliICAgICAgICAgPSBjb21wb25lbnQgImFwaS5qcyIgICAgICAgICAgICAgICAgIkF4aW9zIEhUVFAgY2xpZW50IHdpdGggSldUIGF1dGggaGVhZGVycyBhbmQgYmFzZSBVUkwgY29uZmlnIgogICAgICAgICAgICAgICAgYXV0aExpYiAgICAgICAgPSBjb21wb25lbnQgImF1dGguanMiICAgICAgICAgICAgICAgIkhlbHBlcnMgZm9yIHJlYWRpbmcgYW5kIHN0b3JpbmcgSldUIHRva2VucyBpbiBsb2NhbFN0b3JhZ2UiCiAgICAgICAgICAgICAgICBmZXRjaGVyTGliICAgICA9IGNvbXBvbmVudCAiZmV0Y2hlci5qcyIgICAgICAgICAgICAiU1dSLWNvbXBhdGlibGUgZmV0Y2hlciB3cmFwcGVyIGFyb3VuZCBhcGkuanMiCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgICMgU3ByaW5nIEJvb3QgYmFja2VuZAogICAgICAgICAgICBzcHJpbmdCYWNrZW5kID0gY29udGFpbmVyICJTcHJpbmcgQm9vdCBBUEkiICJSRVNUIEFQSSBhbmQgVGVsZWdyYW0gYm90IGJhY2tlbmQ7IHNlcnZlcyB0aGUgY29tcGlsZWQgUmVhY3QgU1BBIGFzIHN0YXRpYyByZXNvdXJjZXMiICJKYXZhIDE3IC8gU3ByaW5nIEJvb3QgMyAvIE1hdmVuIiAiU3ByaW5nIEJvb3QgQXBwIiB7CgogICAgICAgICAgICAgICAgIyBFbnRyeSBwb2ludAogICAgICAgICAgICAgICAgYXBwTWFpbiAgICAgICAgPSBjb21wb25lbnQgIk15VG9kb0xpc3RBcHBsaWNhdGlvbiIgICJTcHJpbmcgQm9vdCBlbnRyeSBwb2ludDsgYm9vdHN0cmFwcyBhcHBsaWNhdGlvbiBjb250ZXh0IgoKICAgICAgICAgICAgICAgICMgQ29uZmlnCiAgICAgICAgICAgICAgICBvcmFjbGVDb25maWcgICA9IGNvbXBvbmVudCAiT3JhY2xlQ29uZmlndXJhdGlvbiIgICAgIkNvbmZpZ3VyZXMgT3JhY2xlIEpEQkMgRGF0YVNvdXJjZSBmcm9tIGFwcGxpY2F0aW9uLnByb3BlcnRpZXMiCiAgICAgICAgICAgICAgICBjb3JzQ29uZmlnICAgICA9IGNvbXBvbmVudCAiQ29yc0NvbmZpZyIgICAgICAgICAgICAgIkdsb2JhbCBDT1JTIHJ1bGVzIGFsbG93aW5nIFJlYWN0IGRldiBzZXJ2ZXIgYW5kIHByb2R1Y3Rpb24gb3JpZ2luIgogICAgICAgICAgICAgICAgYm90UHJvcHMgICAgICAgPSBjb21wb25lbnQgIkJvdFByb3BzIiAgICAgICAgICAgICAgICJCaW5kcyBUZWxlZ3JhbSBib3QgdG9rZW4gYW5kIHVzZXJuYW1lIGZyb20gY29uZmlnIgogICAgICAgICAgICAgICAgb3BlblJvdXRlckNmZyAgPSBjb21wb25lbnQgIk9wZW5Sb3V0ZXJDb25maWciICAgICAgICJCaW5kcyBPcGVuUm91dGVyIEFQSSBrZXkgYW5kIG1vZGVsIGZyb20gY29uZmlnIgogICAgICAgICAgICAgICAgZGF0YUluaXQgICAgICAgPSBjb21wb25lbnQgIkRhdGFJbml0aWFsaXplciIgICAgICAgICJTZWVkcyBkZWZhdWx0IHJvbGVzIGFuZCBhZG1pbiB1c2VyIG9uIGZpcnN0IHN0YXJ0dXAiCgogICAgICAgICAgICAgICAgIyBTZWN1cml0eQogICAgICAgICAgICAgICAgand0QXV0aEZpbHRlciAgPSBjb21wb25lbnQgIkp3dEF1dGhGaWx0ZXIiICAgICAgICAgICJPbmNlUGVyUmVxdWVzdEZpbHRlcjsgdmFsaWRhdGVzIEJlYXJlciBKV1Qgb24gZXZlcnkgcmVxdWVzdCIKICAgICAgICAgICAgICAgIGp3dFV0aWwgICAgICAgID0gY29tcG9uZW50ICJKd3RVdGlsIiAgICAgICAgICAgICAgICAgIkdlbmVyYXRlcyBhbmQgdmFsaWRhdGVzIEpXVCBhY2Nlc3MgdG9rZW5zIgogICAgICAgICAgICAgICAgd2ViU2VjdXJpdHkgICAgPSBjb21wb25lbnQgIldlYlNlY3VyaXR5Q29uZmlndXJhdGlvbiIgIlNwcmluZyBTZWN1cml0eSBmaWx0ZXIgY2hhaW47IHB1YmxpYyByb3V0ZXMgYW5kIEpXVCBpbnRlZ3JhdGlvbiIKICAgICAgICAgICAgICAgIHVzZXJEZXRhaWxzU3ZjID0gY29tcG9uZW50ICJVc2VyRGV0YWlsc1NlcnZpY2VJbXBsIiAgIkxvYWRzIFVzZXJEZXRhaWxzIGZyb20gRW1wbG95ZWVSZXBvc2l0b3J5IGZvciBTcHJpbmcgU2VjdXJpdHkiCgogICAgICAgICAgICAgICAgIyBDb250cm9sbGVycwogICAgICAgICAgICAgICAgYXV0aENvbnRyb2xsZXIgICAgID0gY29tcG9uZW50ICJBdXRoQ29udHJvbGxlciIgICAgICAgICAiUE9TVCAvYXBpL2F1dGgvbG9naW4gYW5kIC9hcGkvYXV0aC9yZWZyZXNoIgogICAgICAgICAgICAgICAgdGFza0NvbnRyb2xsZXIgICAgID0gY29tcG9uZW50ICJUYXNrQ29udHJvbGxlciIgICAgICAgICAiQ1JVRCBSRVNUIGVuZHBvaW50cyBmb3IgVGFzayByZXNvdXJjZXMiCiAgICAgICAgICAgICAgICBzcHJpbnRDb250cm9sbGVyICAgPSBjb21wb25lbnQgIlNwcmludENvbnRyb2xsZXIiICAgICAgICJDUlVEIFJFU1QgZW5kcG9pbnRzIGZvciBTcHJpbnQgcmVzb3VyY2VzIgogICAgICAgICAgICAgICAgcHJvamVjdENvbnRyb2xsZXIgID0gY29tcG9uZW50ICJQcm9qZWN0Q29udHJvbGxlciIgICAgICAiQ1JVRCBSRVNUIGVuZHBvaW50cyBmb3IgUHJvamVjdCByZXNvdXJjZXMiCiAgICAgICAgICAgICAgICBlbXBsb3llZUNvbnRyb2xsZXIgPSBjb21wb25lbnQgIkVtcGxveWVlQ29udHJvbGxlciIgICAgICJDUlVEIFJFU1QgZW5kcG9pbnRzIGZvciBFbXBsb3llZSAodXNlcikgcmVzb3VyY2VzIgogICAgICAgICAgICAgICAgdGVhbUNvbnRyb2xsZXIgICAgID0gY29tcG9uZW50ICJUZWFtQ29udHJvbGxlciIgICAgICAgICAiUkVTVCBlbmRwb2ludHMgZm9yIFRlYW0gbWFuYWdlbWVudCIKICAgICAgICAgICAgICAgIGNvbW1lbnRDb250cm9sbGVyICA9IGNvbXBvbmVudCAiQ29tbWVudENvbnRyb2xsZXIiICAgICAgIlJFU1QgZW5kcG9pbnRzIGZvciBUYXNrIGNvbW1lbnRzIgogICAgICAgICAgICAgICAgdXNlckNvbnRyb2xsZXIgICAgID0gY29tcG9uZW50ICJVc2VyQ29udHJvbGxlciIgICAgICAgICAiUkVTVCBlbmRwb2ludHMgZm9yIHVzZXIgcHJvZmlsZSBhbmQgcm9sZSBtYW5hZ2VtZW50IgogICAgICAgICAgICAgICAgY2hhdENvbnRyb2xsZXIgICAgID0gY29tcG9uZW50ICJDaGF0Q29udHJvbGxlciIgICAgICAgICAiUE9TVCAvYXBpL2NoYXQ7IHByb3hpZXMgbWVzc2FnZSB0byBCb3RBZ2VudFNlcnZpY2UiCiAgICAgICAgICAgICAgICB0ZWxlZ3JhbUNvbnRyb2xsZXIgPSBjb21wb25lbnQgIlRlbGVncmFtQm90Q29udHJvbGxlciIgICJIYW5kbGVzIGluY29taW5nIFRlbGVncmFtIHdlYmhvb2sgdXBkYXRlcyIKCiAgICAgICAgICAgICAgICAjIFNlcnZpY2VzCiAgICAgICAgICAgICAgICB0YXNrU2VydmljZSAgICAgICAgPSBjb21wb25lbnQgIlRhc2tTZXJ2aWNlIiAgICAgICAgICAgIkJ1c2luZXNzIGxvZ2ljIGZvciB0YXNrIGxpZmVjeWNsZSBhbmQgc3RhdGUgdHJhbnNpdGlvbnMiCiAgICAgICAgICAgICAgICBzcHJpbnRTZXJ2aWNlICAgICAgPSBjb21wb25lbnQgIlNwcmludFNlcnZpY2UiICAgICAgICAgIlNwcmludCBwbGFubmluZywgYWN0aXZhdGlvbiBhbmQgdmVsb2NpdHkgY2FsY3VsYXRpb24iCiAgICAgICAgICAgICAgICBwcm9qZWN0U2VydmljZSAgICAgPSBjb21wb25lbnQgIlByb2plY3RTZXJ2aWNlIiAgICAgICAgIlByb2plY3QgY3JlYXRpb24gYW5kIGJhY2tsb2cgbWFuYWdlbWVudCIKICAgICAgICAgICAgICAgIGVtcGxveWVlVGVhbVN2YyAgICA9IGNvbXBvbmVudCAiRW1wbG95ZWVUZWFtU2VydmljZSIgICAiTWFuYWdlcyBlbXBsb3llZS10ZWFtIG1lbWJlcnNoaXAgcmVjb3JkcyIKICAgICAgICAgICAgICAgIHRlYW1TZXJ2aWNlICAgICAgICA9IGNvbXBvbmVudCAiVGVhbVNlcnZpY2UiICAgICAgICAgICAiVGVhbSBDUlVEIGFuZCBtZW1iZXJzaGlwIG9yY2hlc3RyYXRpb24iCiAgICAgICAgICAgICAgICBjb21tZW50U2VydmljZSAgICAgPSBjb21wb25lbnQgIkNvbW1lbnRTZXJ2aWNlIiAgICAgICAgIlRhc2sgY29tbWVudCBjcmVhdGlvbiBhbmQgcmV0cmlldmFsIgogICAgICAgICAgICAgICAgdXNlclNlcnZpY2UgICAgICAgID0gY29tcG9uZW50ICJVc2VyU2VydmljZSIgICAgICAgICAgICJVc2VyIHJlZ2lzdHJhdGlvbiwgcm9sZSBhc3NpZ25tZW50IGFuZCBwcm9maWxlIHVwZGF0ZXMiCiAgICAgICAgICAgICAgICByZWZyZXNoVG9rZW5TdmMgICAgPSBjb21wb25lbnQgIlJlZnJlc2hUb2tlblNlcnZpY2UiICAgIklzc3VlcyBhbmQgdmFsaWRhdGVzIEpXVCByZWZyZXNoIHRva2VucyIKICAgICAgICAgICAgICAgIGJvdEFnZW50U3ZjICAgICAgICA9IGNvbXBvbmVudCAiQm90QWdlbnRTZXJ2aWNlIiAgICAgICAiT3JjaGVzdHJhdGVzIEFJIGNoYXQ6IGJ1aWxkcyBjb250ZXh0IGFuZCBjYWxscyBPcGVuUm91dGVyU2VydmljZSIKICAgICAgICAgICAgICAgIG9wZW5Sb3V0ZXJTdmMgICAgICA9IGNvbXBvbmVudCAiT3BlblJvdXRlclNlcnZpY2UiICAgICAiSFRUUCBjbGllbnQgdGhhdCBjYWxscyB0aGUgT3BlblJvdXRlciBMTE0gY29tcGxldGlvbiBBUEkiCgogICAgICAgICAgICAgICAgIyBSZXBvc2l0b3JpZXMKICAgICAgICAgICAgICAgIHRhc2tSZXBvICAgICAgICAgICA9IGNvbXBvbmVudCAiVGFza1JlcG9zaXRvcnkiICAgICAgICAiU3ByaW5nIERhdGEgSlBBIHJlcG9zaXRvcnkgZm9yIFRhc2sgZW50aXRpZXMiCiAgICAgICAgICAgICAgICBzcHJpbnRSZXBvICAgICAgICAgPSBjb21wb25lbnQgIlNwcmludFJlcG9zaXRvcnkiICAgICAgIlNwcmluZyBEYXRhIEpQQSByZXBvc2l0b3J5IGZvciBTcHJpbnQgZW50aXRpZXMiCiAgICAgICAgICAgICAgICBwcm9qZWN0UmVwbyAgICAgICAgPSBjb21wb25lbnQgIlByb2plY3RSZXBvc2l0b3J5IiAgICAgIlNwcmluZyBEYXRhIEpQQSByZXBvc2l0b3J5IGZvciBQcm9qZWN0IGVudGl0aWVzIgogICAgICAgICAgICAgICAgZW1wbG95ZWVSZXBvICAgICAgID0gY29tcG9uZW50ICJFbXBsb3llZVJlcG9zaXRvcnkiICAgICJTcHJpbmcgRGF0YSBKUEEgcmVwb3NpdG9yeSBmb3IgRW1wbG95ZWUgZW50aXRpZXMiCiAgICAgICAgICAgICAgICBlbXBsb3llZVRlYW1SZXBvICAgPSBjb21wb25lbnQgIkVtcGxveWVlVGVhbVJlcG9zaXRvcnkiICJTcHJpbmcgRGF0YSBKUEEgcmVwb3NpdG9yeSBmb3IgRW1wbG95ZWVUZWFtIGpvaW4gZW50aXRpZXMiCiAgICAgICAgICAgICAgICB0ZWFtUmVwbyAgICAgICAgICAgPSBjb21wb25lbnQgIlRlYW1SZXBvc2l0b3J5IiAgICAgICAgIlNwcmluZyBEYXRhIEpQQSByZXBvc2l0b3J5IGZvciBUZWFtIGVudGl0aWVzIgogICAgICAgICAgICAgICAgY29tbWVudFJlcG8gICAgICAgID0gY29tcG9uZW50ICJDb21tZW50UmVwb3NpdG9yeSIgICAgICJTcHJpbmcgRGF0YSBKUEEgcmVwb3NpdG9yeSBmb3IgQ29tbWVudCBlbnRpdGllcyIKICAgICAgICAgICAgICAgIHJlZnJlc2hUb2tlblJlcG8gICA9IGNvbXBvbmVudCAiUmVmcmVzaFRva2VuUmVwb3NpdG9yeSIgIlNwcmluZyBEYXRhIEpQQSByZXBvc2l0b3J5IGZvciBSZWZyZXNoVG9rZW4gZW50aXRpZXMiCgogICAgICAgICAgICAgICAgIyBEb21haW4gbW9kZWxzCiAgICAgICAgICAgICAgICB0YXNrTW9kZWwgICAgICA9IGNvbXBvbmVudCAiVGFzayIgICAgICAgICAgIkpQQSBlbnRpdHk6IGlkLCB0aXRsZSwgc3RhdHVzLCBwcmlvcml0eSwgc3RvcnlQb2ludHMsIGFzc2lnbmVlLCBzcHJpbnQiCiAgICAgICAgICAgICAgICBzcHJpbnRNb2RlbCAgICA9IGNvbXBvbmVudCAiU3ByaW50IiAgICAgICAgIkpQQSBlbnRpdHk6IGlkLCBuYW1lLCBzdGFydERhdGUsIGVuZERhdGUsIHN0YXR1cywgcHJvamVjdCIKICAgICAgICAgICAgICAgIHByb2plY3RNb2RlbCAgID0gY29tcG9uZW50ICJQcm9qZWN0IiAgICAgICAiSlBBIGVudGl0eTogaWQsIG5hbWUsIGRlc2NyaXB0aW9uLCB0ZWFtIgogICAgICAgICAgICAgICAgZW1wbG95ZWVNb2RlbCAgPSBjb21wb25lbnQgIkVtcGxveWVlIiAgICAgICJKUEEgZW50aXR5OiBpZCwgbmFtZSwgZW1haWwsIHBhc3N3b3JkSGFzaCwgcm9sZSIKICAgICAgICAgICAgICAgIHRlYW1Nb2RlbCAgICAgID0gY29tcG9uZW50ICJUZWFtIiAgICAgICAgICAiSlBBIGVudGl0eTogaWQsIG5hbWUiCiAgICAgICAgICAgICAgICBjb21tZW50TW9kZWwgICA9IGNvbXBvbmVudCAiQ29tbWVudCIgICAgICAgIkpQQSBlbnRpdHk6IGlkLCBjb250ZW50LCBhdXRob3IsIHRhc2ssIGNyZWF0ZWRBdCIKICAgICAgICAgICAgICAgIHJlZnJlc2hUb2tlbk1kbCA9IGNvbXBvbmVudCAiUmVmcmVzaFRva2VuIiAiSlBBIGVudGl0eTogaWQsIHRva2VuLCBlbXBsb3llZSwgZXhwaXJ5RGF0ZSIKCiAgICAgICAgICAgICAgICAjIEJvdCB1dGlsaXRpZXMKICAgICAgICAgICAgICAgIGJvdEFjdGlvbnMgICAgID0gY29tcG9uZW50ICJCb3RBY3Rpb25zIiAgICAiRW51bSBvZiBUZWxlZ3JhbSBib3QgYWN0aW9uIHN0cmluZ3MiCiAgICAgICAgICAgICAgICBib3RDbGllbnQgICAgICA9IGNvbXBvbmVudCAiQm90Q2xpZW50IiAgICAgIkxvdy1sZXZlbCBUZWxlZ3JhbSBCb3QgQVBJIEhUVFAgY2xpZW50IgogICAgICAgICAgICAgICAgYm90Q29tbWFuZHMgICAgPSBjb21wb25lbnQgIkJvdENvbW1hbmRzIiAgICJFbnVtIG9mIHNsYXNoIGNvbW1hbmQgc3RyaW5ncyIKICAgICAgICAgICAgICAgIGJvdEhlbHBlciAgICAgID0gY29tcG9uZW50ICJCb3RIZWxwZXIiICAgICAiQnVpbGRzIFRlbGVncmFtIG1lc3NhZ2UgcGF5bG9hZHMiCiAgICAgICAgICAgICAgICBib3RMYWJlbHMgICAgICA9IGNvbXBvbmVudCAiQm90TGFiZWxzIiAgICAgIkRpc3BsYXkgbGFiZWwgY29uc3RhbnRzIGZvciBib3QgbWVzc2FnZXMiCiAgICAgICAgICAgICAgICBib3RNZXNzYWdlcyAgICA9IGNvbXBvbmVudCAiQm90TWVzc2FnZXMiICAgIk91dGJvdW5kIG1lc3NhZ2UgdGVtcGxhdGVzIgogICAgICAgICAgICB9CgogICAgICAgICAgICAjIERhdGFiYXNlCiAgICAgICAgICAgIG9yYWNsZURCID0gY29udGFpbmVyICJPcmFjbGUgQXV0b25vbW91cyBEQiIgIlJlbGF0aW9uYWwgc3RvcmUgZm9yIGFsbCBlbnRpdGllczsgYWNjZXNzZWQgdmlhIEpEQkMgd2l0aCBPcmFjbGUgd2FsbGV0IiAiT3JhY2xlIEFUUCAxOWMgLyBTUUwiICJEYXRhYmFzZSIKICAgICAgICB9CgogICAgICAgICMgUmVsYXRpb25zaGlwcyAtIGFjdG9ycyB0byBzeXN0ZW0KICAgICAgICBkZXZlbG9wZXIgICAgLT4gbXRkclN5c3RlbSAgICJDcmVhdGVzIGFuZCB1cGRhdGVzIHRhc2tzLCBsb2dzIHdvcmsgaG91cnMiCiAgICAgICAgc2NydW1NYXN0ZXIgIC0+IG10ZHJTeXN0ZW0gICAiTWFuYWdlcyBzcHJpbnRzIGFuZCBtb25pdG9ycyB0ZWFtIEtQSXMiCiAgICAgICAgYWRtaW4gICAgICAgIC0+IG10ZHJTeXN0ZW0gICAiTWFuYWdlcyB1c2VycyBhbmQgdGVhbSBhc3NpZ25tZW50cyIKICAgICAgICB0ZWxlZ3JhbVVzZXIgLT4gdGVsZWdyYW1BcGkgICJTZW5kcyBjb21tYW5kcyB0byBib3QiCiAgICAgICAgdGVsZWdyYW1BcGkgIC0+IHRlbGVncmFtVXNlciAiRGVsaXZlcnMgYm90IHJlcGxpZXMgYW5kIG5vdGlmaWNhdGlvbnMiCgogICAgICAgICMgUmVsYXRpb25zaGlwcyAtIHN5c3RlbSB0byBleHRlcm5hbAogICAgICAgIG10ZHJTeXN0ZW0gICAtPiB0ZWxlZ3JhbUFwaSAgIlNlbmRzIG5vdGlmaWNhdGlvbnMgYW5kIGJvdCByZXBsaWVzIiAiSFRUUFMiCiAgICAgICAgdGVsZWdyYW1BcGkgIC0+IG10ZHJTeXN0ZW0gICAiRGVsaXZlcnMgd2ViaG9vayBldmVudHMiICJIVFRQUyIKICAgICAgICBtdGRyU3lzdGVtICAgLT4gb3BlblJvdXRlckFJICJSZXF1ZXN0cyBMTE0gY29tcGxldGlvbnMiICJIVFRQUyIKICAgICAgICBvcGVuUm91dGVyQUkgLT4gbXRkclN5c3RlbSAgICJSZXR1cm5zIExMTSBjb21wbGV0aW9ucyIgIkhUVFBTIgogICAgICAgIGdpdGh1YkNJICAgICAtPiBvY2lSZWdpc3RyeSAgIlB1c2hlcyBidWlsdCBEb2NrZXIgaW1hZ2UiICJIVFRQUyIKICAgICAgICBnaXRodWJDSSAgICAgLT4gbXRkclN5c3RlbSAgICJUcmlnZ2VycyBrdWJlY3RsIHJvbGxvdXQgcmVzdGFydCIKCiAgICAgICAgIyBSZWxhdGlvbnNoaXBzIC0gY29udGFpbmVycwogICAgICAgIGRldmVsb3BlciAgICAgLT4gZnJvbnRlbmRTUEEgICAiVXNlcyB2aWEgYnJvd3NlciIgIkhUVFBTIgogICAgICAgIHNjcnVtTWFzdGVyICAgLT4gZnJvbnRlbmRTUEEgICAiVXNlcyB2aWEgYnJvd3NlciIgIkhUVFBTIgogICAgICAgIGFkbWluICAgICAgICAgLT4gZnJvbnRlbmRTUEEgICAiVXNlcyB2aWEgYnJvd3NlciIgIkhUVFBTIgogICAgICAgIHRlcnJhZm9ybUlhQyAgLT4gZGVwbG95U2NyaXB0cyAiU3VwcG9ydHMgcHJvdmlzaW9uaW5nIgogICAgICAgIGRlcGxveVNjcmlwdHMgLT4gc3ByaW5nQmFja2VuZCAiQnVpbGRzIGFuZCBkZXBsb3lzIERvY2tlciBpbWFnZSIKICAgICAgICBmcm9udGVuZFNQQSAgIC0+IHNwcmluZ0JhY2tlbmQgIlJFU1QgQVBJIGNhbGxzIiAiSlNPTiAvIEhUVFBTIgogICAgICAgIHNwcmluZ0JhY2tlbmQgLT4gb3JhY2xlREIgICAgICAiUmVhZHMgYW5kIHdyaXRlcyBhbGwgZW50aXRpZXMiICJKREJDIC8gVExTIgogICAgICAgIHNwcmluZ0JhY2tlbmQgLT4gdGVsZWdyYW1BcGkgICAiU2VuZHMgYm90IG1lc3NhZ2VzIGFuZCBoYW5kbGVzIHdlYmhvb2tzIiAiSFRUUFMiCiAgICAgICAgdGVsZWdyYW1BcGkgICAtPiBzcHJpbmdCYWNrZW5kICJEZWxpdmVycyB3ZWJob29rIHVwZGF0ZXMiICJIVFRQUyIKICAgICAgICBzcHJpbmdCYWNrZW5kIC0+IG9wZW5Sb3V0ZXJBSSAgIkNhbGxzIExMTSBmb3IgY2hhdCBhZ2VudCIgIkhUVFBTIgogICAgICAgIG9wZW5Sb3V0ZXJBSSAgLT4gc3ByaW5nQmFja2VuZCAiUmV0dXJucyBMTE0gY29tcGxldGlvbnMiICJIVFRQUyIKCiAgICAgICAgIyBSZWxhdGlvbnNoaXBzIC0gY29tcG9uZW50cyAoRnJvbnRlbmQgU1BBKQogICAgICAgIGFwcEpzeCAgICAgICAgLT4gcm91dGVySnN4ICAgICAiVXNlcyIKICAgICAgICBhcHBKc3ggICAgICAgIC0+IGNoYXRXaWRnZXQgICAgIlJlbmRlcnMiCiAgICAgICAgcm91dGVySnN4ICAgICAtPiByb290TGF5b3V0ICAgICJXcmFwcyB1bmF1dGhlbnRpY2F0ZWQgcm91dGVzIgogICAgICAgIHJvdXRlckpzeCAgICAgLT4gYXBwTGF5b3V0ICAgICAiV3JhcHMgYXV0aGVudGljYXRlZCByb3V0ZXMiCiAgICAgICAgYXBwTGF5b3V0ICAgICAtPiBzaWRlYmFyICAgICAgICJSZW5kZXJzIgogICAgICAgIGFwcExheW91dCAgICAgLT4ga2FuYmFuUGFnZSAgICAiUm91dGVzIHRvIgogICAgICAgIGFwcExheW91dCAgICAgLT4gZGFzaGJvYXJkUGFnZSAiUm91dGVzIHRvIgogICAgICAgIGFwcExheW91dCAgICAgLT4gZGV2RGFzaGJvYXJkICAiUm91dGVzIHRvIgogICAgICAgIGFwcExheW91dCAgICAgLT4gc3ByaW50c1BhZ2UgICAiUm91dGVzIHRvIgogICAgICAgIGFwcExheW91dCAgICAgLT4gcHJvamVjdHNQYWdlICAiUm91dGVzIHRvIgogICAgICAgIGFwcExheW91dCAgICAgLT4gdXNlck1nbXRQYWdlICAiUm91dGVzIHRvIgogICAgICAgIGFwcExheW91dCAgICAgLT4gdG9kb3NQYWdlICAgICAiUm91dGVzIHRvIgogICAgICAgIHJvb3RMYXlvdXQgICAgLT4gbG9naW5QYWdlICAgICAiUm91dGVzIHRvIgogICAgICAgIGthbmJhblBhZ2UgICAgLT4gYXBpTGliICAgICAgICAiVXNlcyIKICAgICAgICBkYXNoYm9hcmRQYWdlIC0+IGFwaUxpYiAgICAgICAgIlVzZXMiCiAgICAgICAgZGV2RGFzaGJvYXJkICAtPiBhcGlMaWIgICAgICAgICJVc2VzIgogICAgICAgIHNwcmludHNQYWdlICAgLT4gYXBpTGliICAgICAgICAiVXNlcyIKICAgICAgICBwcm9qZWN0c1BhZ2UgIC0+IGFwaUxpYiAgICAgICAgIlVzZXMiCiAgICAgICAgYmFja2xvZ1BhZ2UgICAtPiBhcGlMaWIgICAgICAgICJVc2VzIgogICAgICAgIHVzZXJNZ210UGFnZSAgLT4gYXBpTGliICAgICAgICAiVXNlcyIKICAgICAgICBjaGF0V2lkZ2V0ICAgIC0+IGFwaUxpYiAgICAgICAgIlVzZXMiCiAgICAgICAgbG9naW5QYWdlICAgICAtPiBhdXRoTGliICAgICAgICJTdG9yZXMgdG9rZW5zIHZpYSIKICAgICAgICBhcGlMaWIgICAgICAgIC0+IGF1dGhMaWIgICAgICAgIlJlYWRzIEpXVCBmcm9tIgogICAgICAgIGZldGNoZXJMaWIgICAgLT4gYXBpTGliICAgICAgICAiV3JhcHMiCiAgICAgICAgYXBpTGliICAgICAgICAtPiBzcHJpbmdCYWNrZW5kICJIVFRQIHJlcXVlc3RzIiAiSlNPTiAvIEhUVFBTIgoKICAgICAgICAjIFJlbGF0aW9uc2hpcHMgLSBjb21wb25lbnRzIChTcHJpbmcgQm9vdCAtIHNlY3VyaXR5KQogICAgICAgIGFwcE1haW4gICAgICAgIC0+IG9yYWNsZUNvbmZpZyAgICAiTG9hZHMiCiAgICAgICAgYXBwTWFpbiAgICAgICAgLT4gZGF0YUluaXQgICAgICAgICJUcmlnZ2VycyBvbiBzdGFydHVwIgogICAgICAgIGp3dEF1dGhGaWx0ZXIgIC0+IGp3dFV0aWwgICAgICAgICAiVmFsaWRhdGVzIHRva2VuIHZpYSIKICAgICAgICBqd3RBdXRoRmlsdGVyICAtPiB1c2VyRGV0YWlsc1N2YyAgIkxvYWRzIHVzZXIgdmlhIgogICAgICAgIHdlYlNlY3VyaXR5ICAgIC0+IGp3dEF1dGhGaWx0ZXIgICAiUmVnaXN0ZXJzIGZpbHRlciIKICAgICAgICB1c2VyRGV0YWlsc1N2YyAtPiBlbXBsb3llZVJlcG8gICAgIlF1ZXJpZXMgZW1wbG95ZWUgYnkgZW1haWwiCgogICAgICAgICMgUmVsYXRpb25zaGlwcyAtIGNvbXBvbmVudHMgKFNwcmluZyBCb290IC0gY29udHJvbGxlcnMgdG8gc2VydmljZXMpCiAgICAgICAgYXV0aENvbnRyb2xsZXIgICAgIC0+IHVzZXJTZXJ2aWNlICAgICAgICJBdXRoZW50aWNhdGVzIHZpYSIKICAgICAgICBhdXRoQ29udHJvbGxlciAgICAgLT4gcmVmcmVzaFRva2VuU3ZjICAgIklzc3VlcyByZWZyZXNoIHRva2VuIHZpYSIKICAgICAgICB0YXNrQ29udHJvbGxlciAgICAgLT4gdGFza1NlcnZpY2UgICAgICAgIkRlbGVnYXRlcyB0byIKICAgICAgICBzcHJpbnRDb250cm9sbGVyICAgLT4gc3ByaW50U2VydmljZSAgICAgIkRlbGVnYXRlcyB0byIKICAgICAgICBwcm9qZWN0Q29udHJvbGxlciAgLT4gcHJvamVjdFNlcnZpY2UgICAgIkRlbGVnYXRlcyB0byIKICAgICAgICBlbXBsb3llZUNvbnRyb2xsZXIgLT4gdXNlclNlcnZpY2UgICAgICAgIkRlbGVnYXRlcyB0byIKICAgICAgICB0ZWFtQ29udHJvbGxlciAgICAgLT4gdGVhbVNlcnZpY2UgICAgICAgIkRlbGVnYXRlcyB0byIKICAgICAgICBjb21tZW50Q29udHJvbGxlciAgLT4gY29tbWVudFNlcnZpY2UgICAgIkRlbGVnYXRlcyB0byIKICAgICAgICB1c2VyQ29udHJvbGxlciAgICAgLT4gdXNlclNlcnZpY2UgICAgICAgIkRlbGVnYXRlcyB0byIKICAgICAgICBjaGF0Q29udHJvbGxlciAgICAgLT4gYm90QWdlbnRTdmMgICAgICAgIkRlbGVnYXRlcyB0byIKICAgICAgICB0ZWxlZ3JhbUNvbnRyb2xsZXIgLT4gYm90QWdlbnRTdmMgICAgICAgIkRlbGVnYXRlcyB0byIKICAgICAgICB0ZWxlZ3JhbUNvbnRyb2xsZXIgLT4gYm90Q2xpZW50ICAgICAgICAgIlNlbmRzIHJlcGxpZXMgdmlhIgoKICAgICAgICAjIFJlbGF0aW9uc2hpcHMgLSBjb21wb25lbnRzIChTcHJpbmcgQm9vdCAtIHNlcnZpY2VzIHRvIHJlcG9zKQogICAgICAgIHRhc2tTZXJ2aWNlICAgICAgLT4gdGFza1JlcG8gICAgICAgICAgIlBlcnNpc3RzIHZpYSIKICAgICAgICB0YXNrU2VydmljZSAgICAgIC0+IHNwcmludFJlcG8gICAgICAgICJSZWFkcyBzcHJpbnQgdmlhIgogICAgICAgIHRhc2tTZXJ2aWNlICAgICAgLT4gZW1wbG95ZWVSZXBvICAgICAgIlJlYWRzIGFzc2lnbmVlIHZpYSIKICAgICAgICBzcHJpbnRTZXJ2aWNlICAgIC0+IHNwcmludFJlcG8gICAgICAgICJQZXJzaXN0cyB2aWEiCiAgICAgICAgc3ByaW50U2VydmljZSAgICAtPiBwcm9qZWN0UmVwbyAgICAgICAiUmVhZHMgcHJvamVjdCB2aWEiCiAgICAgICAgcHJvamVjdFNlcnZpY2UgICAtPiBwcm9qZWN0UmVwbyAgICAgICAiUGVyc2lzdHMgdmlhIgogICAgICAgIHRlYW1TZXJ2aWNlICAgICAgLT4gdGVhbVJlcG8gICAgICAgICAgIlBlcnNpc3RzIHZpYSIKICAgICAgICB0ZWFtU2VydmljZSAgICAgIC0+IGVtcGxveWVlVGVhbVN2YyAgICJNYW5hZ2VzIG1lbWJlcnMgdmlhIgogICAgICAgIGVtcGxveWVlVGVhbVN2YyAgLT4gZW1wbG95ZWVUZWFtUmVwbyAgIlBlcnNpc3RzIHZpYSIKICAgICAgICBjb21tZW50U2VydmljZSAgIC0+IGNvbW1lbnRSZXBvICAgICAgICJQZXJzaXN0cyB2aWEiCiAgICAgICAgY29tbWVudFNlcnZpY2UgICAtPiB0YXNrUmVwbyAgICAgICAgICAiUmVhZHMgdGFzayB2aWEiCiAgICAgICAgdXNlclNlcnZpY2UgICAgICAtPiBlbXBsb3llZVJlcG8gICAgICAiUGVyc2lzdHMgdmlhIgogICAgICAgIHJlZnJlc2hUb2tlblN2YyAgLT4gcmVmcmVzaFRva2VuUmVwbyAgIlBlcnNpc3RzIHZpYSIKICAgICAgICBib3RBZ2VudFN2YyAgICAgIC0+IG9wZW5Sb3V0ZXJTdmMgICAgICJDYWxscyBmb3IgTExNIHJlcGx5IgogICAgICAgIGJvdEFnZW50U3ZjICAgICAgLT4gdGFza1JlcG8gICAgICAgICAgIlJlYWRzIHRhc2tzIGZvciBjb250ZXh0IgogICAgICAgIG9wZW5Sb3V0ZXJTdmMgICAgLT4gb3BlblJvdXRlckFJICAgICAgIlBPU1QgL2FwaS92MS9jaGF0L2NvbXBsZXRpb25zIiAiSFRUUFMiCgogICAgICAgICMgUmVsYXRpb25zaGlwcyAtIHJlcG9zIHRvIERCCiAgICAgICAgdGFza1JlcG8gICAgICAgICAtPiBvcmFjbGVEQiAgIlNRTCIgIkpEQkMiCiAgICAgICAgc3ByaW50UmVwbyAgICAgICAtPiBvcmFjbGVEQiAgIlNRTCIgIkpEQkMiCiAgICAgICAgcHJvamVjdFJlcG8gICAgICAtPiBvcmFjbGVEQiAgIlNRTCIgIkpEQkMiCiAgICAgICAgZW1wbG95ZWVSZXBvICAgICAtPiBvcmFjbGVEQiAgIlNRTCIgIkpEQkMiCiAgICAgICAgZW1wbG95ZWVUZWFtUmVwbyAtPiBvcmFjbGVEQiAgIlNRTCIgIkpEQkMiCiAgICAgICAgdGVhbVJlcG8gICAgICAgICAtPiBvcmFjbGVEQiAgIlNRTCIgIkpEQkMiCiAgICAgICAgY29tbWVudFJlcG8gICAgICAtPiBvcmFjbGVEQiAgIlNRTCIgIkpEQkMiCiAgICAgICAgcmVmcmVzaFRva2VuUmVwbyAtPiBvcmFjbGVEQiAgIlNRTCIgIkpEQkMiCgogICAgICAgICMgUmVsYXRpb25zaGlwcyAtIGJvdCB1dGlsaXRpZXMKICAgICAgICBib3RDbGllbnQgICAtPiB0ZWxlZ3JhbUFwaSAgIlBPU1QgL2JvdHt0b2tlbn0vc2VuZE1lc3NhZ2UiICJIVFRQUyIKICAgICAgICBib3RIZWxwZXIgICAtPiBib3RMYWJlbHMgICAgIlVzZXMiCiAgICAgICAgYm90SGVscGVyICAgLT4gYm90TWVzc2FnZXMgICJVc2VzIgogICAgICAgIHRlbGVncmFtQ29udHJvbGxlciAtPiBib3RIZWxwZXIgICAiQnVpbGRzIHBheWxvYWRzIHZpYSIKICAgICAgICB0ZWxlZ3JhbUNvbnRyb2xsZXIgLT4gYm90QWN0aW9ucyAgIlVzZXMiCiAgICAgICAgdGVsZWdyYW1Db250cm9sbGVyIC0+IGJvdENvbW1hbmRzICJVc2VzIgoKICAgICAgICAjIERlcGxveW1lbnQKICAgICAgICBkZXBsb3ltZW50RW52aXJvbm1lbnQgIlByb2R1Y3Rpb24iIHsKCiAgICAgICAgICAgIGRlcGxveW1lbnROb2RlICJPcmFjbGUgQ2xvdWQgSW5mcmFzdHJ1Y3R1cmUiICJPQ0kgcHJvZHVjdGlvbiByZWdpb24iICJPcmFjbGUgQ2xvdWQiIHsKCiAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiT3JhY2xlIEt1YmVybmV0ZXMgRW5naW5lIiAiTWFuYWdlZCBLdWJlcm5ldGVzIGNsdXN0ZXIiICJPS0UiIHsKICAgICAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAibXRkcndvcmtzaG9wIG5hbWVzcGFjZSIgIlByb2R1Y3Rpb24gbmFtZXNwYWNlIiAiS3ViZXJuZXRlcyBOYW1lc3BhY2UiIHsKICAgICAgICAgICAgICAgICAgICAgICAgZGVwbG95bWVudE5vZGUgInRvZG9saXN0YXBwLXNwcmluZ2Jvb3QtZGVwbG95bWVudCIgIlNwcmluZyBCb290IGRlcGxveW1lbnQgKHJvbGxpbmcgdXBkYXRlKSIgIkt1YmVybmV0ZXMgRGVwbG95bWVudCIgewogICAgICAgICAgICAgICAgICAgICAgICAgICAgYXBpSW5zdGFuY2UgPSBjb250YWluZXJJbnN0YW5jZSBzcHJpbmdCYWNrZW5kCiAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICAgICAgZGVwbG95bWVudE5vZGUgInJlYWN0LXN0YXRpYy1yZXNvdXJjZXMiICJSZWFjdCBTUEEgY29tcGlsZWQgaW50byBTcHJpbmcgQm9vdCBzdGF0aWMgcmVzb3VyY2VzIiAiRW1iZWRkZWQgaW4gU3ByaW5nIEJvb3QiIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNwYUluc3RhbmNlID0gY29udGFpbmVySW5zdGFuY2UgZnJvbnRlbmRTUEEKICAgICAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAib3JhY2xlLWF0cC1zZXJ2aWNlIiAiT3JhY2xlIEFUUCBhY2Nlc3NlZCB2aWEgSzhzIHNlcnZpY2UgYW5kIHdhbGxldCBzZWNyZXQiICJLdWJlcm5ldGVzIFNlcnZpY2UiIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIGRiSW5zdGFuY2UgPSBjb250YWluZXJJbnN0YW5jZSBvcmFjbGVEQgogICAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgfQoKICAgICAgICAgICAgICAgIGRlcGxveW1lbnROb2RlICJPQ0kgVGVycmFmb3JtIFJ1bm5lciIgIlRlcnJhZm9ybSBhbmQgT0NJIENMSSBleGVjdXRpb24gZW52aXJvbm1lbnQiICJPQ0kgQ2xvdWQgU2hlbGwiIHsKICAgICAgICAgICAgICAgICAgICBpYWNJbnN0YW5jZSA9IGNvbnRhaW5lckluc3RhbmNlIHRlcnJhZm9ybUlhQwogICAgICAgICAgICAgICAgfQogICAgICAgICAgICB9CgogICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiR2l0SHViIEFjdGlvbnMgUnVubmVyIiAidWJ1bnR1LWxhdGVzdCBob3N0ZWQgcnVubmVyIiAiQ0kvQ0QiIHsKICAgICAgICAgICAgICAgIGNpSW5zdGFuY2UgPSBjb250YWluZXJJbnN0YW5jZSBkZXBsb3lTY3JpcHRzCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9CgogICAgdmlld3MgewoKICAgICAgICBzeXN0ZW1MYW5kc2NhcGUgIlN5c3RlbUxhbmRzY2FwZSIgIkFsbCBhY3RvcnMsIHN5c3RlbXMgYW5kIGV4dGVybmFsIGRlcGVuZGVuY2llcyIgewogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICAgICAgYXV0b0xheW91dCB0YgogICAgICAgIH0KCiAgICAgICAgc3lzdGVtQ29udGV4dCBtdGRyU3lzdGVtICJTeXN0ZW1Db250ZXh0IiAiTXRkclNwcmluZyBhbmQgaXRzIGRpcmVjdCB1c2VycyBhbmQgZXh0ZXJuYWwgc3lzdGVtcyIgewogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICAgICAgYXV0b0xheW91dCB0YgogICAgICAgIH0KCiAgICAgICAgY29udGFpbmVyIG10ZHJTeXN0ZW0gIkNvbnRhaW5lcnMiICJEZXBsb3lhYmxlIGNvbnRhaW5lcnMgd2l0aGluIE10ZHJTcHJpbmciIHsKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgICAgIGF1dG9MYXlvdXQgdGIKICAgICAgICB9CgogICAgICAgIGNvbXBvbmVudCBmcm9udGVuZFNQQSAiQ29tcG9uZW50c0Zyb250ZW5kIiAiSW50ZXJuYWwgY29tcG9uZW50cyBvZiB0aGUgUmVhY3QgU1BBIiB7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBhdXRvTGF5b3V0IHRiCiAgICAgICAgfQoKICAgICAgICBjb21wb25lbnQgc3ByaW5nQmFja2VuZCAiQ29tcG9uZW50c0JhY2tlbmQiICJJbnRlcm5hbCBjb21wb25lbnRzIG9mIHRoZSBTcHJpbmcgQm9vdCBiYWNrZW5kIiB7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBhdXRvTGF5b3V0IHRiCiAgICAgICAgfQoKICAgICAgICBkZXBsb3ltZW50IG10ZHJTeXN0ZW0gIlByb2R1Y3Rpb24iICJEZXBsb3ltZW50RGlhZ3JhbSIgIlByb2R1Y3Rpb24gZGVwbG95bWVudCBvbiBPcmFjbGUgS3ViZXJuZXRlcyBFbmdpbmUiIHsKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgICAgIGF1dG9MYXlvdXQgdGIKICAgICAgICB9CgogICAgICAgIGR5bmFtaWMgbXRkclN5c3RlbSAiRHluYW1pY0xvZ2luIiAiSldUIGF1dGhlbnRpY2F0aW9uIGZsb3ciIHsKICAgICAgICAgICAgZGV2ZWxvcGVyICAgICAtPiBmcm9udGVuZFNQQSAgICJTdWJtaXRzIGxvZ2luIGZvcm0iCiAgICAgICAgICAgIGZyb250ZW5kU1BBICAgLT4gc3ByaW5nQmFja2VuZCAiUE9TVCAvYXBpL2F1dGgvbG9naW4iCiAgICAgICAgICAgIHNwcmluZ0JhY2tlbmQgLT4gb3JhY2xlREIgICAgICAiU0VMRUNUIGVtcGxveWVlIGJ5IGVtYWlsIgogICAgICAgICAgICBmcm9udGVuZFNQQSAgIC0+IHNwcmluZ0JhY2tlbmQgIlN1YnNlcXVlbnQgcmVxdWVzdHMgd2l0aCBCZWFyZXIgdG9rZW4iCiAgICAgICAgICAgIGF1dG9MYXlvdXQgdGIKICAgICAgICB9CgogICAgICAgIGR5bmFtaWMgbXRkclN5c3RlbSAiRHluYW1pY1Rhc2tDcmVhdGlvbiIgIkRldmVsb3BlciBjcmVhdGVzIGEgdGFzayBvbiB0aGUgS2FuYmFuIGJvYXJkIiB7CiAgICAgICAgICAgIGRldmVsb3BlciAgICAgLT4gZnJvbnRlbmRTUEEgICAiRmlsbHMgdGFzayBmb3JtIGFuZCBzdWJtaXRzIgogICAgICAgICAgICBmcm9udGVuZFNQQSAgIC0+IHNwcmluZ0JhY2tlbmQgIlBPU1QgL2FwaS90YXNrcyIKICAgICAgICAgICAgc3ByaW5nQmFja2VuZCAtPiBvcmFjbGVEQiAgICAgICJJTlNFUlQgdGFzayByb3ciCiAgICAgICAgICAgIHNwcmluZ0JhY2tlbmQgLT4gdGVsZWdyYW1BcGkgICAiTm90aWZ5IGFzc2lnbmVlIHZpYSBib3QiCiAgICAgICAgICAgIGF1dG9MYXlvdXQgdGIKICAgICAgICB9CgogICAgICAgIGR5bmFtaWMgbXRkclN5c3RlbSAiRHluYW1pY0FJQ2hhdCIgIlVzZXIgYXNrcyB0aGUgQUkgY2hhdCB3aWRnZXQgYSBxdWVzdGlvbiIgewogICAgICAgICAgICBkZXZlbG9wZXIgICAgIC0+IGZyb250ZW5kU1BBICAgIlR5cGVzIHF1ZXN0aW9uIGluIENoYXRXaWRnZXQiCiAgICAgICAgICAgIGZyb250ZW5kU1BBICAgLT4gc3ByaW5nQmFja2VuZCAiUE9TVCAvYXBpL2NoYXQiCiAgICAgICAgICAgIHNwcmluZ0JhY2tlbmQgLT4gb3JhY2xlREIgICAgICAiUmVhZHMgdGFzayBjb250ZXh0IGZvciBwcm9tcHQiCiAgICAgICAgICAgIHNwcmluZ0JhY2tlbmQgLT4gb3BlblJvdXRlckFJICAiUE9TVCAvYXBpL3YxL2NoYXQvY29tcGxldGlvbnMiCiAgICAgICAgICAgIGF1dG9MYXlvdXQgdGIKICAgICAgICB9CgogICAgICAgIGR5bmFtaWMgc3ByaW5nQmFja2VuZCAiRHluYW1pY1RlbGVncmFtQm90IiAiSW50ZXJuYWwgZmxvdyB3aGVuIGEgVGVsZWdyYW0gd2ViaG9vayBhcnJpdmVzIiB7CiAgICAgICAgICAgIHRlbGVncmFtQ29udHJvbGxlciAtPiBib3RBZ2VudFN2YyAgIlByb2Nlc3NlcyBpbmNvbWluZyBjb21tYW5kIgogICAgICAgICAgICBib3RBZ2VudFN2YyAgICAgICAgLT4gdGFza1JlcG8gICAgICJRdWVyaWVzIHRhc2tzIGZvciBjb250ZXh0IgogICAgICAgICAgICBib3RBZ2VudFN2YyAgICAgICAgLT4gb3BlblJvdXRlclN2YyAiUmVxdWVzdHMgQUktYXNzaXN0ZWQgcmVwbHkiCiAgICAgICAgICAgIHRlbGVncmFtQ29udHJvbGxlciAtPiBib3RDbGllbnQgICAgIlNlbmRzIHJlcGx5IG1lc3NhZ2UiCiAgICAgICAgICAgIGF1dG9MYXlvdXQgdGIKICAgICAgICB9CgogICAgICAgIGR5bmFtaWMgc3ByaW5nQmFja2VuZCAiRHluYW1pY1N0YXJ0dXAiICJTcHJpbmcgQm9vdCBzdGFydHVwIHNlcXVlbmNlIiB7CiAgICAgICAgICAgIGFwcE1haW4gLT4gb3JhY2xlQ29uZmlnICJMb2FkcyBkYXRhc291cmNlIGNvbmZpZyIKICAgICAgICAgICAgYXBwTWFpbiAtPiBkYXRhSW5pdCAgICAgIlNlZWRzIGluaXRpYWwgZGF0YSBpZiBuZWVkZWQiCiAgICAgICAgICAgIGF1dG9MYXlvdXQgdGIKICAgICAgICB9CgogICAgICAgIHN0eWxlcyB7CiAgICAgICAgICAgIGVsZW1lbnQgIldlYiBCcm93c2VyIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBXZWJCcm93c2VyCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiRGF0YWJhc2UiIHsKICAgICAgICAgICAgICAgIHNoYXBlIEN5bGluZGVyCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiU3ByaW5nIEJvb3QgQXBwIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBIZXhhZ29uCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiRXh0ZXJuYWwiIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzk5OTk5OQogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIklhQyIgewogICAgICAgICAgICAgICAgc2hhcGUgQ29tcG9uZW50CiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiQ0kgVG9vbCIgewogICAgICAgICAgICAgICAgc2hhcGUgQ29tcG9uZW50CiAgICAgICAgICAgIH0KICAgICAgICB9CgogICAgICAgIHRoZW1lIGRlZmF1bHQKICAgIH0KCn0=",
+    "structurizr.inspection.info" : "0",
+    "structurizr.inspection.ignore" : "0",
+    "structurizr.inspection.warning" : "0"
+  },
+  "views" : {
+    "componentViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "containerId" : "12",
+      "description" : "Internal components of the React SPA",
+      "elements" : [ {
+        "id" : "13",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "14",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "15",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "16",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "17",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "18",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "19",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "20",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "21",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "22",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "23",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "24",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "25",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "26",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "27",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "28",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "29",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "30",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "31",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalContainerBoundariesVisible" : false,
+      "key" : "ComponentsFrontend",
+      "name" : "Component View: MtdrSpring Sprint Tracker - React SPA",
+      "order" : 4,
+      "relationships" : [ {
+        "id" : "106"
+      }, {
+        "id" : "107"
+      }, {
+        "id" : "108"
+      }, {
+        "id" : "109"
+      }, {
+        "id" : "110"
+      }, {
+        "id" : "111"
+      }, {
+        "id" : "112"
+      }, {
+        "id" : "113"
+      }, {
+        "id" : "114"
+      }, {
+        "id" : "115"
+      }, {
+        "id" : "116"
+      }, {
+        "id" : "117"
+      }, {
+        "id" : "118"
+      }, {
+        "id" : "119"
+      }, {
+        "id" : "120"
+      }, {
+        "id" : "121"
+      }, {
+        "id" : "122"
+      }, {
+        "id" : "123"
+      }, {
+        "id" : "124"
+      }, {
+        "id" : "125"
+      }, {
+        "id" : "126"
+      }, {
+        "id" : "127"
+      }, {
+        "id" : "128"
+      }, {
+        "id" : "129"
+      }, {
+        "id" : "130"
+      } ]
+    }, {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "containerId" : "31",
+      "description" : "Internal components of the Spring Boot backend",
+      "elements" : [ {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "6",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "32",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "33",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "34",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "35",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "36",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "37",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "38",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "39",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "40",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "41",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "42",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "43",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "44",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "45",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "46",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "47",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "48",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "49",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "50",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "51",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "52",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "53",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "54",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "55",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "56",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "57",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "58",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "59",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "60",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "61",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "62",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "63",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "64",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "65",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "66",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "67",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "68",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "69",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "70",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "71",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "72",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "73",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "74",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "75",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "76",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "77",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "78",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "79",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "80",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "81",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "82",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "83",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalContainerBoundariesVisible" : false,
+      "key" : "ComponentsBackend",
+      "name" : "Component View: MtdrSpring Sprint Tracker - Spring Boot API",
+      "order" : 5,
+      "relationships" : [ {
+        "id" : "131"
+      }, {
+        "id" : "132"
+      }, {
+        "id" : "133"
+      }, {
+        "id" : "134"
+      }, {
+        "id" : "135"
+      }, {
+        "id" : "136"
+      }, {
+        "id" : "137"
+      }, {
+        "id" : "138"
+      }, {
+        "id" : "139"
+      }, {
+        "id" : "140"
+      }, {
+        "id" : "141"
+      }, {
+        "id" : "142"
+      }, {
+        "id" : "143"
+      }, {
+        "id" : "144"
+      }, {
+        "id" : "145"
+      }, {
+        "id" : "146"
+      }, {
+        "id" : "147"
+      }, {
+        "id" : "148"
+      }, {
+        "id" : "149"
+      }, {
+        "id" : "150"
+      }, {
+        "id" : "151"
+      }, {
+        "id" : "152"
+      }, {
+        "id" : "153"
+      }, {
+        "id" : "154"
+      }, {
+        "id" : "155"
+      }, {
+        "id" : "156"
+      }, {
+        "id" : "157"
+      }, {
+        "id" : "158"
+      }, {
+        "id" : "159"
+      }, {
+        "id" : "160"
+      }, {
+        "id" : "161"
+      }, {
+        "id" : "162"
+      }, {
+        "id" : "163"
+      }, {
+        "id" : "164"
+      }, {
+        "id" : "165"
+      }, {
+        "id" : "166"
+      }, {
+        "id" : "167"
+      }, {
+        "id" : "168"
+      }, {
+        "id" : "169"
+      }, {
+        "id" : "170"
+      }, {
+        "id" : "171"
+      }, {
+        "id" : "172"
+      }, {
+        "id" : "173"
+      }, {
+        "id" : "174"
+      }, {
+        "id" : "175"
+      }, {
+        "id" : "176"
+      }, {
+        "id" : "177"
+      }, {
+        "id" : "178"
+      } ]
+    } ],
+    "configuration" : {
+      "styles" : {
+        "elements" : [ {
+          "shape" : "Component",
+          "tag" : "CI Tool"
+        }, {
+          "shape" : "Cylinder",
+          "tag" : "Database"
+        }, {
+          "background" : "#999999",
+          "color" : "#ffffff",
+          "tag" : "External"
+        }, {
+          "shape" : "Component",
+          "tag" : "IaC"
+        }, {
+          "shape" : "Hexagon",
+          "tag" : "Spring Boot App"
+        }, {
+          "shape" : "WebBrowser",
+          "tag" : "Web Browser"
+        } ]
+      },
+      "terminology" : { },
+      "themes" : [ "https://static.structurizr.com/themes/default/theme.json" ]
+    },
+    "containerViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "Deployable containers within MtdrSpring",
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "2",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "3",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "6",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "10",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "11",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "12",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "31",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "83",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalSoftwareSystemBoundariesVisible" : false,
+      "key" : "Containers",
+      "name" : "Container View: MtdrSpring Sprint Tracker",
+      "order" : 3,
+      "relationships" : [ {
+        "id" : "100"
+      }, {
+        "id" : "101"
+      }, {
+        "id" : "102"
+      }, {
+        "id" : "103"
+      }, {
+        "id" : "104"
+      }, {
+        "id" : "105"
+      }, {
+        "id" : "95"
+      }, {
+        "id" : "96"
+      }, {
+        "id" : "97"
+      }, {
+        "id" : "98"
+      }, {
+        "id" : "99"
+      } ],
+      "softwareSystemId" : "9"
+    } ],
+    "deploymentViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "Production deployment on Oracle Kubernetes Engine",
+      "elements" : [ {
+        "id" : "179",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "180",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "181",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "182",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "183",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "184",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "185",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "187",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "188",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "190",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "191",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "192",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "193",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "environment" : "Production",
+      "key" : "DeploymentDiagram",
+      "name" : "Deployment View: MtdrSpring Sprint Tracker - Production",
+      "order" : 6,
+      "relationships" : [ {
+        "id" : "186"
+      }, {
+        "id" : "189"
+      }, {
+        "id" : "194"
+      }, {
+        "id" : "195"
+      } ],
+      "softwareSystemId" : "9"
+    } ],
+    "dynamicViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "JWT authentication flow",
+      "elementId" : "9",
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "12",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "31",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "83",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalBoundariesVisible" : false,
+      "key" : "DynamicLogin",
+      "name" : "Dynamic View: MtdrSpring Sprint Tracker",
+      "order" : 7,
+      "relationships" : [ {
+        "description" : "Submits login form",
+        "id" : "95",
+        "order" : "1",
+        "response" : false
+      }, {
+        "description" : "POST /api/auth/login",
+        "id" : "100",
+        "order" : "2",
+        "response" : false
+      }, {
+        "description" : "SELECT employee by email",
+        "id" : "101",
+        "order" : "3",
+        "response" : false
+      }, {
+        "description" : "Subsequent requests with Bearer token",
+        "id" : "100",
+        "order" : "4",
+        "response" : false
+      } ]
+    }, {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "Developer creates a task on the Kanban board",
+      "elementId" : "9",
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "12",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "31",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "83",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalBoundariesVisible" : false,
+      "key" : "DynamicTaskCreation",
+      "name" : "Dynamic View: MtdrSpring Sprint Tracker",
+      "order" : 8,
+      "relationships" : [ {
+        "description" : "Fills task form and submits",
+        "id" : "95",
+        "order" : "1",
+        "response" : false
+      }, {
+        "description" : "POST /api/tasks",
+        "id" : "100",
+        "order" : "2",
+        "response" : false
+      }, {
+        "description" : "INSERT task row",
+        "id" : "101",
+        "order" : "3",
+        "response" : false
+      }, {
+        "description" : "Notify assignee via bot",
+        "id" : "102",
+        "order" : "4",
+        "response" : false
+      } ]
+    }, {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "User asks the AI chat widget a question",
+      "elementId" : "9",
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "6",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "12",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "31",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "83",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalBoundariesVisible" : false,
+      "key" : "DynamicAIChat",
+      "name" : "Dynamic View: MtdrSpring Sprint Tracker",
+      "order" : 9,
+      "relationships" : [ {
+        "description" : "Types question in ChatWidget",
+        "id" : "95",
+        "order" : "1",
+        "response" : false
+      }, {
+        "description" : "POST /api/chat",
+        "id" : "100",
+        "order" : "2",
+        "response" : false
+      }, {
+        "description" : "Reads task context for prompt",
+        "id" : "101",
+        "order" : "3",
+        "response" : false
+      }, {
+        "description" : "POST /api/v1/chat/completions",
+        "id" : "104",
+        "order" : "4",
+        "response" : false
+      } ]
+    }, {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "Internal flow when a Telegram webhook arrives",
+      "elementId" : "31",
+      "elements" : [ {
+        "id" : "51",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "60",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "61",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "62",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "78",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalBoundariesVisible" : false,
+      "key" : "DynamicTelegramBot",
+      "name" : "Dynamic View: MtdrSpring Sprint Tracker - Spring Boot API",
+      "order" : 10,
+      "relationships" : [ {
+        "description" : "Processes incoming command",
+        "id" : "147",
+        "order" : "1",
+        "response" : false
+      }, {
+        "description" : "Queries tasks for context",
+        "id" : "163",
+        "order" : "2",
+        "response" : false
+      }, {
+        "description" : "Requests AI-assisted reply",
+        "id" : "162",
+        "order" : "3",
+        "response" : false
+      }, {
+        "description" : "Sends reply message",
+        "id" : "148",
+        "order" : "4",
+        "response" : false
+      } ]
+    }, {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "Spring Boot startup sequence",
+      "elementId" : "31",
+      "elements" : [ {
+        "id" : "32",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "33",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "37",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalBoundariesVisible" : false,
+      "key" : "DynamicStartup",
+      "name" : "Dynamic View: MtdrSpring Sprint Tracker - Spring Boot API",
+      "order" : 11,
+      "relationships" : [ {
+        "description" : "Loads datasource config",
+        "id" : "131",
+        "order" : "1",
+        "response" : false
+      }, {
+        "description" : "Seeds initial data if needed",
+        "id" : "132",
+        "order" : "2",
+        "response" : false
+      } ]
+    } ],
+    "systemContextViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "MtdrSpring and its direct users and external systems",
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "2",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "3",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "6",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "8",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "9",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "enterpriseBoundaryVisible" : true,
+      "key" : "SystemContext",
+      "name" : "System Context View: MtdrSpring Sprint Tracker",
+      "order" : 2,
+      "relationships" : [ {
+        "id" : "84"
+      }, {
+        "id" : "85"
+      }, {
+        "id" : "86"
+      }, {
+        "id" : "89"
+      }, {
+        "id" : "90"
+      }, {
+        "id" : "91"
+      }, {
+        "id" : "92"
+      }, {
+        "id" : "94"
+      } ],
+      "softwareSystemId" : "9"
+    } ],
+    "systemLandscapeViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "All actors, systems and external dependencies",
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "2",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "3",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "4",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "6",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "7",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "8",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "9",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "enterpriseBoundaryVisible" : true,
+      "key" : "SystemLandscape",
+      "name" : "System Landscape View",
+      "order" : 1,
+      "relationships" : [ {
+        "id" : "84"
+      }, {
+        "id" : "85"
+      }, {
+        "id" : "86"
+      }, {
+        "id" : "87"
+      }, {
+        "id" : "88"
+      }, {
+        "id" : "89"
+      }, {
+        "id" : "90"
+      }, {
+        "id" : "91"
+      }, {
+        "id" : "92"
+      }, {
+        "id" : "93"
+      }, {
+        "id" : "94"
+      } ]
+    } ]
+  }
+}
