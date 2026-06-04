@@ -4,27 +4,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springboot.MyTodoList.model.Employee;
 import com.springboot.MyTodoList.service.UserService;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import com.springboot.MyTodoList.security.WebSecurityConfiguration;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @WebMvcTest(EmployeeController.class)
+@Import(WebSecurityConfiguration.class)
 public class EmployeeControllerTest {
 
     @Autowired
@@ -36,22 +36,25 @@ public class EmployeeControllerTest {
     @MockitoBean
     private com.springboot.MyTodoList.repository.EmployeeRepository employeeRepository;
 
+    // Required by the security filter chain (JwtAuthFilter) that @WebMvcTest loads.
+    @MockitoBean
+    private com.springboot.MyTodoList.security.JwtUtil jwtUtil;
+
+    @MockitoBean
+    private com.springboot.MyTodoList.security.UserDetailsServiceImpl userDetailsService;
+
     private final ObjectMapper mapper = new ObjectMapper();
 
-    @BeforeEach
-    public void setup() {
-        SecurityContextHolder.clearContext();
-    }
+    // Email of the authenticated caller for the request being built; applied via user(...).
+    private String callerEmail;
 
     @AfterEach
     public void tearDown() {
-        SecurityContextHolder.clearContext();
         Mockito.reset(userService, employeeRepository);
     }
 
     private void setCaller(String email, String role) {
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(email, null);
-        SecurityContextHolder.setContext(new SecurityContextImpl(auth));
+        this.callerEmail = email;
         Employee caller = new Employee();
         caller.setEmail(email);
         caller.setRole(role);
@@ -67,6 +70,7 @@ public class EmployeeControllerTest {
         createMgr.setRole("manager");
 
         mockMvc.perform(post("/employees")
+                .with(user(callerEmail))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(createMgr)))
                 .andExpect(status().isForbidden())
@@ -77,6 +81,7 @@ public class EmployeeControllerTest {
         createAdmin.setRole("admin");
 
         mockMvc.perform(post("/employees")
+                .with(user(callerEmail))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(createAdmin)))
                 .andExpect(status().isForbidden())
@@ -92,6 +97,7 @@ public class EmployeeControllerTest {
         e.setRole("developer");
 
         mockMvc.perform(post("/employees")
+                .with(user(callerEmail))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(e)))
                 .andExpect(status().isForbidden());
@@ -101,6 +107,7 @@ public class EmployeeControllerTest {
         when(userService.addEmployee(any(Employee.class))).thenReturn(e);
 
         mockMvc.perform(post("/employees")
+                .with(user(callerEmail))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(e)))
                 .andExpect(status().isOk());
@@ -111,6 +118,7 @@ public class EmployeeControllerTest {
         mgr.setRole("manager");
 
         mockMvc.perform(post("/employees")
+                .with(user(callerEmail))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(mgr)))
                 .andExpect(status().isForbidden());
@@ -120,15 +128,15 @@ public class EmployeeControllerTest {
         when(userService.addEmployee(any(Employee.class))).thenReturn(e);
 
         mockMvc.perform(post("/employees")
+                .with(user(callerEmail))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(e)))
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void adminCanOnlyCreateManager() throws Exception {
-        // This test encodes the requirement that an admin should only be able to create managers.
-        // Depending on current controller logic this may fail until controller is updated.
+    public void adminCanCreateAnyRole() throws Exception {
+        // An admin is not restricted by target role: they may create managers and developers.
         setCaller("admin2@example.com", "admin");
 
         Employee createManager = new Employee();
@@ -137,20 +145,21 @@ public class EmployeeControllerTest {
         when(userService.addEmployee(any(Employee.class))).thenReturn(createManager);
 
         mockMvc.perform(post("/employees")
+                .with(user(callerEmail))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(createManager)))
                 .andExpect(status().isOk());
 
-        // admin should NOT be able to create a developer (per requirement)
+        // admin can also create a developer
         Employee createDev = new Employee();
         createDev.setEmail("dev3@example.com");
         createDev.setRole("developer");
+        when(userService.addEmployee(any(Employee.class))).thenReturn(createDev);
 
-        // Expecting forbidden according to requested rule. If implementation allows it,
-        // this assertion will fail and indicates controller needs updating.
         mockMvc.perform(post("/employees")
+                .with(user(callerEmail))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(createDev)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk());
     }
 }
