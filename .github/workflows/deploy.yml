@@ -66,6 +66,9 @@ jobs:
         needs: build
         environment: prod
         steps:
+          - name: Checkout code
+            uses: actions/checkout@v6
+
           - name: Set up kubectl
             uses: azure/setup-kubectl@v4
 
@@ -80,13 +83,22 @@ jobs:
                 mkdir -p $HOME/.kube
                 echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > $HOME/.kube/config
 
-          - name: Ensure imagePullSecrets
+          - name: Apply Kubernetes manifest
+            working-directory: MtdrSpring/backend
+            env:
+                DOCKER_REGISTRY: ${{ secrets.OCI_REGION }}.ocir.io/${{ secrets.OCI_NAMESPACE }}
+                TODO_PDB_NAME: ${{ secrets.TODO_PDB_NAME }}
+                OCI_REGION: ${{ secrets.OCI_REGION }}
+                UI_USERNAME: ${{ secrets.UI_USERNAME }}
             run: |
-                kubectl patch deployment todolistapp-springboot-deployment \
-                    -n mtdrworkshop \
-                    --type=json \
-                    -p='[{"op":"add","path":"/spec/template/spec/imagePullSecrets","value":[{"name":"oci-registry-secret"}]}]' \
-                    || true
+                # Idempotent: creates the Deployment/Services if missing (e.g. after
+                # undeploy.sh), no-ops the rest if they already exist.
+                sed -e "s|%DOCKER_REGISTRY%|${DOCKER_REGISTRY}|g" \
+                    -e "s|%TODO_PDB_NAME%|${TODO_PDB_NAME}|g" \
+                    -e "s|%OCI_REGION%|${OCI_REGION}|g" \
+                    -e "s|%UI_USERNAME%|${UI_USERNAME}|g" \
+                    src/main/resources/todolistapp-springboot.yaml \
+                    | kubectl apply -n mtdrworkshop -f -
 
           - name: Update deployment image
             run: |
