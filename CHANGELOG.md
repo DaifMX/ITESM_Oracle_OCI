@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/DaifMX/ITESM_Oracle_OCI/compare/v1.0.2...v1.0.3) (2026-06-05)
+
+
+### Bug Fixes
+
+* **tests:** make EmployeeControllerTest pass under the real security chain ([60ead61](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/60ead6168b550e70104549a5d1c3a531d8e04767))
+
 ## [1.0.2](https://github.com/DaifMX/ITESM_Oracle_OCI/compare/v1.0.1...v1.0.2) (2026-05-22)
 
 
