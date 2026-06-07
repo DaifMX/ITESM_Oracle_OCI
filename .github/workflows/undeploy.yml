@@ -1,0 +1,57 @@
+---
+name: Undeploy
+
+# Manually triggered teardown. Targets only the billed compute (OKE cluster +
+# node pool) and sweeps the leftover Load Balancer, so charges stop. The
+# Always-Free ATP database, its bucket and the VCN are PRESERVED -- your data
+# survives, and the next deploy rebuilds the cluster against the existing DB.
+on:
+    workflow_dispatch:
+        inputs:
+            confirm:
+                description: 'Type "destroy" to confirm tearing down all OCI infrastructure'
+                required: true
+                default: ''
+
+jobs:
+    undeploy:
+        runs-on: ubuntu-latest
+        environment: prod
+        if: ${{ github.event.inputs.confirm == 'destroy' }}
+        env:
+            OCI_TENANCY_OCID: ${{ secrets.OCI_TENANCY_OCID }}
+            OCI_USER_OCID: ${{ secrets.OCI_USER_OCID }}
+            OCI_FINGERPRINT: ${{ secrets.OCI_FINGERPRINT }}
+            OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
+            OCI_REGION: ${{ secrets.OCI_REGION }}
+            OCI_NAMESPACE: ${{ secrets.OCI_NAMESPACE }}
+            TF_STATE_BUCKET: ${{ secrets.TF_STATE_BUCKET }}
+            AWS_ACCESS_KEY_ID: ${{ secrets.OCI_S3_ACCESS_KEY }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.OCI_S3_SECRET_KEY }}
+            TF_VAR_ociTenancyOcid: ${{ secrets.OCI_TENANCY_OCID }}
+            TF_VAR_ociUserOcid: ${{ secrets.OCI_USER_OCID }}
+            TF_VAR_ociCompartmentOcid: ${{ secrets.OCI_COMPARTMENT_OCID }}
+            TF_VAR_ociRegionIdentifier: ${{ secrets.OCI_REGION }}
+            TF_VAR_runName: ${{ secrets.RUN_NAME }}
+            TF_VAR_mtdrDbName: ${{ secrets.TODO_PDB_NAME }}
+            TF_VAR_mtdrKey: ${{ secrets.MTDR_KEY }}
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v6
+
+          - name: Set up Terraform
+            uses: hashicorp/setup-terraform@v3
+            with:
+                terraform_wrapper: false
+
+          - name: Install OCI CLI
+            run: |
+                curl -L -O https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh
+                bash install.sh --accept-all-defaults
+                echo "$HOME/bin" >> $GITHUB_PATH
+
+          - name: Configure OCI auth
+            run: bash MtdrSpring/utils/ci/setup-oci-auth.sh
+
+          - name: Terraform destroy
+            run: bash MtdrSpring/utils/ci/terraform-destroy.sh

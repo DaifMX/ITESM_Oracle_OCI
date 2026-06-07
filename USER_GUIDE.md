@@ -1,17 +1,26 @@
-# User Guide — Project Management System with Chatbot Integration
+<div align="center">
 
-> **Version:** 1.0.2 · **Platform:** Oracle Cloud Infrastructure · **Last updated:** May 2026  
-> **Applies to:** Web Portal (all modern browsers) and Telegram Bot integration  
-> **Required role:** Developer or Manager account (assigned by an Admin)
+# 📋 Project Management System — User Guide
+### with Telegram Chatbot & AI Assistant
+
+![Version](https://img.shields.io/badge/version-1.0.2-2563eb)
+![Platform](https://img.shields.io/badge/Oracle_Cloud-OKE-F80000?logo=oracle&logoColor=white)
+![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub_Actions-2088FF?logo=githubactions&logoColor=white)
+![Updated](https://img.shields.io/badge/updated-June_2026-16a34a)
+
+**Applies to:** Web Portal (all modern browsers) · Telegram Bot · GitHub Actions deployment
+**Required role:** Developer or Manager account (assigned by an Admin)
+
+</div>
 
 ---
 
 ## Table of Contents
 
+**Using the system**
 1. [Quick Start — Be up and running in 5 minutes](#1-quick-start)
 2. [Who is this guide for?](#2-who-is-this-guide-for)
 3. [Prerequisites](#3-prerequisites)
-4. [Installation & Local Setup](#4-installation--local-setup)
 5. [How to log in](#5-how-to-log-in)
 6. [Developer Dashboard](#6-developer-dashboard)
 7. [Manager Dashboard](#7-manager-dashboard)
@@ -21,8 +30,17 @@
 11. [How to read your KPI dashboard](#11-how-to-read-your-kpi-dashboard)
 12. [How to manage the backlog](#12-how-to-manage-the-backlog)
 13. [How to download reports](#13-how-to-download-reports)
+
+**Bot & AI**
 14. [Telegram Bot — Full command reference](#14-telegram-bot--full-command-reference)
 15. [AI Assistant (`/ask`)](#15-ai-assistant-ask)
+
+**Running & deploying**
+4. [Installation & Deployment](#4-installation--deployment)
+   - [4.5 Deploying with GitHub Actions](#45-deploying-with-github-actions)
+   - [4.6 GitHub Actions secrets reference](#46-github-actions-secrets-reference) 🔑
+
+**Reference**
 16. [Troubleshooting & common errors](#16-troubleshooting--common-errors)
 17. [Glossary](#17-glossary)
 18. [Changelog](#18-changelog)
@@ -40,7 +58,8 @@ Get your first task updated in under 5 minutes:
 5. Change the **Status** dropdown to the appropriate value (e.g., **In Progress**).
 6. Click **Save**. The change is reflected immediately on the board.
 
-> **Pro Tip:** You can also manage tasks directly from Telegram. Search for the bot, send `/start`, and follow the authentication prompt — no browser required.
+> [!TIP]
+> You can also manage tasks directly from Telegram. Search for the bot, send `/start`, and follow the authentication prompt — no browser required.
 
 ---
 
@@ -69,9 +88,10 @@ Before using the system, confirm the following:
 
 ---
 
-## 4. Installation & Local Setup
+## 4. Installation & Deployment
 
-> **Note:** Skip this section if you are accessing the system through the hosted web portal. These steps are for developers running the project locally.
+> [!NOTE]
+> Skip sections 4.1–4.4 if you are accessing the system through the hosted web portal — those steps are for developers running the project locally. Sections **4.5–4.6** cover cloud deployment via GitHub Actions.
 
 ### 4.1 Clone the repository
 
@@ -92,7 +112,8 @@ docker compose -f compose.dev.yml up --build
 
 The system will build and start all services. Once complete, the web portal is accessible at `http://localhost:3000` and the API at `http://localhost:8080`.
 
-> **Caution:** Running `docker compose down -v` will delete all local database volumes. Back up any data you need before doing this.
+> [!CAUTION]
+> Running `docker compose down -v` will delete all local database volumes. Back up any data you need before doing this.
 
 ### 4.4 Database migration note (v1.0.0+)
 
@@ -103,6 +124,123 @@ migrations/V2__single_assignee.sql
 ```
 
 This migration drops the `EMPLOYEE_TASK` table and replaces it with a single-assignee model. Skipping this step will cause task assignment features to fail.
+
+### 4.5 Deploying with GitHub Actions
+
+Cloud deployment to Oracle Container Engine for Kubernetes (OKE) is fully automated by two workflows. **Full details:** [`docs/CI-CD.md`](docs/CI-CD.md).
+
+| Workflow | Trigger | What it does |
+|---|---|---|
+| **Deploy** (`.github/workflows/deploy.yml`) | Push to `main`, or **Actions → Deploy → Run workflow** | Runs `terraform apply` (creates the OKE cluster, DB, etc. **only if not already up**), rebuilds the DB secrets & schema, builds/pushes the image, and rolls out the app. Safe to re-run. |
+| **Undeploy** (`.github/workflows/undeploy.yml`) | **Actions → Undeploy → Run workflow** (type `destroy` to confirm) | Tears down **only the billed compute** (OKE cluster + node pool) and the load balancer. The Always-Free database, its bucket, and the VCN are **preserved**, so your data survives. |
+
+> [!IMPORTANT]
+> The old `undeploy.sh` only removed the Kubernetes app, leaving the OKE worker nodes (the actual cost) running. Use the **Undeploy workflow** above to genuinely stop compute charges. A redeploy afterwards keeps your data but gets a **new load-balancer IP**.
+
+Before either workflow can run, add the secrets in **section 4.6**.
+
+### 4.6 GitHub Actions secrets reference
+
+Add these under **Repo → Settings → Environments → `prod`** (the workflows use `environment: prod`). 🔑
+
+> [!NOTE]
+> `KUBECONFIG_B64` from older setups is **no longer needed** — the deploy job now generates the kubeconfig automatically from the freshly-provisioned cluster.
+
+#### 🔐 Group A — OCI API signing key *(identity for Terraform & the OCI CLI)*
+
+| Secret | Description |
+|---|---|
+| `OCI_TENANCY_OCID` | Your tenancy OCID |
+| `OCI_USER_OCID` | The CI user's OCID |
+| `OCI_FINGERPRINT` | Fingerprint of the API key |
+| `OCI_PRIVATE_KEY` | Contents of the downloaded private-key `.pem` |
+| `OCI_REGION` | Region identifier, e.g. `mx-queretaro-1` |
+
+<details>
+<summary><b>📘 How to get them (one procedure produces all five)</b></summary>
+
+1. In the OCI Console, click your **profile icon** (top-right) → **User settings**.
+2. Under **Resources**, choose **API keys** → **Add API key**.
+3. Select **Generate API key pair** → **Download private key** (save the `.pem`) → **Add**.
+4. OCI shows a **Configuration file preview**. Copy each value into the matching secret:
+   - `user=` → `OCI_USER_OCID`
+   - `fingerprint=` → `OCI_FINGERPRINT`
+   - `tenancy=` → `OCI_TENANCY_OCID`
+   - `region=` → `OCI_REGION`
+5. Open the downloaded `.pem` file and paste its **entire contents** into `OCI_PRIVATE_KEY` (raw PEM or base64 both work).
+
+</details>
+
+#### 🗄️ Group B — Terraform remote state *(OCI Object Storage, S3-compatible)*
+
+| Secret | Description |
+|---|---|
+| `TF_STATE_BUCKET` | Name of the bucket holding Terraform state |
+| `OCI_NAMESPACE` | Your Object Storage namespace |
+| `OCI_S3_ACCESS_KEY` | Customer Secret Key — **Access Key** |
+| `OCI_S3_SECRET_KEY` | Customer Secret Key — **Secret Key** |
+
+<details>
+<summary><b>📘 How to get them</b></summary>
+
+1. **Bucket:** Console → **Storage → Buckets → Create Bucket** (e.g. `mtdr-tf-state`, same region/compartment). Its name → `TF_STATE_BUCKET`.
+2. **Namespace:** shown on the Object Storage page, or run `oci os ns get`. → `OCI_NAMESPACE`.
+3. **S3 keys:** profile icon → **User settings → Customer Secret Keys → Generate Secret Key**. The dialog gives an **Access Key** (`OCI_S3_ACCESS_KEY`) and, once, a **Secret Key** (`OCI_S3_SECRET_KEY`) — copy it immediately.
+
+</details>
+
+#### 🏷️ Group C — Compartment & naming
+
+| Secret | Description |
+|---|---|
+| `OCI_COMPARTMENT_OCID` | Compartment the resources are created in |
+| `RUN_NAME` | Short stable name (1–13 chars, letter first), e.g. `mtdrworkshop` |
+| `MTDR_KEY` | Short stable unique suffix, e.g. `mtdr01` |
+| `TODO_PDB_NAME` | ATP database name, e.g. `mtdrdb01` |
+
+<details>
+<summary><b>📘 How to get them</b></summary>
+
+- **Compartment:** Console → **Identity → Compartments**, open (or create) your compartment, copy its **OCID** → `OCI_COMPARTMENT_OCID`.
+- `RUN_NAME`, `MTDR_KEY`, `TODO_PDB_NAME` are values **you choose**.
+
+> [!WARNING]
+> Pick `MTDR_KEY` (and `RUN_NAME`) **once and never change them** — bucket, container-repo, and VCN names are derived from them. Changing them later orphans the existing resources.
+
+</details>
+
+#### 🚀 Group D — Application & container registry
+
+| Secret | Description |
+|---|---|
+| `OCI_USERNAME` | Your OCI username (for OCIR docker login + image-pull secret) |
+| `OCI_AUTH_TOKEN` | OCI **Auth Token** (not the API key) for the container registry |
+| `UI_USERNAME` | Username for logging into the app UI *(you choose)* |
+| `UI_PASSWORD` | Password for the app UI *(you choose, 8–30 chars)* |
+| `DB_ADMIN_PASSWORD` | ATP `ADMIN` / `TODOUSER` password *(you choose)* |
+
+<details>
+<summary><b>📘 How to get them</b></summary>
+
+- **Auth Token:** profile icon → **User settings → Auth Tokens → Generate Token**. Copy it once → `OCI_AUTH_TOKEN`.
+- **Username:** your OCI login name → `OCI_USERNAME`.
+- `UI_USERNAME` / `UI_PASSWORD` are chosen by you.
+- `DB_ADMIN_PASSWORD` rules: **12–30 chars**, at least one uppercase, one lowercase, one digit, **no** `"` and must **not** contain the word `admin`.
+
+</details>
+
+#### ✅ Full checklist
+
+```text
+# A — API signing key
+OCI_TENANCY_OCID   OCI_USER_OCID   OCI_FINGERPRINT   OCI_PRIVATE_KEY   OCI_REGION
+# B — Remote state
+TF_STATE_BUCKET    OCI_NAMESPACE   OCI_S3_ACCESS_KEY   OCI_S3_SECRET_KEY
+# C — Compartment & naming
+OCI_COMPARTMENT_OCID   RUN_NAME   MTDR_KEY   TODO_PDB_NAME
+# D — App & registry
+OCI_USERNAME   OCI_AUTH_TOKEN   UI_USERNAME   UI_PASSWORD   DB_ADMIN_PASSWORD
+```
 
 ---
 
@@ -122,7 +260,8 @@ This migration drops the `EMPLOYEE_TASK` table and replaces it with a single-ass
 - If you see `401 Unauthorized`, your credentials are invalid. Contact your Admin to reset your password.
 - The system does not lock accounts after failed attempts, but all login events are logged.
 
-> **Caution:** Never share your credentials. All communication with the system is encrypted via HTTPS.
+> [!CAUTION]
+> Never share your credentials. All communication with the system is encrypted via HTTPS.
 
 ---
 
@@ -165,13 +304,14 @@ After logging in as a Manager, you are taken to the Manager Dashboard, which pro
 - Click any developer's name in the KPI chart to filter the view to their individual performance.
 - Use the **Sprint** dropdown at the top right to filter all charts by a specific sprint.
 
-> **Note:** Managers can only view data for teams they are directly assigned to. Cross-team data is not accessible from this view.
+> [!NOTE]
+> Managers can only view data for teams they are directly assigned to. Cross-team data is not accessible from this view.
 
 ---
 
 ## 8. How to manage tasks
 
-> **Required role:** Manager
+> **👤 Required role:** Manager
 
 ### 8.1 Create a new task
 
@@ -197,7 +337,8 @@ After logging in as a Manager, you are taken to the Manager Dashboard, which pro
 
 ### 8.3 Delete a task
 
-> **Caution:** Deleting a task is permanent and cannot be undone. All associated history and KPI data for that task will be removed.
+> [!CAUTION]
+> Deleting a task is permanent and cannot be undone. All associated history and KPI data for that task will be removed.
 
 1. Open the task detail view.
 2. Click the **Delete** button in the top-right corner.
@@ -225,13 +366,14 @@ Each task card displays:
 - Due date
 - Assigned developer's name
 
-> **Pro Tip:** Managers can see all team tasks on the board. Developers see only their own assigned tasks.
+> [!TIP]
+> Managers can see all team tasks on the board. Developers see only their own assigned tasks.
 
 ---
 
 ## 10. How to manage sprints
 
-> **Required role:** Manager
+> **👤 Required role:** Manager
 
 ### 10.1 Create a new sprint
 
@@ -300,13 +442,16 @@ The backlog is a list of tasks that have been created but not yet assigned to a 
 2. Browse unassigned tasks available to self-assign.
 3. Click a task and select **Assign to me**.
 
-> **Note:** If a task is already assigned to another developer, it cannot be self-assigned. Only Managers can reassign tasks between developers.
+> [!NOTE]
+> If a task is already assigned to another developer, it cannot be self-assigned. Only Managers can reassign tasks between developers.
 
 ---
 
 ## 13. How to download reports
 
-> **Required role:** Manager  
+> **👤 Required role:** Manager
+
+> [!NOTE]
 > **Status:** This feature is currently under development and will be available in a future sprint.
 
 When available, the report download flow will work as follows:
@@ -333,7 +478,8 @@ The Telegram bot allows you to interact with the project management system using
 2. Send `/start` to begin.
 3. The bot will prompt you to authenticate using your system token. Follow the instructions to link your Telegram account to your system profile.
 
-> **Note:** You must have an existing account in the web system before you can use the bot. Authentication is tied to your role — Developers and Managers see different data.
+> [!NOTE]
+> You must have an existing account in the web system before you can use the bot. Authentication is tied to your role — Developers and Managers see different data.
 
 ### 14.2 Available commands
 
@@ -367,7 +513,8 @@ The Telegram bot allows you to interact with the project management system using
 - If the **backend is unavailable**, the bot notifies you that the service is temporarily down and asks you to try again later.
 - If your **authentication token is missing or expired**, the bot denies access and asks you to log in through the web portal first.
 
-> **Note:** The bot responds to all commands within 2 seconds under normal load. All bot-to-backend communication uses HTTPS and JWT authentication. The bot only shows data your role is authorized to access.
+> [!NOTE]
+> The bot responds to all commands within 2 seconds under normal load. All bot-to-backend communication uses HTTPS and JWT authentication. The bot only shows data your role is authorized to access.
 
 ---
 
@@ -398,7 +545,8 @@ The assistant is a context-aware AI agent that can analyze your real project dat
 
 **Powered by:** Gemini 2.5 Flash Lite via OpenRouter. AI costs are tracked internally; usage is extremely low (approximately $0.01 per month for 52 requests).
 
-> **Pro Tip:** The assistant works best with specific questions. Instead of "how am I doing?", try "what is my task completion rate for sprint 2?"
+> [!TIP]
+> The assistant works best with specific questions. Instead of "how am I doing?", try "what is my task completion rate for sprint 2?"
 
 ---
 
@@ -414,6 +562,8 @@ The assistant is a context-aware AI agent that can analyze your real project dat
 | Telegram bot says "Unauthorized" | Your account is not linked or token expired | Log into the web portal and follow the bot linking instructions again. |
 | Page takes more than 5 seconds to load | Possible network issue or service degradation | Refresh the page. If the issue continues, contact your DevOps engineer. |
 | Session expires mid-use | JWT tokens expire after 60 minutes | Log in again. Your data is not lost. |
+| Deploy workflow fails at Terraform step | Missing/invalid OCI secrets (Groups A–B) | Re-check section 4.6 — especially `OCI_PRIVATE_KEY`, `TF_STATE_BUCKET`, and the S3 keys. |
+| Still being billed after undeploy | Old `undeploy.sh` only removed the app, not the nodes | Run the **Undeploy workflow** (section 4.5), which destroys the OKE compute. |
 
 ---
 
@@ -429,6 +579,8 @@ The assistant is a context-aware AI agent that can analyze your real project dat
 | **JWT** | JSON Web Token — a secure, time-limited credential used to authenticate API requests. |
 | **Kanban** | A visual task management method using columns to represent workflow stages. |
 | **OCI** | Oracle Cloud Infrastructure — the cloud platform where this system is deployed. |
+| **OKE** | Oracle Container Engine for Kubernetes — the managed Kubernetes service running the app. |
+| **Terraform** | Infrastructure-as-Code tool used to provision and tear down the OCI resources. |
 | **Microservice** | An independent software component that handles one specific area of the system (e.g., authentication, task management). |
 | **CI/CD** | Continuous Integration / Continuous Deployment — automated processes for building, testing, and deploying code. |
 | **Manager** | A user role with full access to create tasks, manage sprints, assign developers, and view team KPIs. |
@@ -438,6 +590,10 @@ The assistant is a context-aware AI agent that can analyze your real project dat
 ---
 
 ## 18. Changelog
+
+### Documentation — June 6, 2026
+- Added **section 4.5–4.6**: GitHub Actions deployment and the full secrets reference.
+- Refreshed layout: badge header, native GitHub alert callouts, collapsible how-to steps.
 
 ### v1.0.2 — May 22, 2026
 - Fixed login screen error message display.
@@ -458,4 +614,8 @@ The assistant is a context-aware AI agent that can analyze your real project dat
 
 ---
 
+<div align="center">
+
 *This guide covers version 1.0.2 of the system. For source code, open issues, or contribution guidelines, visit the [project repository](https://github.com/DaifMX/ITESM_Oracle_OCI).*
+
+</div>
