@@ -21,6 +21,14 @@ set -euo pipefail
 TF_DIR="${MTDRWORKSHOP_LOCATION:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}/terraform"
 cd "$TF_DIR"
 
+# OCI Object Storage's S3-compatible endpoint rejects the AWS SDK's default
+# aws-chunked / flexible-checksum uploads with "501 NotImplemented: AWS chunked
+# encoding not supported". skip_s3_checksum in the backend isn't enough on
+# modern Terraform; these tell the bundled AWS SDK to only add checksums when a
+# request actually requires them, so state writes use a plain PutObject.
+export AWS_REQUEST_CHECKSUM_CALCULATION=when_required
+export AWS_RESPONSE_CHECKSUM_VALIDATION=when_required
+
 # S3-compatible backend block. Generated, never committed.
 cat > backend_ci_override.tf <<EOF
 terraform {
