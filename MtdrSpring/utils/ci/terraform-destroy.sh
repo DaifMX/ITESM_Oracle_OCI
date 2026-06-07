@@ -18,6 +18,11 @@ set -euo pipefail
 TF_DIR="${MTDRWORKSHOP_LOCATION:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}/terraform"
 cd "$TF_DIR"
 
+# See terraform-apply.sh: OCI's S3-compatible endpoint rejects aws-chunked
+# uploads, so make the AWS SDK add checksums only when required.
+export AWS_REQUEST_CHECKSUM_CALCULATION=when_required
+export AWS_RESPONSE_CHECKSUM_VALIDATION=when_required
+
 cat > backend_ci_override.tf <<EOF
 terraform {
   backend "s3" {

@@ -5,14 +5,45 @@ on:
     push:
         branches:
             - main
-    workflow_dispatch: {}
+    workflow_dispatch:
+        inputs:
+            version:
+                description: 'Git tag, branch, or commit SHA to deploy (defaults to the ref that triggered the run)'
+                required: false
+                type: string
 
 jobs:
+    # Resolves the ref to deploy (the workflow_dispatch input, or the triggering
+    # ref on push) into a concrete commit SHA. Every other job checks out this
+    # ref and tags/pulls the image by the resolved SHA, so manual deploys of an
+    # arbitrary version tag stay immutable and consistent across jobs.
+    resolve:
+        runs-on: ubuntu-latest
+        outputs:
+            ref: ${{ steps.r.outputs.ref }}
+            sha: ${{ steps.r.outputs.sha }}
+        steps:
+          - name: Checkout requested ref
+            uses: actions/checkout@v6
+            with:
+                ref: ${{ inputs.version || github.ref }}
+                fetch-depth: 0
+
+          - name: Resolve ref and commit SHA
+            id: r
+            run: |
+                REF="${{ inputs.version || github.ref_name }}"
+                SHA=$(git rev-parse HEAD)
+                echo "ref=$REF" >> "$GITHUB_OUTPUT"
+                echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+                echo "Deploying ref '$REF' (commit $SHA)"
+
     # Provisions/refreshes all OCI infrastructure (OKE cluster + node pool, VCN,
     # ATP DB, bucket, container repo) from Terraform. Idempotent: a no-op when
     # everything already exists, and recreates it after an undeploy.
     infra:
         runs-on: ubuntu-latest
+        needs: resolve
         environment: prod
         outputs:
             cluster_id: ${{ steps.tf.outputs.cluster_id }}
@@ -36,6 +67,8 @@ jobs:
         steps:
           - name: Checkout code
             uses: actions/checkout@v6
+            with:
+                ref: ${{ needs.resolve.outputs.ref }}
 
           - name: Set up Terraform
             uses: hashicorp/setup-terraform@v3
@@ -60,12 +93,15 @@ jobs:
 
     build:
         runs-on: ubuntu-latest
+        needs: resolve
         environment: prod
         outputs:
             image: ${{ steps.build.outputs.image }}
         steps:
           - name: Checkout code
             uses: actions/checkout@v6
+            with:
+                ref: ${{ needs.resolve.outputs.ref }}
 
           - name: Set up Java 17
             uses: actions/setup-java@v4
@@ -106,15 +142,15 @@ jobs:
                 context: MtdrSpring/backend
                 push: true
                 no-cache: true
-                tags: ${{ secrets.OCI_REGION }}.ocir.io/${{ secrets.OCI_NAMESPACE }}/todolistapp-springboot:${{ github.sha }}
+                tags: ${{ secrets.OCI_REGION }}.ocir.io/${{ secrets.OCI_NAMESPACE }}/todolistapp-springboot:${{ needs.resolve.outputs.sha }}
 
           - name: Output image reference
-            run: echo "image=${{ secrets.OCI_REGION }}.ocir.io/${{ secrets.OCI_NAMESPACE }}/todolistapp-springboot:${{ github.sha }}" >> $GITHUB_OUTPUT
+            run: echo "image=${{ secrets.OCI_REGION }}.ocir.io/${{ secrets.OCI_NAMESPACE }}/todolistapp-springboot:${{ needs.resolve.outputs.sha }}" >> $GITHUB_OUTPUT
             id: build_output
 
     deploy:
         runs-on: ubuntu-latest
-        needs: [infra, build]
+        needs: [resolve, infra, build]
         environment: prod
         env:
             OCI_TENANCY_OCID: ${{ secrets.OCI_TENANCY_OCID }}
@@ -133,6 +169,8 @@ jobs:
         steps:
           - name: Checkout code
             uses: actions/checkout@v6
+            with:
+                ref: ${{ needs.resolve.outputs.ref }}
 
           - name: Set up kubectl
             uses: azure/setup-kubectl@v4
@@ -178,7 +216,7 @@ jobs:
           - name: Update deployment image
             run: |
                 kubectl set image deployment/todolistapp-springboot-deployment \
-                    todolistapp-springboot=${{ secrets.OCI_REGION }}.ocir.io/${{ secrets.OCI_NAMESPACE }}/todolistapp-springboot:${{ github.sha }} \
+                    todolistapp-springboot=${{ secrets.OCI_REGION }}.ocir.io/${{ secrets.OCI_NAMESPACE }}/todolistapp-springboot:${{ needs.resolve.outputs.sha }} \
                     -n mtdrworkshop
 
           - name: Wait for rollout
@@ -188,6 +226,9 @@ jobs:
         name: Semantic Release
         runs-on: ubuntu-latest
         needs: deploy
+        # Only cut a release on a normal push to main; manual deploys of an
+        # existing version tag must not create a new release.
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         permissions:
             contents: write
             issues: write
