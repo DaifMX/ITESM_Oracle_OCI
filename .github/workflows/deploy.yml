@@ -5,8 +5,59 @@ on:
     push:
         branches:
             - main
+    workflow_dispatch: {}
 
 jobs:
+    # Provisions/refreshes all OCI infrastructure (OKE cluster + node pool, VCN,
+    # ATP DB, bucket, container repo) from Terraform. Idempotent: a no-op when
+    # everything already exists, and recreates it after an undeploy.
+    infra:
+        runs-on: ubuntu-latest
+        environment: prod
+        outputs:
+            cluster_id: ${{ steps.tf.outputs.cluster_id }}
+        env:
+            OCI_TENANCY_OCID: ${{ secrets.OCI_TENANCY_OCID }}
+            OCI_USER_OCID: ${{ secrets.OCI_USER_OCID }}
+            OCI_FINGERPRINT: ${{ secrets.OCI_FINGERPRINT }}
+            OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
+            OCI_REGION: ${{ secrets.OCI_REGION }}
+            OCI_NAMESPACE: ${{ secrets.OCI_NAMESPACE }}
+            TF_STATE_BUCKET: ${{ secrets.TF_STATE_BUCKET }}
+            AWS_ACCESS_KEY_ID: ${{ secrets.OCI_S3_ACCESS_KEY }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.OCI_S3_SECRET_KEY }}
+            TF_VAR_ociTenancyOcid: ${{ secrets.OCI_TENANCY_OCID }}
+            TF_VAR_ociUserOcid: ${{ secrets.OCI_USER_OCID }}
+            TF_VAR_ociCompartmentOcid: ${{ secrets.OCI_COMPARTMENT_OCID }}
+            TF_VAR_ociRegionIdentifier: ${{ secrets.OCI_REGION }}
+            TF_VAR_runName: ${{ secrets.RUN_NAME }}
+            TF_VAR_mtdrDbName: ${{ secrets.TODO_PDB_NAME }}
+            TF_VAR_mtdrKey: ${{ secrets.MTDR_KEY }}
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v6
+
+          - name: Set up Terraform
+            uses: hashicorp/setup-terraform@v3
+            with:
+                terraform_wrapper: false
+
+          - name: Install OCI CLI
+            run: |
+                curl -L -O https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh
+                bash install.sh --accept-all-defaults
+                echo "$HOME/bin" >> $GITHUB_PATH
+
+          - name: Configure OCI auth
+            run: bash MtdrSpring/utils/ci/setup-oci-auth.sh
+
+          - name: Terraform apply
+            id: tf
+            run: |
+                bash MtdrSpring/utils/ci/terraform-apply.sh
+                CID=$(terraform -chdir=MtdrSpring/terraform output -raw lab_oke_cluster_id)
+                echo "cluster_id=$CID" >> "$GITHUB_OUTPUT"
+
     build:
         runs-on: ubuntu-latest
         environment: prod
@@ -63,8 +114,22 @@ jobs:
 
     deploy:
         runs-on: ubuntu-latest
-        needs: build
+        needs: [infra, build]
         environment: prod
+        env:
+            OCI_TENANCY_OCID: ${{ secrets.OCI_TENANCY_OCID }}
+            OCI_USER_OCID: ${{ secrets.OCI_USER_OCID }}
+            OCI_FINGERPRINT: ${{ secrets.OCI_FINGERPRINT }}
+            OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
+            OCI_REGION: ${{ secrets.OCI_REGION }}
+            OCI_NAMESPACE: ${{ secrets.OCI_NAMESPACE }}
+            OCI_USERNAME: ${{ secrets.OCI_USERNAME }}
+            OCI_AUTH_TOKEN: ${{ secrets.OCI_AUTH_TOKEN }}
+            TF_VAR_ociCompartmentOcid: ${{ secrets.OCI_COMPARTMENT_OCID }}
+            MTDR_DB_NAME: ${{ secrets.TODO_PDB_NAME }}
+            DB_ADMIN_PASSWORD: ${{ secrets.DB_ADMIN_PASSWORD }}
+            UI_PASSWORD: ${{ secrets.UI_PASSWORD }}
+            CLUSTER_ID: ${{ needs.infra.outputs.cluster_id }}
         steps:
           - name: Checkout code
             uses: actions/checkout@v6
@@ -78,21 +143,31 @@ jobs:
                 bash install.sh --accept-all-defaults
                 echo "$HOME/bin" >> $GITHUB_PATH
 
-          - name: Configure kubeconfig
+          - name: Install Oracle Instant Client (sqlplus)
             run: |
-                mkdir -p $HOME/.kube
-                echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > $HOME/.kube/config
+                sudo apt-get update && sudo apt-get install -y alien libaio1 unzip
+                BASE=https://download.oracle.com/otn_software/linux/instantclient/2113000
+                curl -fsSLO $BASE/oracle-instantclient-basic-21.13.0.0.0-1.el8.x86_64.rpm
+                curl -fsSLO $BASE/oracle-instantclient-sqlplus-21.13.0.0.0-1.el8.x86_64.rpm
+                sudo alien -i oracle-instantclient-basic-21.13.0.0.0-1.el8.x86_64.rpm
+                sudo alien -i oracle-instantclient-sqlplus-21.13.0.0.0-1.el8.x86_64.rpm
+                echo "/usr/lib/oracle/21/client64/bin" >> $GITHUB_PATH
+
+          - name: Configure OCI auth
+            run: bash MtdrSpring/utils/ci/setup-oci-auth.sh
+
+          - name: Bootstrap infra-dependent resources
+            run: bash MtdrSpring/utils/ci/bootstrap-app.sh
 
           - name: Apply Kubernetes manifest
             working-directory: MtdrSpring/backend
             env:
                 DOCKER_REGISTRY: ${{ secrets.OCI_REGION }}.ocir.io/${{ secrets.OCI_NAMESPACE }}
                 TODO_PDB_NAME: ${{ secrets.TODO_PDB_NAME }}
-                OCI_REGION: ${{ secrets.OCI_REGION }}
                 UI_USERNAME: ${{ secrets.UI_USERNAME }}
             run: |
                 # Idempotent: creates the Deployment/Services if missing (e.g. after
-                # undeploy.sh), no-ops the rest if they already exist.
+                # undeploy), no-ops the rest if they already exist.
                 sed -e "s|%DOCKER_REGISTRY%|${DOCKER_REGISTRY}|g" \
                     -e "s|%TODO_PDB_NAME%|${TODO_PDB_NAME}|g" \
                     -e "s|%OCI_REGION%|${OCI_REGION}|g" \
