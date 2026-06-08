@@ -18,6 +18,9 @@
 # Optional:
 #   CLUSTER_ID  (else looked up by display name in the compartment)
 #   DB_DISPLAY_NAME (default MTDRDB)
+#   OPEN_ROUTER_API_KEY TELEGRAM_BOT_TOKEN TELEGRAM_BOT_NAME  (app-env secret;
+#     blank if unset). JWT_SECRET is NOT read here -- it is generated once and
+#     reused from the existing app-env secret on later deploys.
 set -euo pipefail
 
 : "${OCI_REGION:?}" ; : "${OCI_NAMESPACE:?}" ; : "${TF_VAR_ociCompartmentOcid:?}"
@@ -162,7 +165,26 @@ kubectl create secret generic frontendadmin -n "$NS" \
   --dry-run=client -o yaml | kubectl apply -n "$NS" -f -
 
 # app-env is referenced via envFrom WITHOUT optional:true, so it must exist.
+# Its keys MUST match the ${...} names in application.properties so envFrom
+# injects them as the env vars the app reads.
+#
+# JWT secret: generated once, then reused on every later deploy by reading it
+# back from the existing secret. Stable across the 2 replicas and restarts, so
+# you never set it by hand. (The app base64-decodes it into the HMAC key.)
+JWT_SECRET="$(kubectl get secret app-env -n "$NS" \
+  -o jsonpath='{.data.JWT_SECRET}' 2>/dev/null | base64 -d || true)"
+if [ -z "$JWT_SECRET" ]; then
+  JWT_SECRET="$(openssl rand -base64 48)"
+  echo "Generated a new JWT secret."
+else
+  echo "Reusing existing JWT secret."
+fi
+
 kubectl create secret generic app-env -n "$NS" \
+  --from-literal=JWT_SECRET="$JWT_SECRET" \
+  --from-literal=OPEN_ROUTER_API_KEY="${OPEN_ROUTER_API_KEY:-}" \
+  --from-literal=TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN:-}" \
+  --from-literal=TELEGRAM_BOT_NAME="${TELEGRAM_BOT_NAME:-}" \
   --dry-run=client -o yaml | kubectl apply -n "$NS" -f -
 
 # Image pull secret for OCIR (harmless even though the repo is public).

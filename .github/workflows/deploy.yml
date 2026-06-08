@@ -165,6 +165,9 @@ jobs:
             MTDR_DB_NAME: ${{ secrets.TODO_PDB_NAME }}
             DB_ADMIN_PASSWORD: ${{ secrets.DB_ADMIN_PASSWORD }}
             UI_PASSWORD: ${{ secrets.UI_PASSWORD }}
+            OPEN_ROUTER_API_KEY: ${{ secrets.OPEN_ROUTER_API_KEY }}
+            TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+            TELEGRAM_BOT_NAME: ${{ vars.TELEGRAM_BOT_NAME }}
             CLUSTER_ID: ${{ needs.infra.outputs.cluster_id }}
         steps:
           - name: Checkout code
