@@ -37,6 +37,22 @@ resource "oci_database_autonomous_database" "autonomous_database_atp" {
   display_name                                   = "MTDRDB"
   is_auto_scaling_enabled                        = "false"
   is_preview_version_with_service_terms_accepted = "false"
+
+  lifecycle {
+    # Always Free DBs can't be scaled -- compute/storage changes are paid-only.
+    # OCI also caps a free DB to 20 GB regardless of the requested size, so the
+    # 1 TB above shows as perpetual drift and Terraform fires an
+    # UpdateAutonomousDatabase that 403s ("feature not supported... upgrade to
+    # paid"). Ignore the sizing/compute attributes so no scale update is ever
+    # attempted; the values above are only used at create time.
+    ignore_changes = [
+      cpu_core_count,
+      data_storage_size_in_tbs,
+      data_storage_size_in_gb,
+      compute_count,
+      compute_model,
+    ]
+  }
 }
 data "oci_database_autonomous_databases" "autonomous_databases_atp" {
   #Required
