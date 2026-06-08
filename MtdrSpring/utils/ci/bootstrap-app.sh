@@ -84,9 +84,19 @@ echo "ATP DB: $DB_OCID"
 umask 177
 printf '{"adminPassword": "%s"}' "$DB_ADMIN_PASSWORD" > "$WORKDIR/pw.json"
 umask 22
-oci db autonomous-database update --autonomous-database-id "$DB_OCID" \
-  --from-json "file://$WORKDIR/pw.json" >/dev/null
-echo "ATP ADMIN password set."
+# Idempotent: re-running within 24h tries to set the same password, which
+# Oracle's password-history policy rejects ("one of the last four passwords...
+# set less than 24 hours ago"). That error means it's ALREADY this password, so
+# treat it as success; the ADMIN-login wait below still verifies it works.
+if oci db autonomous-database update --autonomous-database-id "$DB_OCID" \
+     --from-json "file://$WORKDIR/pw.json" >/dev/null 2>"$WORKDIR/pwerr"; then
+  echo "ATP ADMIN password set."
+elif grep -qi "last four passwords\|less than 24 hours" "$WORKDIR/pwerr"; then
+  echo "ATP ADMIN password already set recently; keeping it."
+else
+  cat "$WORKDIR/pwerr" >&2
+  exit 1
+fi
 
 # ---------------------------------------------------------------------------
 # 4. wallet -> db-wallet-secret
