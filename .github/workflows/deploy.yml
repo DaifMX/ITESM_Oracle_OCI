@@ -196,9 +196,15 @@ jobs:
           - name: Install Oracle Instant Client (sqlplus)
             run: |
                 sudo apt-get update && sudo apt-get install -y alien unzip
-                # Ubuntu 24.04 (noble) renamed libaio1 -> libaio1t64 (time_t
-                # transition); both provide libaio.so.1 that sqlplus needs.
+                # Ubuntu 24.04 (noble) replaced libaio1 with libaio1t64, which
+                # ships libaio.so.1t64 -- but sqlplus links against the old
+                # soname libaio.so.1. Install it and symlink the expected name.
                 sudo apt-get install -y libaio1t64 || sudo apt-get install -y libaio1
+                if [ ! -e /usr/lib/x86_64-linux-gnu/libaio.so.1 ] && \
+                   [ -e /usr/lib/x86_64-linux-gnu/libaio.so.1t64 ]; then
+                  sudo ln -s /usr/lib/x86_64-linux-gnu/libaio.so.1t64 \
+                             /usr/lib/x86_64-linux-gnu/libaio.so.1
+                fi
                 BASE=https://download.oracle.com/otn_software/linux/instantclient/2113000
                 curl -fsSLO $BASE/oracle-instantclient-basic-21.13.0.0.0-1.el8.x86_64.rpm
                 curl -fsSLO $BASE/oracle-instantclient-sqlplus-21.13.0.0.0-1.el8.x86_64.rpm
