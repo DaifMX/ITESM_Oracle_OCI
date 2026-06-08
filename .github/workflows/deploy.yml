@@ -199,6 +199,10 @@ jobs:
                 sudo alien -i oracle-instantclient-basic-21.13.0.0.0-1.el8.x86_64.rpm
                 sudo alien -i oracle-instantclient-sqlplus-21.13.0.0.0-1.el8.x86_64.rpm
                 echo "/usr/lib/oracle/21/client64/bin" >> $GITHUB_PATH
+                # Register the client libs so the linker finds libsqlplus.so /
+                # libclntsh.so when sqlplus runs in this and later steps.
+                echo /usr/lib/oracle/21/client64/lib | sudo tee /etc/ld.so.conf.d/oracle-instantclient.conf
+                sudo ldconfig
 
           - name: Configure OCI auth
             run: bash MtdrSpring/utils/ci/setup-oci-auth.sh
