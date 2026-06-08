@@ -1,3 +1,25 @@
+# [1.1.0](https://github.com/DaifMX/ITESM_Oracle_OCI/compare/v1.0.3...v1.1.0) (2026-06-08)
+
+
+### Bug Fixes
+
+* **ci:** install libaio1t64 on Ubuntu 24.04 for sqlplus ([05e8e32](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/05e8e3264de672e6564361a9eb3e857ee8e50d8f))
+* **ci:** make ATP admin password update idempotent ([c914200](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/c914200271277a218bb1f8535224e1ab080f8212))
+* **ci:** read TELEGRAM_BOT_NAME from secrets, not vars ([39334c7](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/39334c70091db2b067dcc05674905419726fda51))
+* **ci:** register oracle instant client libs with ldconfig ([1e286ba](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/1e286ba945d97ffd53274530953750deb2d38681))
+* **ci:** require exactly one ATP DB in bootstrap lookup ([1c2d6e8](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/1c2d6e8e4b5d85a2c2271c57fe78d069695c21cd))
+* **ci:** symlink libaio.so.1 for sqlplus on Ubuntu 24.04 ([5a483f7](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/5a483f7954b0c9168b62c7b099b30a92bf8d5169))
+* **ci:** tolerate ORA-28007 when re-setting TODOUSER password ([3e06e7b](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/3e06e7b97b76b0b77b34c0b28ab436594cc88f98))
+* **ci:** use docker driver for buildx to avoid Docker Hub pull ([ebb0f0a](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/ebb0f0a45f584ce265697646534ebb4d34520360))
+* **infra:** stop terraform scaling the Always Free ATP database ([0372779](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/0372779b93821e44e7183b4bba3c5181e46662bc))
+* **infra:** upgrade oci provider, pin k8s image, fix ATP free tier ([34a574e](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/34a574e1516d0bdc005186531926dbee2da8c832))
+
+
+### Features
+
+* **ci:** inject app config secrets and auto-generate JWT secret ([c59ea0c](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/c59ea0cface2e29169d831464c3c130fb9aa5783))
+* **infra:** pin ATP to Oracle Database 26ai ([efee9f4](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/efee9f48ed8e007e9ebb2a068cdcd08a63a6bfe9))
+
 ## [1.0.3](https://github.com/DaifMX/ITESM_Oracle_OCI/compare/v1.0.2...v1.0.3) (2026-06-05)
 
 
