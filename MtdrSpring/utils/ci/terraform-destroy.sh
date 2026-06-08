@@ -54,9 +54,13 @@ done
 
 # Targeted destroy: only the compute. Anything depending on these (nothing
 # else does) goes too; the DB, bucket, repo and VCN stay in state.
+# stdout is discarded so the plan/destroy text (which can echo non-redacted
+# resource attributes) never lands in the CI log; errors stay on stderr.
+echo "Destroying compute (node pool + cluster)..."
 terraform destroy -input=false -auto-approve \
   -target=oci_containerengine_node_pool.oke_node_pool \
-  -target=oci_containerengine_cluster.mtdrworkshop_cluster
+  -target=oci_containerengine_cluster.mtdrworkshop_cluster >/dev/null
+echo "Destroy complete."
 
 echo
 echo "Compute torn down. The ATP database, bucket and VCN were preserved."
