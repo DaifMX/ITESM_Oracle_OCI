@@ -1,6 +1,6 @@
 resource "oci_containerengine_cluster" "mtdrworkshop_cluster" {
   #Required
-  compartment_id      = var.ociCompartmentOcid
+  compartment_id = var.ociCompartmentOcid
   endpoint_config {
     #optional
     is_public_ip_enabled = "true"
@@ -8,12 +8,12 @@ resource "oci_containerengine_cluster" "mtdrworkshop_cluster" {
     ]
     subnet_id = oci_core_subnet.endpoint.id
   }
-  kubernetes_version  = "v1.34.2"
-  name                = "mtdrworkshopcluster-${var.mtdrKey}"
-  vcn_id              = oci_core_vcn.okevcn.id
+  kubernetes_version = "v${local.k8s_version}"
+  name               = "mtdrworkshopcluster-${var.mtdrKey}"
+  vcn_id             = oci_core_vcn.okevcn.id
   #optional
 
-  options{
+  options {
     service_lb_subnet_ids = [oci_core_subnet.svclb_Subnet.id]
 
     add_ons {
@@ -25,10 +25,10 @@ resource "oci_containerengine_cluster" "mtdrworkshop_cluster" {
       #Optional
       is_pod_security_policy_enabled = "false"
     }
-    kubernetes_network_config{
+    kubernetes_network_config {
       #Optional
-      pods_cidr                      = "10.244.0.0/16"
-      services_cidr                  = "10.96.0.0/16"
+      pods_cidr     = "10.244.0.0/16"
+      services_cidr = "10.96.0.0/16"
     }
   }
 }
@@ -36,13 +36,13 @@ resource "oci_containerengine_node_pool" "oke_node_pool" {
   #Required
   cluster_id         = oci_containerengine_cluster.mtdrworkshop_cluster.id
   compartment_id     = var.ociCompartmentOcid
-  kubernetes_version = "v1.34.2"
+  kubernetes_version = "v${local.k8s_version}"
   name               = "Pool"
   #node_shape        = "VM.Standard.A1.Flex"  #Always Free Option
-  node_shape         = "VM.Standard.E3.Flex"
+  node_shape = "VM.Standard.E3.Flex"
   node_shape_config {
     memory_in_gbs = 6
-    ocpus = 2
+    ocpus         = 2
   }
   #subnet_ids         = [oci_core_subnet.nodePool_Subnet_1.id]
   #Optional
@@ -70,7 +70,7 @@ resource "oci_containerengine_node_pool" "oke_node_pool" {
     #boot_volume_size_in_gbs = "60"
   }
   //quantity_per_subnet = 1
-  ssh_public_key      = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCsXyGATqdTnvEDe0aYHGL+QQDjUXf6EIBlKiNLYR4gZhStp4yfn/MEWmCMGg3cbne04HlaeO3zGrUnrtfAQE90XccW9Dc4WkhLYf2vucja9NezAVQZE2qBYiwdZSF9G/FwPI1DzfbXF2UAAN3ix/IwJSWN3KZnd1FOcHOA052QMa7jGOIbi8+skKqkys3gcTaor7eXe/wONimkpPevF30FTQZpsQFU7ZzYcFM3C+XVZ2/UVtZ/MaDf73ub6mYNMpDtDCTMo9FyujzK84EKWIytAKofNwJ/Og3Wqr+CKAeLgCMtWp0926w+ff8dJRDuOxlxgJB48YaFSvjIr4lAv/aX rafael_a_g@6ab23190fb98"
+  ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCsXyGATqdTnvEDe0aYHGL+QQDjUXf6EIBlKiNLYR4gZhStp4yfn/MEWmCMGg3cbne04HlaeO3zGrUnrtfAQE90XccW9Dc4WkhLYf2vucja9NezAVQZE2qBYiwdZSF9G/FwPI1DzfbXF2UAAN3ix/IwJSWN3KZnd1FOcHOA052QMa7jGOIbi8+skKqkys3gcTaor7eXe/wONimkpPevF30FTQZpsQFU7ZzYcFM3C+XVZ2/UVtZ/MaDf73ub6mYNMpDtDCTMo9FyujzK84EKWIytAKofNwJ/Og3Wqr+CKAeLgCMtWp0926w+ff8dJRDuOxlxgJB48YaFSvjIr4lAv/aX rafael_a_g@6ab23190fb98"
   //ssh_public_key =  var.resUserPublicKey
 }
 data "oci_containerengine_cluster_option" "mtdrworkshop_cluster_option" {
@@ -80,8 +80,13 @@ data "oci_containerengine_node_pool_option" "mtdrworkshop_node_pool_option" {
   node_pool_option_id = "all"
 }
 locals {
+  # Single source of truth for the cluster + node pool + worker image version.
+  k8s_version = "1.34.2"
   all_sources = data.oci_containerengine_node_pool_option.mtdrworkshop_node_pool_option.sources
+  # Worker image pinned to the cluster's Kubernetes version. A node pool cannot
+  # run a version above its cluster, so grabbing the latest image (which tracks
+  # the newest OKE release, e.g. v1.36.0) breaks a cluster pinned to k8s_version.
+  # Filtering on "OKE-<version>-" keeps the image and the node pool in lockstep.
   #oracle_linux_images = [for source in local.all_sources : source.image_id if length(regexall("Oracle-Linux-[0-9]*.[0-9]*-aarch64-20[0-9]*",source.source_name)) > 0] #ARM Option
-  oracle_linux_images = [for source in local.all_sources : source.image_id if length(regexall("Oracle-Linux-[0-9]*.[0-9]*-20[0-9]*",source.source_name)) > 0]
-
+  oracle_linux_images = [for source in local.all_sources : source.image_id if length(regexall("Oracle-Linux-[0-9]*.[0-9]*-20[0-9]*.*OKE-${local.k8s_version}-", source.source_name)) > 0]
 }

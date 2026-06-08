@@ -47,16 +47,20 @@ terraform {
 }
 EOF
 
-terraform init -input=false -reconfigure
+# -upgrade so the provider source swap (hashicorp/oci -> oracle/oci) and its
+# version constraint are re-resolved and the (uncommitted) lock is rebuilt.
+terraform init -input=false -reconfigure -upgrade
 
-# Plan to a file, then apply exactly that plan. We deliberately discard the
-# human-readable plan/apply text (stdout) so it never reaches the CI log: the
-# diff can include resource attributes that Terraform does NOT redact (e.g. the
-# wallet password from random_string, whose `result` isn't marked sensitive).
-# Errors and warnings go to stderr, so real failures still surface. The binary
-# tfplan stays on the ephemeral runner and is never uploaded.
+# Plan to a file, with the diff sent to /dev/null. The plan's full attribute
+# diff is the real leak surface -- it prints every value, including ones
+# Terraform doesn't redact -- and nobody needs it streamed. The saved plan
+# drives the apply, so what runs is exactly what was planned.
 echo "Planning..."
 terraform plan -input=false -out=tfplan >/dev/null
-echo "Applying saved plan..."
-terraform apply -input=false -auto-approve tfplan >/dev/null
-echo "Apply complete."
+
+# Apply the saved plan with visible progress. A saved-plan apply streams only
+# resource addresses, OCIDs and "Still creating..." timers (no attribute
+# values), and Terraform redacts anything sensitive (random_password etc.), so
+# this is safe to log while still showing what's happening.
+echo "Applying..."
+terraform apply -input=false -auto-approve tfplan

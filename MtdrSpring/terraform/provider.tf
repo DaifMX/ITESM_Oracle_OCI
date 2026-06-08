@@ -1,11 +1,14 @@
 terraform {
-  required_providers{
+  required_providers {
     oci = {
-      source = "hashicorp/oci"
-      version = "4.42.0"
+      # hashicorp/oci is frozen at 4.42.0 (2021) and moved to oracle/oci.
+      # The old build is incompatible with current OCI (k8s image versions,
+      # the rebranded Always Free "Autonomous AI Database", etc.).
+      source  = "oracle/oci"
+      version = ">= 6.0.0"
     }
   }
 }
-provider "oci"{
+provider "oci" {
   region = var.ociRegionIdentifier
 }
