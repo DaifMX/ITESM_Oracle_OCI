@@ -154,7 +154,15 @@ begin
     execute immediate 'GRANT CREATE TABLE, CREATE TRIGGER, CREATE TYPE, CREATE MATERIALIZED VIEW TO TODOUSER';
     execute immediate 'GRANT CONNECT, RESOURCE, pdb_dba, SODA_APP TO TODOUSER';
   else
-    execute immediate 'ALTER USER TODOUSER IDENTIFIED BY "${DB_ADMIN_PASSWORD}"';
+    begin
+      execute immediate 'ALTER USER TODOUSER IDENTIFIED BY "${DB_ADMIN_PASSWORD}"';
+    exception
+      -- ORA-28007: password cannot be reused. 26ai's default profile enforces
+      -- password-reuse rules, so re-setting the same password fails. That means
+      -- it is already the desired password, so ignore it and keep going.
+      when others then
+        if sqlcode != -28007 then raise; end if;
+    end;
   end if;
 end;
 /
