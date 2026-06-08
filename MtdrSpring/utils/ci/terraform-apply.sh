@@ -48,4 +48,15 @@ terraform {
 EOF
 
 terraform init -input=false -reconfigure
-terraform apply -input=false -auto-approve
+
+# Plan to a file, then apply exactly that plan. We deliberately discard the
+# human-readable plan/apply text (stdout) so it never reaches the CI log: the
+# diff can include resource attributes that Terraform does NOT redact (e.g. the
+# wallet password from random_string, whose `result` isn't marked sensitive).
+# Errors and warnings go to stderr, so real failures still surface. The binary
+# tfplan stays on the ephemeral runner and is never uploaded.
+echo "Planning..."
+terraform plan -input=false -out=tfplan >/dev/null
+echo "Applying saved plan..."
+terraform apply -input=false -auto-approve tfplan >/dev/null
+echo "Apply complete."
