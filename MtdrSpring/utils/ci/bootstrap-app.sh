@@ -62,12 +62,23 @@ kubectl get ns "$NS" >/dev/null 2>&1 || kubectl create ns "$NS"
 # ---------------------------------------------------------------------------
 # 3. ATP admin password + DB OCID
 # ---------------------------------------------------------------------------
-DB_OCID=$(oci db autonomous-database list --compartment-id "$COMPARTMENT" \
-  --query "join(' ', data[?\"display-name\"=='${DB_DISPLAY_NAME}'].id)" --raw-output)
-if [[ "$DB_OCID" != ocid1.autonomousdatabase* ]]; then
-  echo "ERROR: could not find ATP DB named ${DB_DISPLAY_NAME}: '$DB_OCID'" >&2
+# Match by display name, excluding TERMINATED (deleted) DBs. display_name is
+# not unique, so a leftover duplicate would otherwise be silently concatenated
+# into one bad OCID. Require exactly one match and fail loudly with the list
+# (e.g. delete the non-Terraform-managed duplicate) instead of 404ing later.
+DB_SELECTOR="data[?\"display-name\"=='${DB_DISPLAY_NAME}' && \"lifecycle-state\"!='TERMINATED']"
+DB_COUNT=$(oci db autonomous-database list --compartment-id "$COMPARTMENT" \
+  --query "length(${DB_SELECTOR})" --raw-output 2>/dev/null || echo 0)
+if [ "${DB_COUNT:-0}" -ne 1 ]; then
+  echo "ERROR: expected exactly 1 ATP DB named ${DB_DISPLAY_NAME}, found ${DB_COUNT}." >&2
+  echo "If more than one, delete the duplicate so only the Terraform-managed DB remains:" >&2
+  oci db autonomous-database list --compartment-id "$COMPARTMENT" \
+    --query "${DB_SELECTOR}.{name:\"display-name\",state:\"lifecycle-state\",id:id}" \
+    --output table >&2 || true
   exit 1
 fi
+DB_OCID=$(oci db autonomous-database list --compartment-id "$COMPARTMENT" \
+  --query "${DB_SELECTOR} | [0].id" --raw-output)
 echo "ATP DB: $DB_OCID"
 
 umask 177
