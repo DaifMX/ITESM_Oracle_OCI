@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/DaifMX/ITESM_Oracle_OCI/compare/v1.1.0...v1.1.1) (2026-06-08)
+
+
+### Bug Fixes
+
+* **infra:** allow service LB to reach worker NodePorts ([05d83af](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/05d83af07786bd244db945553e755cae57626f03))
+
 # [1.1.0](https://github.com/DaifMX/ITESM_Oracle_OCI/compare/v1.0.3...v1.1.0) (2026-06-08)
 
 
