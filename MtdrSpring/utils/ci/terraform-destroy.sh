@@ -40,7 +40,9 @@ terraform {
 }
 EOF
 
-terraform init -input=false -reconfigure
+# -upgrade so the provider source swap (hashicorp/oci -> oracle/oci) and its
+# version constraint are re-resolved and the (uncommitted) lock is rebuilt.
+terraform init -input=false -reconfigure -upgrade
 
 # Delete the Service-created Load Balancers first so terraform can drop the
 # subnets/VCN cleanly, and so no orphan LB keeps billing.
@@ -54,13 +56,12 @@ done
 
 # Targeted destroy: only the compute. Anything depending on these (nothing
 # else does) goes too; the DB, bucket, repo and VCN stay in state.
-# stdout is discarded so the plan/destroy text (which can echo non-redacted
-# resource attributes) never lands in the CI log; errors stay on stderr.
+# Output is visible: this only touches the cluster + node pool, whose ids are
+# OCIDs (not secrets), and Terraform redacts any sensitive attributes.
 echo "Destroying compute (node pool + cluster)..."
 terraform destroy -input=false -auto-approve \
   -target=oci_containerengine_node_pool.oke_node_pool \
-  -target=oci_containerengine_cluster.mtdrworkshop_cluster >/dev/null
-echo "Destroy complete."
+  -target=oci_containerengine_cluster.mtdrworkshop_cluster
 
 echo
 echo "Compute torn down. The ATP database, bucket and VCN were preserved."
