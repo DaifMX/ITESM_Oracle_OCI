@@ -15,7 +15,10 @@ set -euo pipefail
 : "${AWS_ACCESS_KEY_ID:?}" ; : "${AWS_SECRET_ACCESS_KEY:?}"
 : "${TF_VAR_ociCompartmentOcid:?}"
 
-TF_DIR="${MTDRWORKSHOP_LOCATION:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}/terraform"
+# Resolve absolute paths up front -- the `cd` below would otherwise break any
+# later $(dirname "${BASH_SOURCE[0]}") that relies on the original invocation.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TF_DIR="${MTDRWORKSHOP_LOCATION:-$(cd "$SCRIPT_DIR/../.." && pwd)}/terraform"
 cd "$TF_DIR"
 
 # See terraform-apply.sh: OCI's S3-compatible endpoint rejects aws-chunked
@@ -47,7 +50,7 @@ terraform init -input=false -reconfigure -upgrade
 # `terraform plan` validates oci_objectstorage_object.minilm_onnx even though
 # this destroy is -targeted to compute only -- and that resource's `source` is
 # read off disk during validation. fetch-onnx-cache.sh is idempotent.
-bash "$(dirname "${BASH_SOURCE[0]}")/fetch-onnx-cache.sh" "$TF_DIR/.cache"
+bash "$SCRIPT_DIR/fetch-onnx-cache.sh" "$TF_DIR/.cache"
 
 # Delete the Service-created Load Balancers first so terraform can drop the
 # subnets/VCN cleanly, and so no orphan LB keeps billing.

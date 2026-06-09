@@ -18,7 +18,10 @@ set -euo pipefail
 : "${OCI_REGION:?}" ; : "${OCI_NAMESPACE:?}" ; : "${TF_STATE_BUCKET:?}"
 : "${AWS_ACCESS_KEY_ID:?}" ; : "${AWS_SECRET_ACCESS_KEY:?}"
 
-TF_DIR="${MTDRWORKSHOP_LOCATION:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}/terraform"
+# Resolve absolute paths up front -- the `cd` below would otherwise break any
+# later $(dirname "${BASH_SOURCE[0]}") that relies on the original invocation.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TF_DIR="${MTDRWORKSHOP_LOCATION:-$(cd "$SCRIPT_DIR/../.." && pwd)}/terraform"
 cd "$TF_DIR"
 
 # OCI Object Storage's S3-compatible endpoint rejects the AWS SDK's default
@@ -55,7 +58,7 @@ terraform init -input=false -reconfigure -upgrade
 # oci_objectstorage_object.minilm_onnx reads its `source` file to hash it at
 # plan time. A null_resource can't supply it (those run at apply, too late).
 # fetch-onnx-cache.sh is idempotent (skips when the file is already there).
-bash "$(dirname "${BASH_SOURCE[0]}")/fetch-onnx-cache.sh" "$TF_DIR/.cache"
+bash "$SCRIPT_DIR/fetch-onnx-cache.sh" "$TF_DIR/.cache"
 
 # Plan to a file, with the diff sent to /dev/null. The plan's full attribute
 # diff is the real leak surface -- it prints every value, including ones
