@@ -46,27 +46,8 @@ terraform init -input=false -reconfigure -upgrade
 
 # `terraform plan` validates oci_objectstorage_object.minilm_onnx even though
 # this destroy is -targeted to compute only -- and that resource's `source` is
-# read off disk during validation. If the ONNX file isn't cached, planning
-# blows up with "cannot get file information for the specified source". Fetch
-# it the same way terraform-apply.sh does so destroy works on a clean runner.
-# See terraform-apply.sh for the URL-rotation caveat.
-ONNX_FILE="$TF_DIR/.cache/all_MiniLM_L12_v2.onnx"
-if [ ! -s "$ONNX_FILE" ]; then
-  echo "Fetching ALL_MINILM_L12_V2 ONNX model (needed for plan validation)..."
-  mkdir -p "$TF_DIR/.cache"
-  onnx_tmp="$(mktemp -d)"
-  trap 'rm -rf "$onnx_tmp"' EXIT
-  curl -fsSL -o "$onnx_tmp/model.zip" \
-    'https://adwc4pm.objectstorage.us-ashburn-1.oci.customer-oci.com/p/TtH6hL2y25EypZ0-rrczRZ1aXp7v1ONbRBfCiT-BDBN8WLKQ3lgyW6RxCfIFLdA6/n/adwc4pm/b/OML-ai-models/o/all_MiniLM_L12_v2_augmented.zip'
-  unzip -o "$onnx_tmp/model.zip" -d "$onnx_tmp" >/dev/null
-  onnx_src="$(find "$onnx_tmp" -name '*.onnx' -print -quit)"
-  if [ -z "$onnx_src" ]; then
-    echo 'ERROR: no .onnx file found inside downloaded bundle' >&2
-    exit 1
-  fi
-  mv "$onnx_src" "$ONNX_FILE"
-  echo "ONNX model ready: $ONNX_FILE"
-fi
+# read off disk during validation. fetch-onnx-cache.sh is idempotent.
+bash "$(dirname "${BASH_SOURCE[0]}")/fetch-onnx-cache.sh" "$TF_DIR/.cache"
 
 # Delete the Service-created Load Balancers first so terraform can drop the
 # subnets/VCN cleanly, and so no orphan LB keeps billing.
