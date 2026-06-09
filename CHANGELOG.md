@@ -1,3 +1,15 @@
+# [1.2.0](https://github.com/DaifMX/ITESM_Oracle_OCI/compare/v1.1.1...v1.2.0) (2026-06-09)
+
+
+### Bug Fixes
+
+* **infra:** fetch ONNX model before terraform plan ([6d070b0](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/6d070b0d553e7ba84c86ff381f92abc2e9ff6f15))
+
+
+### Features
+
+* **rag:** add in-database RAG assistant on Oracle 26ai AI Vector Search ([dfd4c22](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/dfd4c22821628ad8d1dccbe5b97a61d2f678f862))
+
 ## [1.1.1](https://github.com/DaifMX/ITESM_Oracle_OCI/compare/v1.1.0...v1.1.1) (2026-06-08)
 
 
