@@ -113,13 +113,17 @@ public class EmbeddingModelLoader {
         // Oracle's "augmented" bundle is a zip containing a single .onnx with
         // the tokenizer + post-processing fused into the graph. Stream-extract
         // the .onnx and return its bytes; we never touch the disk.
-        try (InputStream raw = URI.create(modelUrl).toURL().openStream();
+        var url = URI.create(modelUrl).toURL();
+        var conn = url.openConnection();
+        conn.setConnectTimeout(10_000);
+        conn.setReadTimeout(120_000);
+        try (InputStream raw = conn.getInputStream();
              ZipInputStream zip = new ZipInputStream(raw)) {
             ZipEntry entry;
             while ((entry = zip.getNextEntry()) != null) {
                 if (!entry.isDirectory()
                         && entry.getName().toLowerCase().endsWith(".onnx")) {
-                    ByteArrayOutputStream out = new ByteArrayOutputStream(128 * 1024 * 1024);
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
                     zip.transferTo(out);
                     return out.toByteArray();
                 }
