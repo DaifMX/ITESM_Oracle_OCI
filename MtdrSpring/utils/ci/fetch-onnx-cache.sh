@@ -21,7 +21,7 @@
 set -euo pipefail
 
 CACHE_DIR="${1:?usage: fetch-onnx-cache.sh <cache-dir>}"
-ONNX_URL='https://adwc4pm.objectstorage.us-ashburn-1.oci.customer-oci.com/p/TtH6hL2y25EypZ0-rrczRZ1aXp7v1ONbRBfCiT-BDBN8WLKQ3lgyW6RxCfIFLdA6/n/adwc4pm/b/OML-ai-models/o/all_MiniLM_L12_v2_augmented.zip'
+ONNX_URL="${MINILM_ONNX_BUNDLE_URL:-https://adwc4pm.objectstorage.us-ashburn-1.oci.customer-oci.com/p/TtH6hL2y25EypZ0-rrczRZ1aXp7v1ONbRBfCiT-BDBN8WLKQ3lgyW6RxCfIFLdA6/n/adwc4pm/b/OML-ai-models/o/all_MiniLM_L12_v2_augmented.zip}"
 ONNX_FILE="$CACHE_DIR/all_MiniLM_L12_v2.onnx"
 
 if [ -s "$ONNX_FILE" ]; then
