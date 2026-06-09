@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Idempotent: downloads ALL_MINILM_L12_V2_augmented.zip from Oracle's public
-# OML AI models bucket and extracts the .onnx into the cache directory the
-# `oci_objectstorage_object.minilm_onnx` resource reads off disk at plan time.
+# Idempotent: downloads ALL_MINILM_L12_V2_augmented.zip from Oracle's OML AI
+# models Object Storage bucket (via a PreAuth URL) and extracts the .onnx into
+# the cache directory the `oci_objectstorage_object.minilm_onnx` resource reads
+# off disk at plan time.
 #
 # Both terraform-apply.sh and terraform-destroy.sh need this because
 # Terraform validates the resource's `source` attribute during plan even when
