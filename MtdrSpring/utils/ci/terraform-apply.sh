@@ -21,7 +21,8 @@ set -euo pipefail
 # Resolve absolute paths up front -- the `cd` below would otherwise break any
 # later $(dirname "${BASH_SOURCE[0]}") that relies on the original invocation.
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TF_DIR="${MTDRWORKSHOP_LOCATION:-$(cd "$SCRIPT_DIR/../.." && pwd)}/terraform"
+REPO_ROOT="${MTDRWORKSHOP_LOCATION:-$(cd "$SCRIPT_DIR/../.." && pwd)}"
+TF_DIR="$(cd "$REPO_ROOT/terraform" && pwd)"
 cd "$TF_DIR"
 
 # OCI Object Storage's S3-compatible endpoint rejects the AWS SDK's default
