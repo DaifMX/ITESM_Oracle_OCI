@@ -1,6 +1,7 @@
 package com.springboot.MyTodoList.service;
 
 import com.springboot.MyTodoList.model.Task;
+import com.springboot.MyTodoList.rag.RagDirtyEnqueuer;
 import com.springboot.MyTodoList.repository.CommentRepository;
 import com.springboot.MyTodoList.repository.TaskRepository;
 import jakarta.transaction.Transactional;
@@ -18,6 +19,9 @@ public class TaskService {
 
     @Autowired
     private CommentRepository commentRepository;
+
+    @Autowired
+    private RagDirtyEnqueuer ragDirty;
 
     public List<Task> findAll() {
         return taskRepository.findAll();
@@ -56,7 +60,9 @@ public class TaskService {
     }
 
     public Task save(Task task) {
-        return taskRepository.save(task);
+        Task saved = taskRepository.save(task);
+        ragDirty.upsert(RagDirtyEnqueuer.TYPE_TASK, saved.getTaskId());
+        return saved;
     }
 
     public Optional<Task> update(int id, Task updated) {
@@ -73,7 +79,9 @@ public class TaskService {
             existing.setStartDate(updated.getStartDate());
             existing.setExpectedEndDate(updated.getExpectedEndDate());
             existing.setEndDate(updated.getEndDate());
-            return taskRepository.save(existing);
+            Task saved = taskRepository.save(existing);
+            ragDirty.upsert(RagDirtyEnqueuer.TYPE_TASK, saved.getTaskId());
+            return saved;
         });
     }
 
@@ -82,6 +90,7 @@ public class TaskService {
         if (!taskRepository.existsById(id)) return false;
         commentRepository.deleteAll(commentRepository.findByTask_TaskIdOrderByCreatedAtAsc(id));
         taskRepository.deleteById(id);
+        ragDirty.delete(RagDirtyEnqueuer.TYPE_TASK, id);
         return true;
     }
 }

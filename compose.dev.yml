@@ -1,4 +1,34 @@
 services:
+  # One-shot sidecar that downloads the ALL_MINILM_L12_V2 ONNX bundle into
+  # a docker-managed volume the DB will mount read-only. Skips the download
+  # if the file is already present, so re-running compose up is a no-op.
+  onnx-fetcher:
+    image: alpine:3
+    container_name: rag-onnx-fetcher
+    volumes:
+      - oracle-embeddings:/embeddings
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -e
+        if [ -s /embeddings/all_MiniLM_L12_v2.onnx ]; then
+          echo "ONNX model already present -- skipping download."
+          exit 0
+        fi
+        apk add --no-cache curl unzip >/dev/null
+        cd /tmp
+        echo "Downloading ALL_MINILM_L12_V2 augmented bundle..."
+        # The "augmented" bundle has the tokenizer fused into the ONNX graph;
+        # it is the only variant compatible with DBMS_VECTOR.LOAD_ONNX_MODEL.
+        # If this PreAuth URL ever 401s, replace it with the current one from
+        # docs.oracle.com/pls/topic/lookup?...oml_ai_models_object_storage
+        curl -fsSL -o m.zip \
+          'https://adwc4pm.objectstorage.us-ashburn-1.oci.customer-oci.com/p/TtH6hL2y25EypZ0-rrczRZ1aXp7v1ONbRBfCiT-BDBN8WLKQ3lgyW6RxCfIFLdA6/n/adwc4pm/b/OML-ai-models/o/all_MiniLM_L12_v2_augmented.zip'
+        unzip -o m.zip >/dev/null
+        find . -name '*.onnx' -exec mv {} /embeddings/all_MiniLM_L12_v2.onnx \;
+        chmod 644 /embeddings/all_MiniLM_L12_v2.onnx
+        echo "ONNX ready: $(ls -lh /embeddings/all_MiniLM_L12_v2.onnx)"
+
   oracle-db:
     image: gvenzl/oracle-free:23-slim-faststart
     container_name: oracle-atp-dev
@@ -10,6 +40,15 @@ services:
       APP_USER_PASSWORD: ADMIN
     volumes:
       - oracle-data:/opt/oracle/oradata
+      # The ONNX file the fetcher dropped into the shared volume.
+      - oracle-embeddings:/opt/oracle/embeddings:ro
+      # gvenzl runs *.sql files in startdb.d on every container start. Our
+      # script is idempotent so this is cheap on warm boots and does the
+      # whole RAG schema + ONNX load on cold ones.
+      - ./MtdrSpring/utils/dev/db-init/startdb:/container-entrypoint-startdb.d:ro
+    depends_on:
+      onnx-fetcher:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD", "healthcheck.sh"]
       interval: 30s
@@ -34,3 +73,4 @@ services:
 
 volumes:
   oracle-data:
+  oracle-embeddings:
