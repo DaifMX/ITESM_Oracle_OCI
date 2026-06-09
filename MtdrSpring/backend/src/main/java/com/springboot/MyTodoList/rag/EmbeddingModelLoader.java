@@ -86,13 +86,23 @@ public class EmbeddingModelLoader {
                         modelName, modelUrl);
             byte[] onnx = downloadAndExtractOnnx();
             logger.info("Downloaded ONNX bundle ({} bytes). Loading into DB...", onnx.length);
-            loadIntoDb(onnx);
+            try {
+                loadIntoDb(onnx);
+            } catch (SQLException e) {
+                // Another instance may have loaded it concurrently.
+                if (existsInCurrentSchema()) {
+                    logger.info("Embedding model {} became available during load; continuing.", modelName);
+                    return;
+                }
+                throw e;
+            }
             logger.info("Loaded {} into the current user's schema.", modelName);
         } catch (Exception e) {
             logger.error("Embedding model load failed -- RAG will not work until this is " +
                          "resolved. Set rag.embedding.model.url if Oracle's PAR has rotated.",
                          e);
         }
+    }
     }
 
     // ─── helpers ─────────────────────────────────────────────────────────
