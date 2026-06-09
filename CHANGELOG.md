@@ -1,3 +1,16 @@
+# [1.3.0](https://github.com/DaifMX/ITESM_Oracle_OCI/compare/v1.2.0...v1.3.0) (2026-06-09)
+
+
+### Bug Fixes
+
+* **infra:** fetch ONNX model before terraform plan in destroy ([172c186](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/172c18630aa21c0c20bb4a12bf3de4da82b46608))
+* **infra:** resolve fetch-onnx-cache.sh path before `cd` ([464f2b2](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/464f2b2d15101d522fdb6ac46be11a8d30f2dc0d))
+
+
+### Features
+
+* **rag:** self-heal embedding model load at app startup ([2afe6a7](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/2afe6a74aa1108ea62b013b3645e327d45ae0c4d))
+
 # [1.2.0](https://github.com/DaifMX/ITESM_Oracle_OCI/compare/v1.1.1...v1.2.0) (2026-06-09)
 
 
