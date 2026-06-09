@@ -1,6 +1,7 @@
 package com.springboot.MyTodoList.service;
 
 import com.springboot.MyTodoList.model.Project;
+import com.springboot.MyTodoList.rag.RagDirtyEnqueuer;
 import com.springboot.MyTodoList.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,9 @@ public class ProjectService {
 
     @Autowired
     private ProjectRepository projectRepository;
+
+    @Autowired
+    private RagDirtyEnqueuer ragDirty;
 
     public List<Project> findAll() {
         return projectRepository.findAll();
@@ -31,7 +35,9 @@ public class ProjectService {
     }
 
     public Project save(Project project) {
-        return projectRepository.save(project);
+        Project saved = projectRepository.save(project);
+        ragDirty.upsert(RagDirtyEnqueuer.TYPE_PROJECT, saved.getProjectId());
+        return saved;
     }
 
     public Optional<Project> update(int id, Project updated) {
@@ -42,13 +48,16 @@ public class ProjectService {
             existing.setStatus(updated.getStatus());
             existing.setStartDate(updated.getStartDate());
             existing.setEndDate(updated.getEndDate());
-            return projectRepository.save(existing);
+            Project saved = projectRepository.save(existing);
+            ragDirty.upsert(RagDirtyEnqueuer.TYPE_PROJECT, saved.getProjectId());
+            return saved;
         });
     }
 
     public boolean delete(int id) {
         if (!projectRepository.existsById(id)) return false;
         projectRepository.deleteById(id);
+        ragDirty.delete(RagDirtyEnqueuer.TYPE_PROJECT, id);
         return true;
     }
 }

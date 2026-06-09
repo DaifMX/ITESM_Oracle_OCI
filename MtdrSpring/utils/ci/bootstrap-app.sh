@@ -182,6 +182,58 @@ EOF
 echo "Schema ready."
 
 # ---------------------------------------------------------------------------
+# 5b. RAG schema + ONNX embedding model load (idempotent)
+# ---------------------------------------------------------------------------
+# Applies migrations/V5__rag_chunk.sql and loads ALL_MINILM_L12_V2 into the
+# DB from the PreAuth URL produced by terraform (embeddings.tf). Both steps
+# no-op when already done, so safe to run on every deploy.
+#
+# MINILM_ONNX_PAR_URL is expected to be exported by the calling workflow
+# from `terraform output -raw minilm_onnx_par_url`. If the variable is
+# missing (e.g. during partial deploys), skip the load with a warning so
+# we don't break the rest of the bootstrap -- the V5 migration still runs.
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
+
+echo "Applying migrations/V5__rag_chunk.sql..."
+sqlplus -L -S admin/"$DB_ADMIN_PASSWORD"@"$SVC" \
+  @"$REPO_ROOT/migrations/V5__rag_chunk.sql"
+
+if [ -n "${MINILM_ONNX_PAR_URL:-}" ]; then
+  echo "Loading ALL_MINILM_L12_V2 ONNX model (if missing)..."
+  sqlplus -L -S admin/"$DB_ADMIN_PASSWORD"@"$SVC" <<EOF
+WHENEVER SQLERROR EXIT 1
+SET SERVEROUTPUT ON
+DECLARE
+  n NUMBER;
+BEGIN
+  SELECT COUNT(*) INTO n FROM all_mining_models
+   WHERE owner = 'TODOUSER' AND model_name = 'ALL_MINILM_L12_V2';
+  IF n = 0 THEN
+    -- Schema-qualify so the app (connected as TODOUSER) can resolve
+    -- VECTOR_EMBEDDING(ALL_MINILM_L12_V2 ...) without ORA-40284.
+    DBMS_VECTOR.LOAD_ONNX_MODEL_CLOUD(
+      model_name => 'TODOUSER.ALL_MINILM_L12_V2',
+      uri        => '${MINILM_ONNX_PAR_URL}',
+      metadata   => JSON('{
+        "function": "embedding",
+        "embeddingOutput": "embedding",
+        "input": { "input": ["DATA"] }
+      }')
+    );
+    DBMS_OUTPUT.PUT_LINE('Loaded TODOUSER.ALL_MINILM_L12_V2.');
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('ALL_MINILM_L12_V2 already loaded -- skipping.');
+  END IF;
+END;
+/
+EXIT
+EOF
+else
+  echo "WARN: MINILM_ONNX_PAR_URL not set -- skipping ONNX model load." \
+       "Re-run with the terraform output exported to enable RAG." >&2
+fi
+
+# ---------------------------------------------------------------------------
 # 6. application secrets
 # ---------------------------------------------------------------------------
 # App connects as TODOUSER using the same password.

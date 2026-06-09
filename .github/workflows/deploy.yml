@@ -220,7 +220,12 @@ jobs:
             run: bash MtdrSpring/utils/ci/setup-oci-auth.sh
 
           - name: Bootstrap infra-dependent resources
-            run: bash MtdrSpring/utils/ci/bootstrap-app.sh
+            # Expose the embeddings PAR URL produced by terraform so the
+            # bootstrap script can call DBMS_VECTOR.LOAD_ONNX_MODEL_CLOUD.
+            run: |
+                MINILM_ONNX_PAR_URL="$(terraform -chdir=MtdrSpring/terraform output -raw minilm_onnx_par_url 2>/dev/null || true)"
+                export MINILM_ONNX_PAR_URL
+                bash MtdrSpring/utils/ci/bootstrap-app.sh
 
           - name: Apply Kubernetes manifest
             working-directory: MtdrSpring/backend

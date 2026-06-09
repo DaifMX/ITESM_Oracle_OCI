@@ -7,3 +7,6 @@ backend_ci_override.tf
 *.tfstate
 *.tfstate.*
 crash.log
+
+# ONNX embedding model cache (downloaded by embeddings.tf, ~80 MB)
+.cache/

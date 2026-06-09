@@ -51,5 +51,8 @@ yarn-debug.log*
 yarn-error.log*
 /MtdrSpring/backend/wallet
 
+# Local-dev ONNX embedding cache (~80 MB, fetched by utils/dev/fetch-onnx.sh)
+/MtdrSpring/.dev/
+
 .claude
 MtdrSpring/backend/src/main/frontend/package-lock.json
