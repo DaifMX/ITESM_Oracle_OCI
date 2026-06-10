@@ -1,3 +1,17 @@
+# [1.4.0](https://github.com/DaifMX/ITESM_Oracle_OCI/compare/v1.3.0...v1.4.0) (2026-06-10)
+
+
+### Bug Fixes
+
+* **comments:** set task and author when creating a comment ([82272a0](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/82272a06ccff8f0a59474bf33c2bb9083ef68b26))
+* **routing:** serve SPA fallback and return 401 on expired token ([bc1d165](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/bc1d1654cf7166c736415220396843ec346c4d17))
+* **task:** enforce 500-char description limit across all layers ([7a4ac24](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/7a4ac24288ca4a3ef762f485ecfeb45e9ffebedc))
+
+
+### Features
+
+* **ai:** agentic tool-calling assistant with persistent chat memory ([dabe3a8](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/dabe3a8b273f3cdb3408c60978bb92995ab2df1c)), closes [#17](https://github.com/DaifMX/ITESM_Oracle_OCI/issues/17) [#18](https://github.com/DaifMX/ITESM_Oracle_OCI/issues/18)
+
 # [1.3.0](https://github.com/DaifMX/ITESM_Oracle_OCI/compare/v1.2.0...v1.3.0) (2026-06-09)
 
 
