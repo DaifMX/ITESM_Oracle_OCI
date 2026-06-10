@@ -171,10 +171,10 @@ export async function getTeams() {
 
 // ─── Chat / AI Assistant ─────────────────────────────────────────────────────
 
-export async function sendChatMessage(message) {
+export async function sendChatMessage(message, history = []) {
   const res = await authFetch('/chat', {
     method: 'POST',
-    body: JSON.stringify({ message }),
+    body: JSON.stringify({ message, history }),
   })
   if (!res.ok) throw new Error('Failed to send message')
   return res.json()

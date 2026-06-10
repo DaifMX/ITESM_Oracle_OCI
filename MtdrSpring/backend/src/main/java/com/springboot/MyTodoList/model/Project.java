@@ -19,6 +19,10 @@ public class Project {
     @Column(name = "NAME")
     private String name;
 
+    // Jira-style project key, e.g. "P1". Tickets are referenced as KEY-NUMBER.
+    @Column(name = "SHORT_NAME", unique = true, length = 10)
+    private String shortName;
+
     @Column(name = "DESCRIPTION")
     private String description;
 
@@ -41,6 +45,9 @@ public class Project {
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+
+    public String getShortName() { return shortName; }
+    public void setShortName(String shortName) { this.shortName = shortName; }
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }

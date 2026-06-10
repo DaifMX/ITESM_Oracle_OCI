@@ -56,6 +56,13 @@ public class TaskController {
         return taskService.findAll();
     }
 
+    @GetMapping("/key/{ticketKey}")
+    public ResponseEntity<Task> getByTicketKey(@PathVariable String ticketKey) {
+        return taskService.findByTicketKey(ticketKey)
+                .map(t -> ResponseEntity.ok(t))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Task> getById(@PathVariable int id) {
         return taskService.findById(id)

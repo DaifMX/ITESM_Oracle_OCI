@@ -3,6 +3,7 @@ package com.springboot.MyTodoList.service;
 import com.springboot.MyTodoList.model.Task;
 import com.springboot.MyTodoList.rag.RagDirtyEnqueuer;
 import com.springboot.MyTodoList.repository.CommentRepository;
+import com.springboot.MyTodoList.repository.ProjectRepository;
 import com.springboot.MyTodoList.repository.TaskRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class TaskService {
     private CommentRepository commentRepository;
 
     @Autowired
+    private ProjectRepository projectRepository;
+
+    @Autowired
     private RagDirtyEnqueuer ragDirty;
 
     public List<Task> findAll() {
@@ -29,6 +33,22 @@ public class TaskService {
 
     public Optional<Task> findById(int id) {
         return taskRepository.findById(id);
+    }
+
+    /** Looks up a task by Jira-style ticket key, e.g. "P1-7". */
+    public Optional<Task> findByTicketKey(String ticketKey) {
+        if (ticketKey == null) return Optional.empty();
+        int dash = ticketKey.lastIndexOf('-');
+        if (dash <= 0 || dash == ticketKey.length() - 1) return Optional.empty();
+        String projectKey = ticketKey.substring(0, dash).trim();
+        int ticketNumber;
+        try {
+            ticketNumber = Integer.parseInt(ticketKey.substring(dash + 1).trim());
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
+        return projectRepository.findByShortNameIgnoreCase(projectKey)
+            .flatMap(p -> taskRepository.findByProject_ProjectIdAndTicketNumber(p.getProjectId(), ticketNumber));
     }
 
     public List<Task> findByProject(int projectId) {
@@ -60,9 +80,16 @@ public class TaskService {
     }
 
     public Task save(Task task) {
+        assignTicketNumber(task);
         Task saved = taskRepository.save(task);
         ragDirty.upsert(RagDirtyEnqueuer.TYPE_TASK, saved.getTaskId());
         return saved;
+    }
+
+    /** Gives new tasks the next sequential ticket number within their project. */
+    private void assignTicketNumber(Task task) {
+        if (task.getTicketNumber() != null || task.getProject() == null) return;
+        task.setTicketNumber(taskRepository.findMaxTicketNumber(task.getProject().getProjectId()) + 1);
     }
 
     public Optional<Task> update(int id, Task updated) {

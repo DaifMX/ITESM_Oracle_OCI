@@ -193,8 +193,9 @@ public class RagIndexer {
 
     private String buildTaskText(Task t) {
         StringBuilder sb = new StringBuilder();
-        sb.append("[TASK #").append(t.getTaskId()).append("] ")
-          .append(nz(t.getTitle())).append('\n');
+        sb.append("[TASK #").append(t.getTaskId());
+        if (t.getTicketKey() != null) sb.append(" | ").append(t.getTicketKey());
+        sb.append("] ").append(nz(t.getTitle())).append('\n');
         sb.append("Status: ").append(nz(t.getStatus()))
           .append(" | Priority: ").append(nz(t.getPriority()))
           .append(" | Sprint: ").append(t.getSprint() != null ? t.getSprint().getName() : "none")
@@ -249,8 +250,9 @@ public class RagIndexer {
 
     private String buildProjectText(Project p) {
         StringBuilder sb = new StringBuilder();
-        sb.append("[PROJECT #").append(p.getProjectId()).append("] ")
-          .append(nz(p.getName()))
+        sb.append("[PROJECT #").append(p.getProjectId());
+        if (p.getShortName() != null) sb.append(" | ").append(p.getShortName());
+        sb.append("] ").append(nz(p.getName()))
           .append(" (").append(nz(p.getStatus())).append(")\n");
         sb.append("Dates: ")
           .append(p.getStartDate() != null ? p.getStartDate() : "-")

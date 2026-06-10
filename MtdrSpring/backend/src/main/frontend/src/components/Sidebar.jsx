@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { LayoutDashboard, FolderKanban, LogOut, Sun, Moon, Users, Shield } from 'lucide-react'
 import { useTheme } from '../context/ThemeContext'
-import { clearTokens, clearUser, getUser } from '../lib/auth'
+import { clearTokens, clearUser, clearChatHistory, getUser } from '../lib/auth'
 import { cn } from '../lib/utils'
 import { Button } from './ui/button'
 
@@ -31,6 +31,7 @@ export default function Sidebar() {
   function handleLogout() {
     clearTokens()
     clearUser()
+    clearChatHistory()
     navigate('/login')
   }
 
