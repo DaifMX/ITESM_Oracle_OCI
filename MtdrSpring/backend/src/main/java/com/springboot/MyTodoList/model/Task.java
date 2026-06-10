@@ -29,7 +29,7 @@ public class Task {
     @Column(name = "TITLE", nullable = false)
     private String title;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", length = 500)
     private String description;
 
     @Column(name = "STATUS")

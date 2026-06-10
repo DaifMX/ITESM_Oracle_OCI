@@ -73,14 +73,16 @@ export async function getTasksByProject(projectId) {
 
 export async function createTask(data) {
   const res = await authFetch('/tasks', { method: 'POST', body: JSON.stringify(data) })
-  if (!res.ok) throw new Error('Failed to create task')
-  return res.json()
+  const body = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(body.error || 'Failed to create task')
+  return body
 }
 
 export async function updateTask(id, data) {
   const res = await authFetch(`/tasks/${id}`, { method: 'PUT', body: JSON.stringify(data) })
-  if (!res.ok) throw new Error('Failed to update task')
-  return res.json()
+  const body = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(body.error || 'Failed to update task')
+  return body
 }
 
 export async function deleteTask(id) {

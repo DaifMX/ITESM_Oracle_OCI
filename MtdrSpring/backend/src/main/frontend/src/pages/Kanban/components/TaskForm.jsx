@@ -19,10 +19,14 @@ export default function TaskForm({ form, setForm, onSubmit, error, developers, a
         <textarea
           className="field resize-none"
           rows={3}
+          maxLength={500}
           value={form.description}
           onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
           placeholder="Optional description"
         />
+        <p className={`text-xs mt-0.5 text-right ${form.description?.length > 480 ? 'text-destructive' : 'text-muted-foreground'}`}>
+          {form.description?.length ?? 0}/500
+        </p>
       </Field>
 
       <div className="grid grid-cols-2 gap-3">
