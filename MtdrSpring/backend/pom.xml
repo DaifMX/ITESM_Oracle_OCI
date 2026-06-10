@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -42,7 +42,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>
-			<artifactId>httpclient5</artifactId>			
+			<artifactId>httpclient5</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.oracle.database.jdbc</groupId>
@@ -58,7 +58,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>			
+			<artifactId>spring-boot-starter-test</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -66,7 +66,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>			
+			<artifactId>spring-security-test</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.telegram</groupId>
@@ -107,7 +107,7 @@
 			<version>0.12.3</version>
 			<scope>runtime</scope>
 		</dependency>
- </dependencies>
+	</dependencies>
 	<build>
 		<testSourceDirectory>${project.basedir}/tests</testSourceDirectory>
 		<plugins>
@@ -184,6 +184,31 @@
 						</goals>
 					</execution>
 				</executions>
+
+			</plugin>
+			<plugin>
+				<groupId>de.elnarion.maven</groupId>
+				<artifactId>plantuml-generator-maven-plugin</artifactId>
+				<version>3.0.1</version>
+				<executions>
+					<execution>
+						<id>generate-puml</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+
+				<configuration>
+					<outputDirectory>
+						${project.basedir}/../../docs/diagrams
+					</outputDirectory>
+					<outputFilename>class-diagram.puml</outputFilename>
+					<scanPackages>
+						<scanPackage>com.springboot.MyTodoList</scanPackage>
+					</scanPackages>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

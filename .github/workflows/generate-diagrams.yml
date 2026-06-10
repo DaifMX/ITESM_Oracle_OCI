@@ -1,0 +1,50 @@
+name: Generate UML Diagrams
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  generate-diagrams:
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: maven
+
+      - name: Install Graphviz
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphviz
+
+      - name: Download PlantUML
+        run: |
+          curl -L -o plantuml.jar https://github.com/plantuml/plantuml/releases/latest/download/plantuml.jar
+
+      - name: Generate PlantUML source
+        working-directory: MtdrSpring/backend
+        run: |
+          mvn -B -DskipTests -Dskip.installnodenpm -Dskip.npm process-classes
+
+      - name: Render PlantUML diagrams
+        run: |
+          java -jar plantuml.jar -tpng docs/diagrams/*.puml
+
+      - name: Commit diagrams
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Auto-update UML diagrams"
+          file_pattern: docs/diagrams/*.puml docs/diagrams/*.png
