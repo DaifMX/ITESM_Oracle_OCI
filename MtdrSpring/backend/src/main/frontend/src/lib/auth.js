@@ -36,6 +36,34 @@ export function clearUser() {
   sessionStorage.removeItem(USER_KEY)
 }
 
+// ─── Chat history ────────────────────────────────────────────────────────────
+// Persisted per user so the assistant keeps conversation context across page
+// reloads (it lives in sessionStorage, so it clears when the tab closes).
+const CHAT_HISTORY_PREFIX = 'oracle_todo_chat_'
+
+export function getChatHistory(userId) {
+  try {
+    const raw = sessionStorage.getItem(`${CHAT_HISTORY_PREFIX}${userId ?? 'anon'}`)
+    return raw ? JSON.parse(raw) : null
+  } catch {
+    return null
+  }
+}
+
+export function setChatHistory(userId, messages) {
+  try {
+    sessionStorage.setItem(`${CHAT_HISTORY_PREFIX}${userId ?? 'anon'}`, JSON.stringify(messages))
+  } catch {
+    // sessionStorage full or unavailable — degrade to in-memory only.
+  }
+}
+
+export function clearChatHistory() {
+  Object.keys(sessionStorage)
+    .filter((k) => k.startsWith(CHAT_HISTORY_PREFIX))
+    .forEach((k) => sessionStorage.removeItem(k))
+}
+
 export async function refreshAccessToken() {
   const refreshToken = getRefreshToken()
   if (!refreshToken) return null

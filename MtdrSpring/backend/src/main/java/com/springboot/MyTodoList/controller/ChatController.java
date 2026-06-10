@@ -36,7 +36,7 @@ public class ChatController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "User not found"));
         }
 
-        String response = botAgentService.processQuery(employeeOpt.get(), request.getMessage());
+        String response = botAgentService.processQuery(employeeOpt.get(), request.getMessage(), request.getHistory());
         return ResponseEntity.ok(Map.of("response", response));
     }
 }

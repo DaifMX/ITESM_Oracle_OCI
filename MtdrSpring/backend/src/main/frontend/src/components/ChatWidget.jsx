@@ -3,18 +3,28 @@ import { MessageSquare, X, Send, Loader2, Bot } from 'lucide-react'
 import { Button } from './ui/button'
 import { cn } from '../lib/utils'
 import { sendChatMessage } from '../lib/api'
-import { getUser } from '../lib/auth'
+import { getUser, getChatHistory, setChatHistory } from '../lib/auth'
 
-const WELCOME = 'Hi! I\'m your project assistant. Ask me anything about your tasks, sprints, or projects.'
+const WELCOME = 'Hi! I\'m your project assistant. Ask me about your tasks, sprints, or projects — or ask me to create or update them for you.'
+
+// Cap the history replayed to the backend so prompts stay small.
+const MAX_HISTORY = 12
 
 export default function ChatWidget() {
+  const user = getUser()
   const [open, setOpen] = useState(false)
-  const [messages, setMessages] = useState([{ role: 'assistant', text: WELCOME }])
+  const [messages, setMessages] = useState(
+    () => getChatHistory(user?.employeeId) ?? [{ role: 'assistant', text: WELCOME }]
+  )
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
-  const user = getUser()
+
+  // Persist the conversation so context survives page reloads.
+  useEffect(() => {
+    setChatHistory(user?.employeeId, messages)
+  }, [messages, user?.employeeId])
 
   useEffect(() => {
     if (open) {
@@ -34,11 +44,15 @@ export default function ChatWidget() {
     if (!text || loading) return
 
     setInput('')
+    const history = messages
+      .slice(1) // skip the canned welcome message
+      .slice(-MAX_HISTORY)
+      .map(m => ({ role: m.role, content: m.text }))
     setMessages(prev => [...prev, { role: 'user', text }])
     setLoading(true)
 
     try {
-      const data = await sendChatMessage(text)
+      const data = await sendChatMessage(text, history)
       setMessages(prev => [...prev, { role: 'assistant', text: data.response }])
     } catch {
       setMessages(prev => [...prev, { role: 'assistant', text: 'Sorry, something went wrong. Please try again.' }])

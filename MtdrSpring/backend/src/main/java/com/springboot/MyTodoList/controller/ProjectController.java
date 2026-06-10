@@ -30,6 +30,13 @@ public class ProjectController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/key/{key}")
+    public ResponseEntity<Project> getByKey(@PathVariable String key) {
+        return projectService.findByShortName(key)
+                .map(p -> ResponseEntity.ok(p))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/team/{teamId}")
     public List<Project> getByTeam(@PathVariable int teamId) {
         return projectService.findByTeam(teamId);

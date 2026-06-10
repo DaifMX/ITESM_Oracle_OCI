@@ -68,4 +68,32 @@ public class OpenRouterService{
         }
         return responseBody;
     }
+
+    /**
+     * Full chat completion with optional function-calling tools. Returns the
+     * raw assistant message node, which may contain "content", "tool_calls",
+     * or both -- the caller decides whether to execute tools and loop.
+     */
+    public JsonNode chatCompletion(ArrayNode messages, ArrayNode tools) throws IOException, org.apache.hc.core5.http.ParseException {
+        ObjectNode root = objectMapper.createObjectNode();
+        root.put("model", model);
+        root.set("messages", messages);
+        if (tools != null && !tools.isEmpty()) {
+            root.set("tools", tools);
+        }
+
+        String requestBody = objectMapper.writeValueAsString(root);
+        httpPost.setEntity(new StringEntity(requestBody, java.nio.charset.StandardCharsets.UTF_8));
+        String responseBody;
+        try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+            responseBody = EntityUtils.toString(response.getEntity());
+        }
+
+        JsonNode json = objectMapper.readTree(responseBody);
+        JsonNode choices = json.path("choices");
+        if (choices.isArray() && !choices.isEmpty()) {
+            return choices.get(0).path("message");
+        }
+        throw new IOException("Unexpected LLM response: " + responseBody);
+    }
 }
