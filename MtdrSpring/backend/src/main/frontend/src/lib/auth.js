@@ -1,3 +1,7 @@
+// All REST endpoints are served under this prefix so SPA routes (e.g. /projects)
+// never collide with the API. Client-side router paths must NOT include it.
+export const API_BASE = '/api'
+
 const ACCESS_TOKEN_KEY = 'oracle_todo_access_token'
 const REFRESH_TOKEN_KEY = 'oracle_todo_refresh_token'
 const USER_KEY = 'oracle_todo_user'
@@ -68,7 +72,7 @@ export async function refreshAccessToken() {
   const refreshToken = getRefreshToken()
   if (!refreshToken) return null
 
-  const res = await fetch('/auth/refresh', {
+  const res = await fetch(`${API_BASE}/auth/refresh`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ refreshToken }),
@@ -87,8 +91,11 @@ export async function refreshAccessToken() {
 export async function authFetch(url, options = {}) {
   let token = getAccessToken()
 
+  // Prepend the API prefix unless the caller already included it.
+  const apiUrl = url.startsWith(`${API_BASE}/`) ? url : `${API_BASE}${url}`
+
   const makeRequest = (t) =>
-    fetch(url, {
+    fetch(apiUrl, {
       ...options,
       headers: {
         ...options.headers,
