@@ -1,13 +1,14 @@
 import { cn, parseLocalDate } from '../../../lib/utils'
 import PriorityBadge from './PriorityBadge'
 
-export default function KanbanCard({ task, onDragStart }) {
+export default function KanbanCard({ task, onDragStart, onOpen }) {
   const isOverdue = task.expectedEndDate && task.status !== 'done' && parseLocalDate(task.expectedEndDate) < new Date()
 
   return (
     <div
       draggable
       onDragStart={(e) => onDragStart(e, task)}
+      onClick={() => onOpen?.(task)}
       className={cn(
         'rounded-md border bg-card p-3 cursor-grab active:cursor-grabbing shadow-sm',
         'hover:shadow-md transition-shadow select-none',

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { FolderKanban, BarChart3, Inbox } from 'lucide-react'
 import { cn } from '../../lib/utils'
+import CreateTaskButton from '../../components/CreateTaskButton'
 import Overview from './Overview'
 import TeamKPIs from './TeamKPIs'
 import BacklogView from '../DeveloperDashboard/components/BacklogView'
@@ -16,11 +17,14 @@ export default function DashboardPage() {
 
   return (
     <div className="px-6 py-6 max-w-5xl mx-auto space-y-5">
-      <div>
-        <h1 className="text-xl font-bold text-foreground">Dashboard</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          Overview of projects, sprints and team productivity
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-bold text-foreground">Dashboard</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            Overview of projects, sprints and team productivity
+          </p>
+        </div>
+        <CreateTaskButton />
       </div>
 
       <div className="flex items-center gap-1 border-b">
