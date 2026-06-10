@@ -31,6 +31,12 @@ public class TaskController {
     @Autowired
     private SprintRepository sprintRepository;
 
+    private ResponseEntity<?> validateTask(Task task) {
+        if (task.getDescription() != null && task.getDescription().length() > 500)
+            return ResponseEntity.badRequest().body(Map.of("error", "Description is too long. Please shorten it."));
+        return validateTaskDates(task);
+    }
+
     private ResponseEntity<?> validateTaskDates(Task task) {
         if (task.getSprint() == null) return null;
         Optional<Sprint> sprintOpt = sprintRepository.findById(task.getSprint().getSprintId());
@@ -96,14 +102,14 @@ public class TaskController {
     @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     @PostMapping
     public ResponseEntity<?> create(@RequestBody Task task) {
-        ResponseEntity<?> err = validateTaskDates(task);
+        ResponseEntity<?> err = validateTask(task);
         if (err != null) return err;
         return ResponseEntity.status(HttpStatus.CREATED).body(taskService.save(task));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable int id, @RequestBody Task task) {
-        ResponseEntity<?> err = validateTaskDates(task);
+        ResponseEntity<?> err = validateTask(task);
         if (err != null) return err;
         return taskService.update(id, task)
                 .map(t -> ResponseEntity.ok(t))

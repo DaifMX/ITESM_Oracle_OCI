@@ -5,9 +5,9 @@ import { STATUS_OPTIONS, STATUS_CONFIG } from '../constants'
 export default function TaskControls({ tasks, total, filterStatus, setFilterStatus, view, setView }) {
   return (
     <div className="flex items-center justify-between gap-3 flex-wrap">
-      {/* Status filters */}
+      {/* Status filters — only shown in list view */}
       <div className="flex items-center gap-1.5 flex-wrap">
-        {['all', ...STATUS_OPTIONS].map((s) => (
+        {view !== 'kanban' && ['all', ...STATUS_OPTIONS].map((s) => (
           <button
             key={s}
             onClick={() => setFilterStatus(s)}
