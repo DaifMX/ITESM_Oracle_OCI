@@ -40,11 +40,14 @@ jobs:
           mvn -B -DskipTests -Dskip.installnodenpm -Dskip.npm process-classes
 
       - name: Render PlantUML diagrams
+        env:
+          PLANTUML_LIMIT_SIZE: 16384
         run: |
           java -jar plantuml.jar -tpng docs/diagrams/*.puml
+          java -jar plantuml.jar -tsvg docs/diagrams/*.puml
 
       - name: Commit diagrams
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Auto-update UML diagrams"
-          file_pattern: docs/diagrams/*.puml docs/diagrams/*.png
+          file_pattern: docs/diagrams/*.puml docs/diagrams/*.png docs/diagrams/*.svg
