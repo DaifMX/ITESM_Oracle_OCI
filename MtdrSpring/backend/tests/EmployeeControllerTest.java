@@ -69,7 +69,7 @@ public class EmployeeControllerTest {
         createMgr.setEmail("newmgr@example.com");
         createMgr.setRole("manager");
 
-        mockMvc.perform(post("/employees")
+        mockMvc.perform(post("/api/employees")
                 .with(user(callerEmail))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(createMgr)))
@@ -80,7 +80,7 @@ public class EmployeeControllerTest {
         createAdmin.setEmail("newadmin@example.com");
         createAdmin.setRole("admin");
 
-        mockMvc.perform(post("/employees")
+        mockMvc.perform(post("/api/employees")
                 .with(user(callerEmail))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(createAdmin)))
@@ -96,7 +96,7 @@ public class EmployeeControllerTest {
         e.setEmail("user@example.com");
         e.setRole("developer");
 
-        mockMvc.perform(post("/employees")
+        mockMvc.perform(post("/api/employees")
                 .with(user(callerEmail))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(e)))
@@ -106,7 +106,7 @@ public class EmployeeControllerTest {
         setCaller("mgr@example.com", "manager");
         when(userService.addEmployee(any(Employee.class))).thenReturn(e);
 
-        mockMvc.perform(post("/employees")
+        mockMvc.perform(post("/api/employees")
                 .with(user(callerEmail))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(e)))
@@ -117,7 +117,7 @@ public class EmployeeControllerTest {
         mgr.setEmail("newmgr2@example.com");
         mgr.setRole("manager");
 
-        mockMvc.perform(post("/employees")
+        mockMvc.perform(post("/api/employees")
                 .with(user(callerEmail))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(mgr)))
@@ -127,7 +127,7 @@ public class EmployeeControllerTest {
         setCaller("admin@example.com", "admin");
         when(userService.addEmployee(any(Employee.class))).thenReturn(e);
 
-        mockMvc.perform(post("/employees")
+        mockMvc.perform(post("/api/employees")
                 .with(user(callerEmail))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(e)))
@@ -144,7 +144,7 @@ public class EmployeeControllerTest {
         createManager.setRole("manager");
         when(userService.addEmployee(any(Employee.class))).thenReturn(createManager);
 
-        mockMvc.perform(post("/employees")
+        mockMvc.perform(post("/api/employees")
                 .with(user(callerEmail))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(createManager)))
@@ -156,7 +156,7 @@ public class EmployeeControllerTest {
         createDev.setRole("developer");
         when(userService.addEmployee(any(Employee.class))).thenReturn(createDev);
 
-        mockMvc.perform(post("/employees")
+        mockMvc.perform(post("/api/employees")
                 .with(user(callerEmail))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(createDev)))
