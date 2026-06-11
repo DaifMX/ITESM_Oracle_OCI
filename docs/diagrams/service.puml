@@ -1,0 +1,131 @@
+@startuml
+
+class com.springboot.MyTodoList.service.BotAgentService {
+	{field} {static} -logger : org.slf4j.Logger
+	{field} -ragRetriever : com.springboot.MyTodoList.rag.RagRetriever
+	{field} -topK : int
+	{method} -buildSystemPrompt ( employee : com.springboot.MyTodoList.model.Employee , isManager : boolean ) : String
+	{method} +processQuery ( employee : com.springboot.MyTodoList.model.Employee , query : String ) : String
+}
+
+
+class com.springboot.MyTodoList.service.CommentService {
+	{field} -commentRepository : com.springboot.MyTodoList.repository.CommentRepository
+	{field} -ragDirty : com.springboot.MyTodoList.rag.RagDirtyEnqueuer
+	{method} +delete ( id : int ) : boolean
+	{method} +findByEmployee ( employeeId : int ) : java.util.List
+	{method} +findById ( id : int ) : java.util.Optional
+	{method} +findByTask ( taskId : int ) : java.util.List
+	{method} +save ( comment : com.springboot.MyTodoList.model.Comment ) : com.springboot.MyTodoList.model.Comment
+	{method} +update ( id : int , newContent : String ) : java.util.Optional
+}
+
+
+class com.springboot.MyTodoList.service.EmployeeTeamService {
+	{field} -employeeRepository : com.springboot.MyTodoList.repository.EmployeeRepository
+	{field} -employeeTeamRepository : com.springboot.MyTodoList.repository.EmployeeTeamRepository
+	{field} -teamRepository : com.springboot.MyTodoList.repository.TeamRepository
+	{method} +addMember ( teamId : int , employeeId : int ) : java.util.Optional
+	{method} +findByEmployee ( employeeId : int ) : java.util.List
+	{method} +findByTeam ( teamId : int ) : java.util.List
+	{method} +removeMember ( teamId : int , employeeId : int ) : boolean
+}
+
+
+class com.springboot.MyTodoList.service.OpenRouterService {
+	{field} -httpClient : org.apache.hc.client5.http.impl.classic.CloseableHttpClient
+	{field} -httpPost : org.apache.hc.client5.http.classic.methods.HttpPost
+	{field} -model : String
+	{field} -objectMapper : com.fasterxml.jackson.databind.ObjectMapper
+	{method} +chat ( systemPrompt : String , userMessage : String ) : String
+	{method} +generateText ( prompt : String ) : String
+}
+
+
+class com.springboot.MyTodoList.service.ProjectService {
+	{field} -projectRepository : com.springboot.MyTodoList.repository.ProjectRepository
+	{field} -ragDirty : com.springboot.MyTodoList.rag.RagDirtyEnqueuer
+	{method} +delete ( id : int ) : boolean
+	{method} +findAll () : java.util.List
+	{method} +findById ( id : int ) : java.util.Optional
+	{method} +findByStatus ( status : String ) : java.util.List
+	{method} +findByTeam ( teamId : int ) : java.util.List
+	{method} +save ( project : com.springboot.MyTodoList.model.Project ) : com.springboot.MyTodoList.model.Project
+	{method} +update ( id : int , updated : com.springboot.MyTodoList.model.Project ) : java.util.Optional
+}
+
+
+class com.springboot.MyTodoList.service.RefreshTokenService {
+	{field} -refreshExpiration : long
+	{field} -refreshTokenRepository : com.springboot.MyTodoList.repository.RefreshTokenRepository
+	{method} +createRefreshToken ( employee : com.springboot.MyTodoList.model.Employee ) : com.springboot.MyTodoList.model.RefreshToken
+	{method} +deleteByEmployee ( employee : com.springboot.MyTodoList.model.Employee ) : void
+	{method} +findByToken ( token : String ) : java.util.Optional
+	{method} +isExpired ( token : com.springboot.MyTodoList.model.RefreshToken ) : boolean
+}
+
+
+class com.springboot.MyTodoList.service.SprintService {
+	{field} -ragDirty : com.springboot.MyTodoList.rag.RagDirtyEnqueuer
+	{field} -sprintRepository : com.springboot.MyTodoList.repository.SprintRepository
+	{method} +delete ( id : int ) : boolean
+	{method} +findActiveByProject ( projectId : int ) : java.util.Optional
+	{method} +findAll () : java.util.List
+	{method} +findById ( id : int ) : java.util.Optional
+	{method} +findByProject ( projectId : int ) : java.util.List
+	{method} +findByStatus ( status : String ) : java.util.List
+	{method} +save ( sprint : com.springboot.MyTodoList.model.Sprint ) : com.springboot.MyTodoList.model.Sprint
+	{method} +update ( id : int , updated : com.springboot.MyTodoList.model.Sprint ) : java.util.Optional
+}
+
+
+class com.springboot.MyTodoList.service.TaskService {
+	{field} -commentRepository : com.springboot.MyTodoList.repository.CommentRepository
+	{field} -ragDirty : com.springboot.MyTodoList.rag.RagDirtyEnqueuer
+	{field} -taskRepository : com.springboot.MyTodoList.repository.TaskRepository
+	{method} +delete ( id : int ) : boolean
+	{method} +findAll () : java.util.List
+	{method} +findByAssignee ( employeeId : int ) : java.util.List
+	{method} +findById ( id : int ) : java.util.Optional
+	{method} +findByProject ( projectId : int ) : java.util.List
+	{method} +findByProjectAndSprint ( projectId : int , sprintId : int ) : java.util.List
+	{method} +findByProjectAndStatus ( projectId : int , status : String ) : java.util.List
+	{method} +findBySprint ( sprintId : int ) : java.util.List
+	{method} +findBySprintAndStatus ( sprintId : int , status : String ) : java.util.List
+	{method} +findByStatus ( status : String ) : java.util.List
+	{method} +save ( task : com.springboot.MyTodoList.model.Task ) : com.springboot.MyTodoList.model.Task
+	{method} +update ( id : int , updated : com.springboot.MyTodoList.model.Task ) : java.util.Optional
+}
+
+
+class com.springboot.MyTodoList.service.TeamService {
+	{field} -teamRepository : com.springboot.MyTodoList.repository.TeamRepository
+	{method} +delete ( id : int ) : boolean
+	{method} +findAll () : java.util.List
+	{method} +findById ( id : int ) : java.util.Optional
+	{method} +findByManager ( managerId : int ) : java.util.List
+	{method} +save ( team : com.springboot.MyTodoList.model.Team ) : com.springboot.MyTodoList.model.Team
+	{method} +update ( id : int , updated : com.springboot.MyTodoList.model.Team ) : java.util.Optional
+}
+
+
+class com.springboot.MyTodoList.service.UserService {
+	{field} -commentRepository : com.springboot.MyTodoList.repository.CommentRepository
+	{field} -employeeRepository : com.springboot.MyTodoList.repository.EmployeeRepository
+	{field} -employeeTeamRepository : com.springboot.MyTodoList.repository.EmployeeTeamRepository
+	{field} -refreshTokenRepository : com.springboot.MyTodoList.repository.RefreshTokenRepository
+	{field} -taskRepository : com.springboot.MyTodoList.repository.TaskRepository
+	{method} +addEmployee ( employee : com.springboot.MyTodoList.model.Employee ) : com.springboot.MyTodoList.model.Employee
+	{method} +deleteEmployee ( id : int ) : boolean
+	{method} +findAll () : java.util.List
+	{method} +getEmployeeById ( id : int ) : org.springframework.http.ResponseEntity
+	{method} +updateEmployee ( id : int , updated : com.springboot.MyTodoList.model.Employee ) : com.springboot.MyTodoList.model.Employee
+}
+
+
+
+
+com.springboot.MyTodoList.service.BotAgentService *--  com.springboot.MyTodoList.service.OpenRouterService : openRouterService
+
+
+@enduml

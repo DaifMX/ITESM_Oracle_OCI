@@ -1,0 +1,88 @@
+@startuml
+
+class com.springboot.MyTodoList.util.BotActions {
+	{field} -botAgentService : com.springboot.MyTodoList.service.BotAgentService
+	{field} -chatId : long
+	{field} {static} -dataMap : java.util.concurrent.ConcurrentHashMap
+	{field} -employeeRepository : com.springboot.MyTodoList.repository.EmployeeRepository
+	{field} -handled : boolean
+	{field} {static} -logger : org.slf4j.Logger
+	{field} -openRouterService : com.springboot.MyTodoList.service.OpenRouterService
+	{field} -projectService : com.springboot.MyTodoList.service.ProjectService
+	{field} -requestText : String
+	{field} -sprintService : com.springboot.MyTodoList.service.SprintService
+	{field} {static} -stateMap : java.util.concurrent.ConcurrentHashMap
+	{field} -taskService : com.springboot.MyTodoList.service.TaskService
+	{field} -telegramClient : org.telegram.telegrambots.meta.generics.TelegramClient
+	{method} -clearState () : void
+	{method} -createProject ( name : String , description : String ) : void
+	{method} +dispatch () : void
+	{method}  {static} -escapeMarkdown ( text : String ) : String
+	{method} -fnActiveSprint ( employee : com.springboot.MyTodoList.model.Employee ) : void
+	{method} -fnAsk ( employee : com.springboot.MyTodoList.model.Employee ) : void
+	{method} -fnDoneTask () : void
+	{method} -fnHelp () : void
+	{method} -fnHide () : void
+	{method} -fnLLM () : void
+	{method} -fnListProjects () : void
+	{method} -fnMyTasks ( employee : com.springboot.MyTodoList.model.Employee ) : void
+	{method} -fnNewProject () : void
+	{method} -fnNewSprint () : void
+	{method} -fnStart () : void
+	{method} -handleConversationReply ( state : com.springboot.MyTodoList.util.BotActions$ConvState , employee : com.springboot.MyTodoList.model.Employee ) : void
+	{method}  {static} -isManagerOrAdmin ( emp : com.springboot.MyTodoList.model.Employee ) : boolean
+	{method} -matches ( cmd : com.springboot.MyTodoList.util.BotCommands ) : boolean
+	{method}  {static} -priorityLabel ( priority : String ) : String
+	{method}  {static} -projectEmoji ( status : String ) : String
+	{method} -send ( text : String ) : void
+	{method} -send ( text : String , keyboard : org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup ) : void
+	{method} -startsWith ( cmd : com.springboot.MyTodoList.util.BotCommands ) : boolean
+	{method}  {static} -statusEmoji ( status : String ) : String
+}
+
+
+class com.springboot.MyTodoList.util.BotClient {
+	{method} +telegramClient ( botProps : com.springboot.MyTodoList.config.BotProps ) : org.telegram.telegrambots.meta.generics.TelegramClient
+}
+
+
+enum com.springboot.MyTodoList.util.BotCommands {
+	{field} +ASK
+	{field} +DONE_TASK
+	{field} +HELP
+	{field} +HIDE_COMMAND
+	{field} +LIST_PROJECTS
+	{field} +LLM_REQ
+	{field} +MY_TASKS
+	{field} +NEW_PROJECT
+	{field} +NEW_SPRINT
+	{field} +SPRINT
+	{field} +START_COMMAND
+}
+
+
+class com.springboot.MyTodoList.util.BotHelper {
+	{field} {static} -logger : org.slf4j.Logger
+	{method}  {static} +sendMessageToTelegram ( chatId : Long , text : String , bot : org.telegram.telegrambots.meta.generics.TelegramClient ) : void
+	{method}  {static} +sendMessageToTelegram ( chatId : Long , text : String , bot : org.telegram.telegrambots.meta.generics.TelegramClient , rk : org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup ) : void
+}
+
+
+enum com.springboot.MyTodoList.util.BotLabels {
+	{field} +HIDE_MAIN_SCREEN
+	{field} +SHOW_MAIN_SCREEN
+}
+
+
+enum com.springboot.MyTodoList.util.BotMessages {
+	{field} +BOT_REGISTERED
+	{field} +BYE
+	{field} +WELCOME
+}
+
+
+
+
+
+
+@enduml

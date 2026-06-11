@@ -1,0 +1,37 @@
+@startuml
+
+class com.springboot.MyTodoList.security.JwtAuthFilter {
+	{method} #doFilterInternal ( request : jakarta.servlet.http.HttpServletRequest , response : jakarta.servlet.http.HttpServletResponse , filterChain : jakarta.servlet.FilterChain ) : void
+}
+
+
+class com.springboot.MyTodoList.security.JwtUtil {
+	{field} -accessExpiration : long
+	{field} -secret : String
+	{method} +generateAccessToken ( email : String ) : String
+	{method} +getEmailFromToken ( token : String ) : String
+	{method} -getSigningKey () : javax.crypto.SecretKey
+	{method} +validateToken ( token : String ) : boolean
+}
+
+
+class com.springboot.MyTodoList.security.UserDetailsServiceImpl {
+	{field} -employeeRepository : com.springboot.MyTodoList.repository.EmployeeRepository
+	{method} +loadUserByUsername ( email : String ) : org.springframework.security.core.userdetails.UserDetails
+}
+
+
+class com.springboot.MyTodoList.security.WebSecurityConfiguration {
+	{method} +passwordEncoder () : org.springframework.security.crypto.password.PasswordEncoder
+	{method} +securityFilterChain ( http : org.springframework.security.config.annotation.web.builders.HttpSecurity ) : org.springframework.security.web.SecurityFilterChain
+}
+
+
+
+
+com.springboot.MyTodoList.security.JwtAuthFilter -->  com.springboot.MyTodoList.security.JwtUtil : jwtUtil
+com.springboot.MyTodoList.security.JwtAuthFilter -->  com.springboot.MyTodoList.security.UserDetailsServiceImpl : userDetailsService
+com.springboot.MyTodoList.security.WebSecurityConfiguration -->  com.springboot.MyTodoList.security.JwtAuthFilter : jwtAuthFilter
+
+
+@enduml

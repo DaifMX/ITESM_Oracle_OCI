@@ -1,0 +1,15 @@
+@startuml
+
+class com.springboot.MyTodoList.id.EmployeeTeamId {
+	{field} +employeeId : int
+	{field} +teamId : int
+	{method} +equals ( o : Object ) : boolean
+	{method} +hashCode () : int
+}
+
+
+
+
+
+
+@enduml

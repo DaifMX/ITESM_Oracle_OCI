@@ -51,68 +51,168 @@ workspace "MtdrSpring Sprint Tracker" "Team sprint tracking system deployed on O
                 appMain        = component "MyTodoListApplication"  "Spring Boot entry point; bootstraps application context"
 
                 # Config
-                oracleConfig   = component "OracleConfiguration"    "Configures Oracle JDBC DataSource from application.properties"
-                corsConfig     = component "CorsConfig"             "Global CORS rules allowing React dev server and production origin"
-                botProps       = component "BotProps"               "Binds Telegram bot token and username from config"
-                openRouterCfg  = component "OpenRouterConfig"       "Binds OpenRouter API key and model from config"
-                dataInit       = component "DataInitializer"        "Seeds default roles and admin user on first startup"
+                oracleConfig   = component "OracleConfiguration"    "Configures Oracle JDBC DataSource from application.properties" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/config.png"
+                }
+                corsConfig     = component "CorsConfig"             "Global CORS rules allowing React dev server and production origin" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/config.png"
+                }
+                botProps       = component "BotProps"               "Binds Telegram bot token and username from config" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/config.png"
+                }
+                openRouterCfg  = component "OpenRouterConfig"       "Binds OpenRouter API key and model from config" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/config.png"
+                }
+                dataInit       = component "DataInitializer"        "Seeds default roles and admin user on first startup" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/config.png"
+                }
 
                 # Security
-                jwtAuthFilter  = component "JwtAuthFilter"          "OncePerRequestFilter; validates Bearer JWT on every request"
-                jwtUtil        = component "JwtUtil"                 "Generates and validates JWT access tokens"
-                webSecurity    = component "WebSecurityConfiguration" "Spring Security filter chain; public routes and JWT integration"
-                userDetailsSvc = component "UserDetailsServiceImpl"  "Loads UserDetails from EmployeeRepository for Spring Security"
+                jwtAuthFilter  = component "JwtAuthFilter"          "OncePerRequestFilter; validates Bearer JWT on every request" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/security.png"
+                }
+                jwtUtil        = component "JwtUtil"                 "Generates and validates JWT access tokens" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/security.png"
+                }
+                webSecurity    = component "WebSecurityConfiguration" "Spring Security filter chain; public routes and JWT integration" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/security.png"
+                }
+                userDetailsSvc = component "UserDetailsServiceImpl"  "Loads UserDetails from EmployeeRepository for Spring Security" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/security.png"
+                }
 
                 # Controllers
-                authController     = component "AuthController"         "POST /api/auth/login and /api/auth/refresh"
-                taskController     = component "TaskController"         "CRUD REST endpoints for Task resources"
-                sprintController   = component "SprintController"       "CRUD REST endpoints for Sprint resources"
-                projectController  = component "ProjectController"      "CRUD REST endpoints for Project resources"
-                employeeController = component "EmployeeController"     "CRUD REST endpoints for Employee (user) resources"
-                teamController     = component "TeamController"         "REST endpoints for Team management"
-                commentController  = component "CommentController"      "REST endpoints for Task comments"
-                userController     = component "UserController"         "REST endpoints for user profile and role management"
-                chatController     = component "ChatController"         "POST /api/chat; proxies message to BotAgentService"
-                telegramController = component "TelegramBotController"  "Handles incoming Telegram webhook updates"
+                authController     = component "AuthController"         "POST /api/auth/login and /api/auth/refresh" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/controller.png"
+                }
+                taskController     = component "TaskController"         "CRUD REST endpoints for Task resources" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/controller.png"
+                }
+                sprintController   = component "SprintController"       "CRUD REST endpoints for Sprint resources" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/controller.png"
+                }
+                projectController  = component "ProjectController"      "CRUD REST endpoints for Project resources" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/controller.png"
+                }
+                employeeController = component "EmployeeController"     "CRUD REST endpoints for Employee (user) resources" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/controller.png"
+                }
+                teamController     = component "TeamController"         "REST endpoints for Team management" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/controller.png"
+                }
+                commentController  = component "CommentController"      "REST endpoints for Task comments" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/controller.png"
+                }
+                userController     = component "UserController"         "REST endpoints for user profile and role management" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/controller.png"
+                }
+                chatController     = component "ChatController"         "POST /api/chat; proxies message to BotAgentService" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/controller.png"
+                }
+                telegramController = component "TelegramBotController"  "Handles incoming Telegram webhook updates" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/controller.png"
+                }
 
                 # Services
-                taskService        = component "TaskService"           "Business logic for task lifecycle and state transitions"
-                sprintService      = component "SprintService"         "Sprint planning, activation and velocity calculation"
-                projectService     = component "ProjectService"        "Project creation and backlog management"
-                employeeTeamSvc    = component "EmployeeTeamService"   "Manages employee-team membership records"
-                teamService        = component "TeamService"           "Team CRUD and membership orchestration"
-                commentService     = component "CommentService"        "Task comment creation and retrieval"
-                userService        = component "UserService"           "User registration, role assignment and profile updates"
-                refreshTokenSvc    = component "RefreshTokenService"   "Issues and validates JWT refresh tokens"
-                botAgentSvc        = component "BotAgentService"       "Orchestrates AI chat: builds context and calls OpenRouterService"
-                openRouterSvc      = component "OpenRouterService"     "HTTP client that calls the OpenRouter LLM completion API"
+                taskService        = component "TaskService"           "Business logic for task lifecycle and state transitions" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/service.png"
+                }
+                sprintService      = component "SprintService"         "Sprint planning, activation and velocity calculation" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/service.png"
+                }
+                projectService     = component "ProjectService"        "Project creation and backlog management" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/service.png"
+                }
+                employeeTeamSvc    = component "EmployeeTeamService"   "Manages employee-team membership records" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/service.png"
+                }
+                teamService        = component "TeamService"           "Team CRUD and membership orchestration" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/service.png"
+                }
+                commentService     = component "CommentService"        "Task comment creation and retrieval" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/service.png"
+                }
+                userService        = component "UserService"           "User registration, role assignment and profile updates" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/service.png"
+                }
+                refreshTokenSvc    = component "RefreshTokenService"   "Issues and validates JWT refresh tokens" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/service.png"
+                }
+                botAgentSvc        = component "BotAgentService"       "Orchestrates AI chat: builds context and calls OpenRouterService" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/service.png"
+                }
+                openRouterSvc      = component "OpenRouterService"     "HTTP client that calls the OpenRouter LLM completion API" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/service.png"
+                }
 
                 # Repositories
-                taskRepo           = component "TaskRepository"        "Spring Data JPA repository for Task entities"
-                sprintRepo         = component "SprintRepository"      "Spring Data JPA repository for Sprint entities"
-                projectRepo        = component "ProjectRepository"     "Spring Data JPA repository for Project entities"
-                employeeRepo       = component "EmployeeRepository"    "Spring Data JPA repository for Employee entities"
-                employeeTeamRepo   = component "EmployeeTeamRepository" "Spring Data JPA repository for EmployeeTeam join entities"
-                teamRepo           = component "TeamRepository"        "Spring Data JPA repository for Team entities"
-                commentRepo        = component "CommentRepository"     "Spring Data JPA repository for Comment entities"
-                refreshTokenRepo   = component "RefreshTokenRepository" "Spring Data JPA repository for RefreshToken entities"
+                taskRepo           = component "TaskRepository"        "Spring Data JPA repository for Task entities" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/repository.png"
+                }
+                sprintRepo         = component "SprintRepository"      "Spring Data JPA repository for Sprint entities" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/repository.png"
+                }
+                projectRepo        = component "ProjectRepository"     "Spring Data JPA repository for Project entities" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/repository.png"
+                }
+                employeeRepo       = component "EmployeeRepository"    "Spring Data JPA repository for Employee entities" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/repository.png"
+                }
+                employeeTeamRepo   = component "EmployeeTeamRepository" "Spring Data JPA repository for EmployeeTeam join entities" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/repository.png"
+                }
+                teamRepo           = component "TeamRepository"        "Spring Data JPA repository for Team entities" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/repository.png"
+                }
+                commentRepo        = component "CommentRepository"     "Spring Data JPA repository for Comment entities" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/repository.png"
+                }
+                refreshTokenRepo   = component "RefreshTokenRepository" "Spring Data JPA repository for RefreshToken entities" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/repository.png"
+                }
 
                 # Domain models
-                taskModel      = component "Task"          "JPA entity: id, title, status, priority, storyPoints, assignee, sprint"
-                sprintModel    = component "Sprint"        "JPA entity: id, name, startDate, endDate, status, project"
-                projectModel   = component "Project"       "JPA entity: id, name, description, team"
-                employeeModel  = component "Employee"      "JPA entity: id, name, email, passwordHash, role"
-                teamModel      = component "Team"          "JPA entity: id, name"
-                commentModel   = component "Comment"       "JPA entity: id, content, author, task, createdAt"
-                refreshTokenMdl = component "RefreshToken" "JPA entity: id, token, employee, expiryDate"
+                taskModel      = component "Task"          "JPA entity: id, title, status, priority, storyPoints, assignee, sprint" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/model.png"
+                }
+                sprintModel    = component "Sprint"        "JPA entity: id, name, startDate, endDate, status, project" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/model.png"
+                }
+                projectModel   = component "Project"       "JPA entity: id, name, description, team" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/model.png"
+                }
+                employeeModel  = component "Employee"      "JPA entity: id, name, email, passwordHash, role" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/model.png"
+                }
+                teamModel      = component "Team"          "JPA entity: id, name" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/model.png"
+                }
+                commentModel   = component "Comment"       "JPA entity: id, content, author, task, createdAt" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/model.png"
+                }
+                refreshTokenMdl = component "RefreshToken" "JPA entity: id, token, employee, expiryDate" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/model.png"
+                }
 
                 # Bot utilities
-                botActions     = component "BotActions"    "Enum of Telegram bot action strings"
-                botClient      = component "BotClient"     "Low-level Telegram Bot API HTTP client"
-                botCommands    = component "BotCommands"   "Enum of slash command strings"
-                botHelper      = component "BotHelper"     "Builds Telegram message payloads"
-                botLabels      = component "BotLabels"     "Display label constants for bot messages"
-                botMessages    = component "BotMessages"   "Outbound message templates"
+                botActions     = component "BotActions"    "Enum of Telegram bot action strings" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/util.png"
+                }
+                botClient      = component "BotClient"     "Low-level Telegram Bot API HTTP client" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/util.png"
+                }
+                botCommands    = component "BotCommands"   "Enum of slash command strings" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/util.png"
+                }
+                botHelper      = component "BotHelper"     "Builds Telegram message payloads" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/util.png"
+                }
+                botLabels      = component "BotLabels"     "Display label constants for bot messages" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/util.png"
+                }
+                botMessages    = component "BotMessages"   "Outbound message templates" {
+                    url "https://github.com/DaifMX/ITESM_Oracle_OCI/blob/main/docs/diagrams/util.png"
+                }
             }
 
             # Database
@@ -289,6 +389,61 @@ workspace "MtdrSpring Sprint Tracker" "Team sprint tracking system deployed on O
             autoLayout tb
         }
 
+        image springBackend "BackendConfigPackage" {
+            image "../docs/diagrams/config.png"
+            title "Spring Boot config package class diagram"
+        }
+
+        image springBackend "BackendControllerPackage" {
+            image "../docs/diagrams/controller.png"
+            title "Spring Boot controller package class diagram"
+        }
+
+        image springBackend "BackendDtoPackage" {
+            image "../docs/diagrams/dto.png"
+            title "Spring Boot dto package class diagram"
+        }
+
+        image springBackend "BackendExceptionPackage" {
+            image "../docs/diagrams/exception.png"
+            title "Spring Boot exception package class diagram"
+        }
+
+        image springBackend "BackendIdPackage" {
+            image "../docs/diagrams/id.png"
+            title "Spring Boot id package class diagram"
+        }
+
+        image springBackend "BackendModelPackage" {
+            image "../docs/diagrams/model.png"
+            title "Spring Boot model package class diagram"
+        }
+
+        image springBackend "BackendRagPackage" {
+            image "../docs/diagrams/rag.png"
+            title "Spring Boot rag package class diagram"
+        }
+
+        image springBackend "BackendRepositoryPackage" {
+            image "../docs/diagrams/repository.png"
+            title "Spring Boot repository package class diagram"
+        }
+
+        image springBackend "BackendSecurityPackage" {
+            image "../docs/diagrams/security.png"
+            title "Spring Boot security package class diagram"
+        }
+
+        image springBackend "BackendServicePackage" {
+            image "../docs/diagrams/service.png"
+            title "Spring Boot service package class diagram"
+        }
+
+        image springBackend "BackendUtilPackage" {
+            image "../docs/diagrams/util.png"
+            title "Spring Boot util package class diagram"
+        }
+
         deployment mtdrSystem "Production" "DeploymentDiagram" "Production deployment on Oracle Kubernetes Engine" {
             include *
             autoLayout tb
@@ -358,3 +513,4 @@ workspace "MtdrSpring Sprint Tracker" "Team sprint tracking system deployed on O
     }
 
 }
+
