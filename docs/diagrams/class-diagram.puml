@@ -1,0 +1,878 @@
+@startuml
+
+class com.springboot.MyTodoList.MyTodoListApplication {
+	{method}  {static} +main ( args : [Ljava.lang.String; ) : void
+}
+
+
+class com.springboot.MyTodoList.config.BotProps {
+	{field} +name : String
+	{field} +token : String
+}
+
+
+class com.springboot.MyTodoList.config.CorsConfig {
+	{field} ~logger : org.slf4j.Logger
+	{method} +corsFilter () : org.springframework.web.filter.CorsFilter
+}
+
+
+class com.springboot.MyTodoList.config.DataInitializer {
+	{field} {static} -logger : org.slf4j.Logger
+	{field} -passwordEncoder : org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+	{method} +seedAdminUser () : void
+}
+
+
+class com.springboot.MyTodoList.config.DbSettings {
+	{field} +driver_class_name : String
+	{field} +password : String
+	{field} +url : String
+	{field} +username : String
+}
+
+
+class com.springboot.MyTodoList.config.OpenRouterConfig {
+	{field} -apiKey : String
+	{method} +httpClient () : org.apache.hc.client5.http.impl.classic.CloseableHttpClient
+	{method} +openRouterRequest ( apiUrl : String ) : org.apache.hc.client5.http.classic.methods.HttpPost
+}
+
+
+class com.springboot.MyTodoList.config.OracleConfiguration {
+	{field} -dbPassword : String
+	{field} -dbUrl : String
+	{field} -dbUser : String
+	{field} -driverClassName : String
+	{field} ~logger : org.slf4j.Logger
+	{method} +dataSource () : javax.sql.DataSource
+}
+
+
+class com.springboot.MyTodoList.config.TicketKeyBackfill {
+	{field} {static} -logger : org.slf4j.Logger
+	{method} -backfillProjectKeys () : void
+	{method} -backfillTicketNumbers () : void
+	{method} +run ( args : org.springframework.boot.ApplicationArguments ) : void
+}
+
+
+class com.springboot.MyTodoList.config.WebConfig {
+	{method} +addResourceHandlers ( registry : org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry ) : void
+	{method} +configurePathMatch ( configurer : org.springframework.web.servlet.config.annotation.PathMatchConfigurer ) : void
+}
+
+
+class com.springboot.MyTodoList.controller.AuthController {
+	{field} -passwordEncoder : org.springframework.security.crypto.password.PasswordEncoder
+	{method} +login ( request : com.springboot.MyTodoList.dto.LoginRequest ) : org.springframework.http.ResponseEntity
+	{method} +logout ( request : com.springboot.MyTodoList.dto.RefreshRequest ) : org.springframework.http.ResponseEntity
+	{method} +me () : org.springframework.http.ResponseEntity
+	{method} +refresh ( request : com.springboot.MyTodoList.dto.RefreshRequest ) : org.springframework.http.ResponseEntity
+	{method} +register ( request : com.springboot.MyTodoList.dto.RegisterRequest ) : org.springframework.http.ResponseEntity
+}
+
+
+class com.springboot.MyTodoList.controller.ChatController {
+	{method} +chat ( request : com.springboot.MyTodoList.dto.ChatRequest ) : org.springframework.http.ResponseEntity
+}
+
+
+class com.springboot.MyTodoList.controller.CommentController {
+	{method} +create ( taskId : int , body : java.util.Map ) : org.springframework.http.ResponseEntity
+	{method} +delete ( id : int ) : org.springframework.http.ResponseEntity
+	{method} +getById ( id : int ) : org.springframework.http.ResponseEntity
+	{method} +getByTask ( taskId : int ) : java.util.List
+	{method} +update ( id : int , body : java.util.Map ) : org.springframework.http.ResponseEntity
+}
+
+
+class com.springboot.MyTodoList.controller.EmployeeController {
+	{method} +addEmployee ( employee : com.springboot.MyTodoList.model.Employee ) : org.springframework.http.ResponseEntity
+	{method} +deleteEmployee ( id : int ) : org.springframework.http.ResponseEntity
+	{method} +getAllEmployees () : org.springframework.http.ResponseEntity
+	{method} -getCallerRole () : String
+	{method} +getEmployeeById ( id : int ) : org.springframework.http.ResponseEntity
+	{method} +updateEmployee ( id : int , employee : com.springboot.MyTodoList.model.Employee ) : org.springframework.http.ResponseEntity
+}
+
+
+class com.springboot.MyTodoList.controller.ProjectController {
+	{method} +create ( project : com.springboot.MyTodoList.model.Project ) : org.springframework.http.ResponseEntity
+	{method} +delete ( id : int ) : org.springframework.http.ResponseEntity
+	{method} +getAll () : java.util.List
+	{method} +getById ( id : int ) : org.springframework.http.ResponseEntity
+	{method} +getByKey ( key : String ) : org.springframework.http.ResponseEntity
+	{method} +getByStatus ( status : String ) : java.util.List
+	{method} +getByTeam ( teamId : int ) : java.util.List
+	{method} +update ( id : int , project : com.springboot.MyTodoList.model.Project ) : org.springframework.http.ResponseEntity
+}
+
+
+class com.springboot.MyTodoList.controller.SprintController {
+	{method} +create ( sprint : com.springboot.MyTodoList.model.Sprint ) : org.springframework.http.ResponseEntity
+	{method} +delete ( id : int ) : org.springframework.http.ResponseEntity
+	{method} +getActiveByProject ( projectId : int ) : org.springframework.http.ResponseEntity
+	{method} +getAll () : java.util.List
+	{method} +getById ( id : int ) : org.springframework.http.ResponseEntity
+	{method} +getByProject ( projectId : int ) : java.util.List
+	{method} +getByStatus ( status : String ) : java.util.List
+	{method} +update ( id : int , sprint : com.springboot.MyTodoList.model.Sprint ) : org.springframework.http.ResponseEntity
+	{method} -validateSprintDates ( sprint : com.springboot.MyTodoList.model.Sprint ) : org.springframework.http.ResponseEntity
+}
+
+
+class com.springboot.MyTodoList.controller.TaskController {
+	{method} +assign ( id : int , employeeId : int ) : org.springframework.http.ResponseEntity
+	{method} +create ( task : com.springboot.MyTodoList.model.Task ) : org.springframework.http.ResponseEntity
+	{method} +delete ( id : int ) : org.springframework.http.ResponseEntity
+	{method} +getAll () : java.util.List
+	{method} +getAssignees ( id : int ) : org.springframework.http.ResponseEntity
+	{method} +getByEmployee ( employeeId : int ) : java.util.List
+	{method} +getById ( id : int ) : org.springframework.http.ResponseEntity
+	{method} +getByProject ( projectId : int ) : java.util.List
+	{method} +getByProjectAndSprint ( projectId : int , sprintId : int ) : java.util.List
+	{method} +getByProjectAndStatus ( projectId : int , status : String ) : java.util.List
+	{method} +getBySprint ( sprintId : int ) : java.util.List
+	{method} +getBySprintAndStatus ( sprintId : int , status : String ) : java.util.List
+	{method} +getByStatus ( status : String ) : java.util.List
+	{method} +getByTicketKey ( ticketKey : String ) : org.springframework.http.ResponseEntity
+	{method} +unassign ( id : int , employeeId : int ) : org.springframework.http.ResponseEntity
+	{method} +update ( id : int , task : com.springboot.MyTodoList.model.Task ) : org.springframework.http.ResponseEntity
+	{method} -validateTask ( task : com.springboot.MyTodoList.model.Task ) : org.springframework.http.ResponseEntity
+	{method} -validateTaskDates ( task : com.springboot.MyTodoList.model.Task ) : org.springframework.http.ResponseEntity
+}
+
+
+class com.springboot.MyTodoList.controller.TeamController {
+	{method} +addMember ( id : int , employeeId : int ) : org.springframework.http.ResponseEntity
+	{method} +create ( team : com.springboot.MyTodoList.model.Team ) : org.springframework.http.ResponseEntity
+	{method} +delete ( id : int ) : org.springframework.http.ResponseEntity
+	{method} +getAll () : java.util.List
+	{method} +getById ( id : int ) : org.springframework.http.ResponseEntity
+	{method} +getByManager ( managerId : int ) : java.util.List
+	{method} +getMembers ( id : int ) : java.util.List
+	{method} +removeMember ( id : int , employeeId : int ) : org.springframework.http.ResponseEntity
+	{method} +update ( id : int , team : com.springboot.MyTodoList.model.Team ) : org.springframework.http.ResponseEntity
+}
+
+
+class com.springboot.MyTodoList.controller.TelegramBotController {
+	{field} {static} -logger : org.slf4j.Logger
+	{field} -telegramBotToken : String
+	{field} -telegramClient : org.telegram.telegrambots.meta.generics.TelegramClient
+	{method} +afterRegistration ( botSession : org.telegram.telegrambots.longpolling.BotSession ) : void
+	{method} +consume ( update : org.telegram.telegrambots.meta.api.objects.Update ) : void
+	{method} +getBotToken () : String
+	{method} +getUpdatesConsumer () : org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer
+}
+
+
+class com.springboot.MyTodoList.controller.UserController {
+}
+
+
+class com.springboot.MyTodoList.dto.AuthResponse {
+	{field} -accessToken : String
+	{field} -expiresIn : long
+	{field} -refreshToken : String
+	{field} -tokenType : String
+}
+
+
+class com.springboot.MyTodoList.dto.ChatMessage {
+	{field} +content : String
+	{field} +role : String
+}
+
+
+class com.springboot.MyTodoList.dto.ChatRequest {
+	{field} +message : String
+}
+
+
+class com.springboot.MyTodoList.dto.LoginRequest {
+	{field} +email : String
+	{field} +password : String
+}
+
+
+class com.springboot.MyTodoList.dto.RefreshRequest {
+	{field} +refreshToken : String
+}
+
+
+class com.springboot.MyTodoList.dto.RegisterRequest {
+	{field} +email : String
+	{field} +firstName : String
+	{field} +lastName : String
+	{field} +modality : String
+	{field} +password : String
+	{field} +phoneNumber : String
+	{field} +position : String
+	{field} +role : String
+	{field} +telegramChatId : String
+}
+
+
+class com.springboot.MyTodoList.exception.ElementNotFoundException {
+}
+
+
+class com.springboot.MyTodoList.id.EmployeeTeamId {
+	{field} +employeeId : int
+	{field} +teamId : int
+	{method} +equals ( o : Object ) : boolean
+	{method} +hashCode () : int
+}
+
+
+class com.springboot.MyTodoList.model.Comment {
+	{field} +commentId : int
+	{field} +content : String
+	{field} +createdAt : java.time.LocalDateTime
+	{method} #onCreate () : void
+}
+
+
+class com.springboot.MyTodoList.model.Employee {
+	{field} +email : String
+	{field} +employeeId : int
+	{field} +firstName : String
+	{field} +lastName : String
+	{field} +modality : String
+	{field} +passwordHash : String
+	{field} +phoneNumber : String
+	{field} +position : String
+	{field} +role : String
+	{field} +telegramChatId : String
+}
+
+
+class com.springboot.MyTodoList.model.EmployeeTeam {
+	{field} +joinedAt : java.time.LocalDate
+}
+
+
+class com.springboot.MyTodoList.model.Project {
+	{field} +description : String
+	{field} +endDate : java.time.LocalDate
+	{field} +name : String
+	{field} +projectId : int
+	{field} +shortName : String
+	{field} +startDate : java.time.LocalDate
+	{field} +status : String
+}
+
+
+class com.springboot.MyTodoList.model.RefreshToken {
+	{field} +expiryDate : java.time.Instant
+	{field} -id : Long
+	{field} +token : String
+}
+
+
+class com.springboot.MyTodoList.model.Sprint {
+	{field} +endDate : java.time.LocalDate
+	{field} +goal : String
+	{field} +name : String
+	{field} +sprintId : int
+	{field} +startDate : java.time.LocalDate
+	{field} +status : String
+}
+
+
+class com.springboot.MyTodoList.model.Task {
+	{field} +createdAt : java.time.LocalDateTime
+	{field} +description : String
+	{field} +endDate : java.time.LocalDate
+	{field} +estimatedHours : java.math.BigDecimal
+	{field} +expectedEndDate : java.time.LocalDate
+	{field} +priority : String
+	{field} +startDate : java.time.LocalDate
+	{field} +status : String
+	{field} +storyPoints : Integer
+	{field} +taskId : int
+	{field} +ticketNumber : Integer
+	{field} +title : String
+	{field} +totalHours : java.math.BigDecimal
+	{method} +getTicketKey () : String
+	{method} #onCreate () : void
+}
+
+
+class com.springboot.MyTodoList.model.Team {
+	{field} +name : String
+	{field} +teamId : int
+}
+
+
+class com.springboot.MyTodoList.rag.EmbeddingModelLoader {
+	{field} {static} -DEFAULT_URL : String
+	{field} {static} -LOAD_METADATA : String
+	{field} -dataSource : javax.sql.DataSource
+	{field} {static} -logger : org.slf4j.Logger
+	{field} -modelName : String
+	{field} -modelUrl : String
+	{method} -downloadAndExtractOnnx () : [B
+	{method} +ensureLoaded () : void
+	{method} -existsInCurrentSchema () : boolean
+	{method} -loadIntoDb ( onnx : [B ) : void
+}
+
+
+class com.springboot.MyTodoList.rag.EmbeddingService {
+	{field} -dataSource : javax.sql.DataSource
+	{field} {static} -logger : org.slf4j.Logger
+	{field} -modelName : String
+	{method} +embed ( text : String ) : [F
+	{method} +modelName () : String
+}
+
+
+class com.springboot.MyTodoList.rag.RagBackfillRunner {
+	{field} -enabled : boolean
+	{field} {static} -logger : org.slf4j.Logger
+	{method} +backfill () : void
+	{method} -enqueueMissing ( sourceType : String , ids : [J ) : int
+}
+
+
+class com.springboot.MyTodoList.rag.RagChunk {
+	{field} +chunkId : Long
+	{field} +content : String
+	{field} +contentHash : String
+	{field} +ownerEmployeeId : Long
+	{field} +projectId : Long
+	{field} +sourceId : Long
+	{field} +sourceType : String
+	{field} +sprintId : Long
+	{field} +updatedAt : java.time.LocalDateTime
+}
+
+
+interface com.springboot.MyTodoList.rag.RagChunkRepository {
+	{method}  {abstract} +countBySourceType ( sourceType : String ) : long
+	{method}  {abstract} +existsBySourceTypeAndSourceId ( sourceType : String , sourceId : Long ) : boolean
+	{method}  {abstract} +findBySourceTypeAndSourceId ( sourceType : String , sourceId : Long ) : java.util.Optional
+}
+
+
+class com.springboot.MyTodoList.rag.RagDirty {
+	{field} {static} +ACTION_DELETE : String
+	{field} {static} +ACTION_UPSERT : String
+	{field} +action : String
+	{field} +attempts : int
+	{field} +dirtyId : Long
+	{field} +enqueuedAt : java.time.LocalDateTime
+	{field} +lastError : String
+	{field} +sourceId : Long
+	{field} +sourceType : String
+	{method} ~onCreate () : void
+}
+
+
+class com.springboot.MyTodoList.rag.RagDirtyEnqueuer {
+	{field} {static} +TYPE_PROJECT : String
+	{field} {static} +TYPE_SPRINT : String
+	{field} {static} +TYPE_TASK : String
+	{method} +delete ( sourceType : String , sourceId : long ) : void
+	{method} +upsert ( sourceType : String , sourceId : long ) : void
+}
+
+
+interface com.springboot.MyTodoList.rag.RagDirtyRepository {
+	{method}  {abstract} +countByAttemptsGreaterThanEqual ( attempts : int ) : long
+}
+
+
+class com.springboot.MyTodoList.rag.RagIndexWorker {
+	{field} -batchSize : int
+	{field} -dataSource : javax.sql.DataSource
+	{field} {static} -logger : org.slf4j.Logger
+	{field} -maxAttempts : int
+	{method} -coalesce ( rows : java.util.List ) : java.util.Map
+	{method} -deleteGroup ( c : java.sql.Connection , g : com.springboot.MyTodoList.rag.RagIndexWorker$DirtyGroup ) : void
+	{method} ~drainOnce () : void
+	{method} -markFailure ( c : java.sql.Connection , g : com.springboot.MyTodoList.rag.RagIndexWorker$DirtyGroup , e : Exception ) : void
+	{method} -pickBatch ( c : java.sql.Connection ) : java.util.List
+	{method} +tick () : void
+}
+
+
+class com.springboot.MyTodoList.rag.RagIndexer {
+	{field} -dataSource : javax.sql.DataSource
+	{field} {static} -logger : org.slf4j.Logger
+	{method} -buildProjectText ( p : com.springboot.MyTodoList.model.Project ) : String
+	{method} -buildSprintText ( s : com.springboot.MyTodoList.model.Sprint ) : String
+	{method} -buildTaskText ( t : com.springboot.MyTodoList.model.Task ) : String
+	{method} +delete ( sourceType : String , sourceId : long ) : void
+	{method} -merge ( sourceType : String , sourceId : long , content : String , ownerEmployeeId : Long , projectId : Long , sprintId : Long ) : void
+	{method}  {static} -nz ( s : String ) : String
+	{method} +reindex ( sourceType : String , sourceId : long ) : boolean
+	{method}  {static} -setNullableLong ( ps : java.sql.PreparedStatement , idx : int , v : Long ) : void
+	{method}  {static} -sha256 ( s : String ) : String
+	{method} -upsertProject ( p : com.springboot.MyTodoList.model.Project ) : void
+	{method} -upsertSprint ( s : com.springboot.MyTodoList.model.Sprint ) : void
+	{method} -upsertTask ( t : com.springboot.MyTodoList.model.Task ) : void
+}
+
+
+class com.springboot.MyTodoList.rag.RagRetriever {
+	{field} -dataSource : javax.sql.DataSource
+	{field} {static} -logger : org.slf4j.Logger
+	{method} +search ( query : String , topK : int , caller : com.springboot.MyTodoList.model.Employee , isManager : boolean ) : java.util.List
+}
+
+
+class com.springboot.MyTodoList.rag.RagRetriever$RetrievedChunk {
+	{field} -content : String
+	{field} -distance : double
+	{field} -sourceId : long
+	{field} -sourceType : String
+	{method} +content () : String
+	{method} +distance () : double
+	{method} +equals ( o : Object ) : boolean
+	{method} +hashCode () : int
+	{method} +sourceId () : long
+	{method} +sourceType () : String
+	{method} +toString () : String
+}
+
+
+interface com.springboot.MyTodoList.repository.CommentRepository {
+	{method}  {abstract} +findByEmployee_EmployeeId ( employeeId : int ) : java.util.List
+	{method}  {abstract} +findByTask_TaskIdOrderByCreatedAtAsc ( taskId : int ) : java.util.List
+}
+
+
+interface com.springboot.MyTodoList.repository.EmployeeRepository {
+	{method}  {abstract} +countByRole ( role : String ) : long
+	{method}  {abstract} +findByEmail ( email : String ) : java.util.Optional
+	{method}  {abstract} +findByTelegramChatId ( telegramChatId : String ) : java.util.Optional
+}
+
+
+interface com.springboot.MyTodoList.repository.EmployeeTeamRepository {
+	{method}  {abstract} +existsById_EmployeeIdAndId_TeamId ( employeeId : int , teamId : int ) : boolean
+	{method}  {abstract} +findById_EmployeeId ( employeeId : int ) : java.util.List
+	{method}  {abstract} +findById_TeamId ( teamId : int ) : java.util.List
+}
+
+
+interface com.springboot.MyTodoList.repository.ProjectRepository {
+	{method}  {abstract} +findByNameIgnoreCase ( name : String ) : java.util.Optional
+	{method}  {abstract} +findByShortNameIgnoreCase ( shortName : String ) : java.util.Optional
+	{method}  {abstract} +findByStatus ( status : String ) : java.util.List
+	{method}  {abstract} +findByTeam_TeamId ( teamId : int ) : java.util.List
+}
+
+
+interface com.springboot.MyTodoList.repository.RefreshTokenRepository {
+	{method}  {abstract} +deleteByEmployee ( employee : com.springboot.MyTodoList.model.Employee ) : void
+	{method}  {abstract} +findByToken ( token : String ) : java.util.Optional
+}
+
+
+interface com.springboot.MyTodoList.repository.SprintRepository {
+	{method}  {abstract} +findByProject_ProjectId ( projectId : int ) : java.util.List
+	{method}  {abstract} +findByProject_ProjectIdAndStatus ( projectId : int , status : String ) : java.util.Optional
+	{method}  {abstract} +findByStatus ( status : String ) : java.util.List
+}
+
+
+interface com.springboot.MyTodoList.repository.TaskRepository {
+	{method}  {abstract} +findByAssignee_EmployeeId ( employeeId : int ) : java.util.List
+	{method}  {abstract} +findByProject_ProjectId ( projectId : int ) : java.util.List
+	{method}  {abstract} +findByProject_ProjectIdAndSprint_SprintId ( projectId : int , sprintId : int ) : java.util.List
+	{method}  {abstract} +findByProject_ProjectIdAndStatus ( projectId : int , status : String ) : java.util.List
+	{method}  {abstract} +findByProject_ProjectIdAndTicketNumber ( projectId : int , ticketNumber : int ) : java.util.Optional
+	{method}  {abstract} +findBySprint_SprintId ( sprintId : int ) : java.util.List
+	{method}  {abstract} +findBySprint_SprintIdAndStatus ( sprintId : int , status : String ) : java.util.List
+	{method}  {abstract} +findByStatus ( status : String ) : java.util.List
+	{method}  {abstract} +findByTicketNumberIsNullOrderByProject_ProjectIdAscTaskIdAsc () : java.util.List
+	{method}  {abstract} +findMaxTicketNumber ( projectId : int ) : int
+}
+
+
+interface com.springboot.MyTodoList.repository.TeamRepository {
+	{method}  {abstract} +findByManager_EmployeeId ( managerId : int ) : java.util.List
+}
+
+
+class com.springboot.MyTodoList.security.JwtAuthFilter {
+	{method} #doFilterInternal ( request : jakarta.servlet.http.HttpServletRequest , response : jakarta.servlet.http.HttpServletResponse , filterChain : jakarta.servlet.FilterChain ) : void
+}
+
+
+class com.springboot.MyTodoList.security.JwtUtil {
+	{field} -accessExpiration : long
+	{field} -secret : String
+	{method} +generateAccessToken ( email : String ) : String
+	{method} +getEmailFromToken ( token : String ) : String
+	{method} -getSigningKey () : javax.crypto.SecretKey
+	{method} +validateToken ( token : String ) : boolean
+}
+
+
+class com.springboot.MyTodoList.security.UserDetailsServiceImpl {
+	{method} +loadUserByUsername ( email : String ) : org.springframework.security.core.userdetails.UserDetails
+}
+
+
+class com.springboot.MyTodoList.security.WebSecurityConfiguration {
+	{method} +passwordEncoder () : org.springframework.security.crypto.password.PasswordEncoder
+	{method} +securityFilterChain ( http : org.springframework.security.config.annotation.web.builders.HttpSecurity ) : org.springframework.security.web.SecurityFilterChain
+}
+
+
+class com.springboot.MyTodoList.service.AgentToolService {
+	{field} {static} -MANAGER_ONLY_TOOLS : java.util.Set
+	{field} {static} -PROJECT_STATUSES : java.util.Set
+	{field} {static} -SPRINT_STATUSES : java.util.Set
+	{field} {static} -TASK_PRIORITIES : java.util.Set
+	{field} {static} -TASK_STATUSES : java.util.Set
+	{field} {static} -logger : org.slf4j.Logger
+	{field} -mapper : com.fasterxml.jackson.databind.ObjectMapper
+	{field} -passwordEncoder : org.springframework.security.crypto.password.PasswordEncoder
+	{field} -random : java.security.SecureRandom
+	{method} -applyShortName ( project : com.springboot.MyTodoList.model.Project , rawKey : String , selfId : int ) : void
+	{method} -checkDateOrder ( start : java.time.LocalDate , end : java.time.LocalDate ) : void
+	{method} -createProject ( args : com.fasterxml.jackson.databind.JsonNode ) : String
+	{method} -createSprint ( args : com.fasterxml.jackson.databind.JsonNode ) : String
+	{method} -createTask ( args : com.fasterxml.jackson.databind.JsonNode , caller : com.springboot.MyTodoList.model.Employee , isManager : boolean ) : String
+	{method} -dateParam ( props : com.fasterxml.jackson.databind.node.ObjectNode , name : String , description : String , required : boolean ) : void
+	{method} -enumParam ( props : com.fasterxml.jackson.databind.node.ObjectNode , name : String , description : String , values : java.util.Set , required : boolean ) : void
+	{method} -errorJson ( message : String ) : String
+	{method} +execute ( name : String , args : com.fasterxml.jackson.databind.JsonNode , caller : com.springboot.MyTodoList.model.Employee ) : String
+	{method} -generateTempPassword () : String
+	{method} -intParam ( props : com.fasterxml.jackson.databind.node.ObjectNode , name : String , description : String , required : boolean ) : void
+	{method} -listEmployees () : String
+	{method} -listProjects () : String
+	{method} -listSprints ( args : com.fasterxml.jackson.databind.JsonNode ) : String
+	{method} -listTasks ( args : com.fasterxml.jackson.databind.JsonNode , caller : com.springboot.MyTodoList.model.Employee , isManager : boolean ) : String
+	{method} -numberParam ( props : com.fasterxml.jackson.databind.node.ObjectNode , name : String , description : String , required : boolean ) : void
+	{method} -okJson ( message : String , field : String , payload : com.fasterxml.jackson.databind.node.ObjectNode ) : String
+	{method} -optDate ( args : com.fasterxml.jackson.databind.JsonNode , field : String ) : java.time.LocalDate
+	{method} -optDecimal ( args : com.fasterxml.jackson.databind.JsonNode , field : String ) : java.math.BigDecimal
+	{method} -optInt ( args : com.fasterxml.jackson.databind.JsonNode , field : String ) : Integer
+	{method} -optString ( args : com.fasterxml.jackson.databind.JsonNode , field : String ) : String
+	{method} -param ( props : com.fasterxml.jackson.databind.node.ObjectNode , name : String , type : String , description : String , required : boolean ) : com.fasterxml.jackson.databind.node.ObjectNode
+	{method} -projectInsights ( args : com.fasterxml.jackson.databind.JsonNode ) : String
+	{method} -projectJson ( p : com.springboot.MyTodoList.model.Project ) : com.fasterxml.jackson.databind.node.ObjectNode
+	{method} -projectParam ( props : com.fasterxml.jackson.databind.node.ObjectNode , description : String , required : boolean ) : void
+	{method} -registerEmployee ( args : com.fasterxml.jackson.databind.JsonNode , caller : com.springboot.MyTodoList.model.Employee ) : String
+	{method} -reqInt ( args : com.fasterxml.jackson.databind.JsonNode , field : String ) : int
+	{method} -reqString ( args : com.fasterxml.jackson.databind.JsonNode , field : String ) : String
+	{method} -requireEmployee ( id : int ) : com.springboot.MyTodoList.model.Employee
+	{method} -requireProject ( id : int ) : com.springboot.MyTodoList.model.Project
+	{method} -requireSprintInProject ( sprintId : int , projectId : int ) : com.springboot.MyTodoList.model.Sprint
+	{method} -resolveProjectArg ( args : com.fasterxml.jackson.databind.JsonNode , required : boolean ) : com.springboot.MyTodoList.model.Project
+	{method} -resolveProjectRef ( ref : String ) : com.springboot.MyTodoList.model.Project
+	{method} -resolveTaskArg ( args : com.fasterxml.jackson.databind.JsonNode ) : com.springboot.MyTodoList.model.Task
+	{method} -sprintJson ( s : com.springboot.MyTodoList.model.Sprint ) : com.fasterxml.jackson.databind.node.ObjectNode
+	{method} -stringParam ( props : com.fasterxml.jackson.databind.node.ObjectNode , name : String , description : String , required : boolean ) : void
+	{method} -sumHours ( tasks : java.util.List , estimated : boolean ) : java.math.BigDecimal
+	{method} -taskJson ( t : com.springboot.MyTodoList.model.Task ) : com.fasterxml.jackson.databind.node.ObjectNode
+	{method} -taskParam ( props : com.fasterxml.jackson.databind.node.ObjectNode , description : String , required : boolean ) : void
+	{method} -tool ( name : String , description : String , builder : com.springboot.MyTodoList.service.AgentToolService$ParamsBuilder ) : com.fasterxml.jackson.databind.node.ObjectNode
+	{method} +toolDefinitions ( isManager : boolean ) : com.fasterxml.jackson.databind.node.ArrayNode
+	{method} -updateProject ( args : com.fasterxml.jackson.databind.JsonNode ) : String
+	{method} -updateSprint ( args : com.fasterxml.jackson.databind.JsonNode ) : String
+	{method} -updateTask ( args : com.fasterxml.jackson.databind.JsonNode , caller : com.springboot.MyTodoList.model.Employee , isManager : boolean ) : String
+	{method} -validated ( value : String , allowed : java.util.Set , field : String , defaultValue : String ) : String
+	{method} -wrap ( field : String , arr : com.fasterxml.jackson.databind.node.ArrayNode ) : String
+}
+
+
+class com.springboot.MyTodoList.service.BotAgentService {
+	{field} {static} -MAX_HISTORY_MESSAGES : int
+	{field} {static} -MAX_TOOL_ROUNDS : int
+	{field} {static} -logger : org.slf4j.Logger
+	{field} -mapper : com.fasterxml.jackson.databind.ObjectMapper
+	{field} -topK : int
+	{method} -appendHistory ( messages : com.fasterxml.jackson.databind.node.ArrayNode , history : java.util.List ) : void
+	{method} -buildSystemPrompt ( employee : com.springboot.MyTodoList.model.Employee , isManager : boolean ) : String
+	{method} -parseArguments ( rawArguments : String ) : com.fasterxml.jackson.databind.JsonNode
+	{method} +processQuery ( employee : com.springboot.MyTodoList.model.Employee , query : String ) : String
+	{method} +processQuery ( employee : com.springboot.MyTodoList.model.Employee , query : String , history : java.util.List ) : String
+	{method} -retrieveContext ( employee : com.springboot.MyTodoList.model.Employee , query : String , isManager : boolean ) : String
+}
+
+
+class com.springboot.MyTodoList.service.CommentService {
+	{method} +delete ( id : int ) : boolean
+	{method} +findByEmployee ( employeeId : int ) : java.util.List
+	{method} +findById ( id : int ) : java.util.Optional
+	{method} +findByTask ( taskId : int ) : java.util.List
+	{method} +save ( comment : com.springboot.MyTodoList.model.Comment ) : com.springboot.MyTodoList.model.Comment
+	{method} +update ( id : int , newContent : String ) : java.util.Optional
+}
+
+
+class com.springboot.MyTodoList.service.EmployeeTeamService {
+	{method} +addMember ( teamId : int , employeeId : int ) : java.util.Optional
+	{method} +findByEmployee ( employeeId : int ) : java.util.List
+	{method} +findByTeam ( teamId : int ) : java.util.List
+	{method} +removeMember ( teamId : int , employeeId : int ) : boolean
+}
+
+
+class com.springboot.MyTodoList.service.OpenRouterService {
+	{field} -httpClient : org.apache.hc.client5.http.impl.classic.CloseableHttpClient
+	{field} -httpPost : org.apache.hc.client5.http.classic.methods.HttpPost
+	{field} -model : String
+	{field} -objectMapper : com.fasterxml.jackson.databind.ObjectMapper
+	{method} +chat ( systemPrompt : String , userMessage : String ) : String
+	{method} +chatCompletion ( messages : com.fasterxml.jackson.databind.node.ArrayNode , tools : com.fasterxml.jackson.databind.node.ArrayNode ) : com.fasterxml.jackson.databind.JsonNode
+	{method} +generateText ( prompt : String ) : String
+}
+
+
+class com.springboot.MyTodoList.service.ProjectService {
+	{method} +delete ( id : int ) : boolean
+	{method}  {static} -deriveShortName ( name : String ) : String
+	{method} +ensureShortName ( project : com.springboot.MyTodoList.model.Project ) : void
+	{method} +findAll () : java.util.List
+	{method} +findById ( id : int ) : java.util.Optional
+	{method} +findByShortName ( shortName : String ) : java.util.Optional
+	{method} +findByStatus ( status : String ) : java.util.List
+	{method} +findByTeam ( teamId : int ) : java.util.List
+	{method}  {static} +normalizeShortName ( raw : String ) : String
+	{method} +save ( project : com.springboot.MyTodoList.model.Project ) : com.springboot.MyTodoList.model.Project
+	{method} +update ( id : int , updated : com.springboot.MyTodoList.model.Project ) : java.util.Optional
+}
+
+
+class com.springboot.MyTodoList.service.RefreshTokenService {
+	{field} -refreshExpiration : long
+	{method} +createRefreshToken ( employee : com.springboot.MyTodoList.model.Employee ) : com.springboot.MyTodoList.model.RefreshToken
+	{method} +deleteByEmployee ( employee : com.springboot.MyTodoList.model.Employee ) : void
+	{method} +findByToken ( token : String ) : java.util.Optional
+	{method} +isExpired ( token : com.springboot.MyTodoList.model.RefreshToken ) : boolean
+}
+
+
+class com.springboot.MyTodoList.service.SprintService {
+	{method} +delete ( id : int ) : boolean
+	{method} +findActiveByProject ( projectId : int ) : java.util.Optional
+	{method} +findAll () : java.util.List
+	{method} +findById ( id : int ) : java.util.Optional
+	{method} +findByProject ( projectId : int ) : java.util.List
+	{method} +findByStatus ( status : String ) : java.util.List
+	{method} +save ( sprint : com.springboot.MyTodoList.model.Sprint ) : com.springboot.MyTodoList.model.Sprint
+	{method} +update ( id : int , updated : com.springboot.MyTodoList.model.Sprint ) : java.util.Optional
+}
+
+
+class com.springboot.MyTodoList.service.TaskService {
+	{method} -assignTicketNumber ( task : com.springboot.MyTodoList.model.Task ) : void
+	{method} +delete ( id : int ) : boolean
+	{method} +findAll () : java.util.List
+	{method} +findByAssignee ( employeeId : int ) : java.util.List
+	{method} +findById ( id : int ) : java.util.Optional
+	{method} +findByProject ( projectId : int ) : java.util.List
+	{method} +findByProjectAndSprint ( projectId : int , sprintId : int ) : java.util.List
+	{method} +findByProjectAndStatus ( projectId : int , status : String ) : java.util.List
+	{method} +findBySprint ( sprintId : int ) : java.util.List
+	{method} +findBySprintAndStatus ( sprintId : int , status : String ) : java.util.List
+	{method} +findByStatus ( status : String ) : java.util.List
+	{method} +findByTicketKey ( ticketKey : String ) : java.util.Optional
+	{method} +save ( task : com.springboot.MyTodoList.model.Task ) : com.springboot.MyTodoList.model.Task
+	{method} +update ( id : int , updated : com.springboot.MyTodoList.model.Task ) : java.util.Optional
+}
+
+
+class com.springboot.MyTodoList.service.TeamService {
+	{method} +delete ( id : int ) : boolean
+	{method} +findAll () : java.util.List
+	{method} +findById ( id : int ) : java.util.Optional
+	{method} +findByManager ( managerId : int ) : java.util.List
+	{method} +save ( team : com.springboot.MyTodoList.model.Team ) : com.springboot.MyTodoList.model.Team
+	{method} +update ( id : int , updated : com.springboot.MyTodoList.model.Team ) : java.util.Optional
+}
+
+
+class com.springboot.MyTodoList.service.UserService {
+	{method} +addEmployee ( employee : com.springboot.MyTodoList.model.Employee ) : com.springboot.MyTodoList.model.Employee
+	{method} +deleteEmployee ( id : int ) : boolean
+	{method} +findAll () : java.util.List
+	{method} +getEmployeeById ( id : int ) : org.springframework.http.ResponseEntity
+	{method} +updateEmployee ( id : int , updated : com.springboot.MyTodoList.model.Employee ) : com.springboot.MyTodoList.model.Employee
+}
+
+
+class com.springboot.MyTodoList.util.BotActions {
+	{field} -chatId : long
+	{field} {static} -dataMap : java.util.concurrent.ConcurrentHashMap
+	{field} -handled : boolean
+	{field} {static} -logger : org.slf4j.Logger
+	{field} -requestText : String
+	{field} {static} -stateMap : java.util.concurrent.ConcurrentHashMap
+	{field} -telegramClient : org.telegram.telegrambots.meta.generics.TelegramClient
+	{method} -clearState () : void
+	{method} -createProject ( name : String , description : String ) : void
+	{method} +dispatch () : void
+	{method}  {static} -escapeMarkdown ( text : String ) : String
+	{method} -fnActiveSprint ( employee : com.springboot.MyTodoList.model.Employee ) : void
+	{method} -fnAsk ( employee : com.springboot.MyTodoList.model.Employee ) : void
+	{method} -fnDoneTask () : void
+	{method} -fnHelp () : void
+	{method} -fnHide () : void
+	{method} -fnLLM () : void
+	{method} -fnListProjects () : void
+	{method} -fnMyTasks ( employee : com.springboot.MyTodoList.model.Employee ) : void
+	{method} -fnNewProject () : void
+	{method} -fnNewSprint () : void
+	{method} -fnStart () : void
+	{method} -handleConversationReply ( state : com.springboot.MyTodoList.util.BotActions$ConvState , employee : com.springboot.MyTodoList.model.Employee ) : void
+	{method}  {static} -isManagerOrAdmin ( emp : com.springboot.MyTodoList.model.Employee ) : boolean
+	{method} -matches ( cmd : com.springboot.MyTodoList.util.BotCommands ) : boolean
+	{method}  {static} -priorityLabel ( priority : String ) : String
+	{method}  {static} -projectEmoji ( status : String ) : String
+	{method} -send ( text : String ) : void
+	{method} -send ( text : String , keyboard : org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup ) : void
+	{method} -startsWith ( cmd : com.springboot.MyTodoList.util.BotCommands ) : boolean
+	{method}  {static} -statusEmoji ( status : String ) : String
+}
+
+
+class com.springboot.MyTodoList.util.BotClient {
+	{method} +telegramClient ( botProps : com.springboot.MyTodoList.config.BotProps ) : org.telegram.telegrambots.meta.generics.TelegramClient
+}
+
+
+enum com.springboot.MyTodoList.util.BotCommands {
+	{field} +ASK
+	{field} +DONE_TASK
+	{field} +HELP
+	{field} +HIDE_COMMAND
+	{field} +LIST_PROJECTS
+	{field} +LLM_REQ
+	{field} +MY_TASKS
+	{field} +NEW_PROJECT
+	{field} +NEW_SPRINT
+	{field} +SPRINT
+	{field} +START_COMMAND
+}
+
+
+class com.springboot.MyTodoList.util.BotHelper {
+	{field} {static} -logger : org.slf4j.Logger
+	{method}  {static} +sendMessageToTelegram ( chatId : Long , text : String , bot : org.telegram.telegrambots.meta.generics.TelegramClient ) : void
+	{method}  {static} +sendMessageToTelegram ( chatId : Long , text : String , bot : org.telegram.telegrambots.meta.generics.TelegramClient , rk : org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup ) : void
+}
+
+
+enum com.springboot.MyTodoList.util.BotLabels {
+	{field} +HIDE_MAIN_SCREEN
+	{field} +SHOW_MAIN_SCREEN
+}
+
+
+enum com.springboot.MyTodoList.util.BotMessages {
+	{field} +BOT_REGISTERED
+	{field} +BYE
+	{field} +WELCOME
+}
+
+
+
+
+com.springboot.MyTodoList.config.DataInitializer *--  com.springboot.MyTodoList.repository.EmployeeRepository : employeeRepository
+com.springboot.MyTodoList.config.TicketKeyBackfill *--  com.springboot.MyTodoList.rag.RagDirtyEnqueuer : ragDirty
+com.springboot.MyTodoList.config.TicketKeyBackfill *--  com.springboot.MyTodoList.repository.ProjectRepository : projectRepository
+com.springboot.MyTodoList.config.TicketKeyBackfill *--  com.springboot.MyTodoList.repository.TaskRepository : taskRepository
+com.springboot.MyTodoList.config.TicketKeyBackfill *--  com.springboot.MyTodoList.service.ProjectService : projectService
+com.springboot.MyTodoList.controller.AuthController -->  com.springboot.MyTodoList.repository.EmployeeRepository : employeeRepository
+com.springboot.MyTodoList.controller.AuthController -->  com.springboot.MyTodoList.security.JwtUtil : jwtUtil
+com.springboot.MyTodoList.controller.AuthController -->  com.springboot.MyTodoList.service.RefreshTokenService : refreshTokenService
+com.springboot.MyTodoList.controller.ChatController -->  com.springboot.MyTodoList.repository.EmployeeRepository : employeeRepository
+com.springboot.MyTodoList.controller.ChatController -->  com.springboot.MyTodoList.service.BotAgentService : botAgentService
+com.springboot.MyTodoList.controller.CommentController -->  com.springboot.MyTodoList.repository.EmployeeRepository : employeeRepository
+com.springboot.MyTodoList.controller.CommentController -->  com.springboot.MyTodoList.service.CommentService : commentService
+com.springboot.MyTodoList.controller.CommentController -->  com.springboot.MyTodoList.service.TaskService : taskService
+com.springboot.MyTodoList.controller.EmployeeController -->  com.springboot.MyTodoList.repository.EmployeeRepository : employeeRepository
+com.springboot.MyTodoList.controller.EmployeeController -->  com.springboot.MyTodoList.service.UserService : userService
+com.springboot.MyTodoList.controller.ProjectController -->  com.springboot.MyTodoList.service.ProjectService : projectService
+com.springboot.MyTodoList.controller.SprintController -->  com.springboot.MyTodoList.repository.ProjectRepository : projectRepository
+com.springboot.MyTodoList.controller.SprintController -->  com.springboot.MyTodoList.service.SprintService : sprintService
+com.springboot.MyTodoList.controller.TaskController -->  com.springboot.MyTodoList.repository.EmployeeRepository : employeeRepository
+com.springboot.MyTodoList.controller.TaskController -->  com.springboot.MyTodoList.repository.SprintRepository : sprintRepository
+com.springboot.MyTodoList.controller.TaskController -->  com.springboot.MyTodoList.service.TaskService : taskService
+com.springboot.MyTodoList.controller.TeamController -->  com.springboot.MyTodoList.service.EmployeeTeamService : employeeTeamService
+com.springboot.MyTodoList.controller.TeamController -->  com.springboot.MyTodoList.service.TeamService : teamService
+com.springboot.MyTodoList.controller.TelegramBotController *--  com.springboot.MyTodoList.config.BotProps : botProps
+com.springboot.MyTodoList.controller.TelegramBotController *--  com.springboot.MyTodoList.repository.EmployeeRepository : employeeRepository
+com.springboot.MyTodoList.controller.TelegramBotController *--  com.springboot.MyTodoList.service.BotAgentService : botAgentService
+com.springboot.MyTodoList.controller.TelegramBotController *--  com.springboot.MyTodoList.service.OpenRouterService : openRouterService
+com.springboot.MyTodoList.controller.TelegramBotController *--  com.springboot.MyTodoList.service.ProjectService : projectService
+com.springboot.MyTodoList.controller.TelegramBotController *--  com.springboot.MyTodoList.service.SprintService : sprintService
+com.springboot.MyTodoList.controller.TelegramBotController *--  com.springboot.MyTodoList.service.TaskService : taskService
+com.springboot.MyTodoList.dto.ChatRequest "1" o-- "0..*"  com.springboot.MyTodoList.dto.ChatMessage : history
+com.springboot.MyTodoList.model.Comment -->  com.springboot.MyTodoList.model.Employee :  @ManyToOne\nemployee
+com.springboot.MyTodoList.model.Comment -->  com.springboot.MyTodoList.model.Task :  @ManyToOne\ntask
+com.springboot.MyTodoList.model.EmployeeTeam -->  com.springboot.MyTodoList.id.EmployeeTeamId : id
+com.springboot.MyTodoList.model.EmployeeTeam -->  com.springboot.MyTodoList.model.Employee :  @ManyToOne\nemployee
+com.springboot.MyTodoList.model.EmployeeTeam -->  com.springboot.MyTodoList.model.Team :  @ManyToOne\nteam
+com.springboot.MyTodoList.model.Project -->  com.springboot.MyTodoList.model.Team :  @ManyToOne\nteam
+com.springboot.MyTodoList.model.RefreshToken -->  com.springboot.MyTodoList.model.Employee :  @OneToOne\nemployee
+com.springboot.MyTodoList.model.Sprint -->  com.springboot.MyTodoList.model.Project :  @ManyToOne\nproject
+com.springboot.MyTodoList.model.Task -->  com.springboot.MyTodoList.model.Employee :  @ManyToOne\nassignee
+com.springboot.MyTodoList.model.Task -->  com.springboot.MyTodoList.model.Project :  @ManyToOne\nproject
+com.springboot.MyTodoList.model.Task -->  com.springboot.MyTodoList.model.Sprint :  @ManyToOne\nsprint
+com.springboot.MyTodoList.model.Team -->  com.springboot.MyTodoList.model.Employee :  @ManyToOne\nmanager
+com.springboot.MyTodoList.rag.RagBackfillRunner *--  com.springboot.MyTodoList.rag.RagChunkRepository : chunkRepo
+com.springboot.MyTodoList.rag.RagBackfillRunner *--  com.springboot.MyTodoList.rag.RagDirtyEnqueuer : enqueuer
+com.springboot.MyTodoList.rag.RagBackfillRunner *--  com.springboot.MyTodoList.repository.ProjectRepository : projectRepo
+com.springboot.MyTodoList.rag.RagBackfillRunner *--  com.springboot.MyTodoList.repository.SprintRepository : sprintRepo
+com.springboot.MyTodoList.rag.RagBackfillRunner *--  com.springboot.MyTodoList.repository.TaskRepository : taskRepo
+com.springboot.MyTodoList.rag.RagDirtyEnqueuer -->  com.springboot.MyTodoList.rag.RagDirtyRepository : repo
+com.springboot.MyTodoList.rag.RagIndexWorker *--  com.springboot.MyTodoList.rag.RagIndexer : indexer
+com.springboot.MyTodoList.rag.RagIndexer *--  com.springboot.MyTodoList.rag.EmbeddingService : embeddingService
+com.springboot.MyTodoList.rag.RagIndexer *--  com.springboot.MyTodoList.rag.RagChunkRepository : chunkRepo
+com.springboot.MyTodoList.rag.RagIndexer *--  com.springboot.MyTodoList.repository.CommentRepository : commentRepo
+com.springboot.MyTodoList.rag.RagIndexer *--  com.springboot.MyTodoList.repository.ProjectRepository : projectRepo
+com.springboot.MyTodoList.rag.RagIndexer *--  com.springboot.MyTodoList.repository.SprintRepository : sprintRepo
+com.springboot.MyTodoList.rag.RagIndexer *--  com.springboot.MyTodoList.repository.TaskRepository : taskRepo
+com.springboot.MyTodoList.rag.RagRetriever *--  com.springboot.MyTodoList.rag.EmbeddingService : embeddingService
+com.springboot.MyTodoList.security.JwtAuthFilter -->  com.springboot.MyTodoList.security.JwtUtil : jwtUtil
+com.springboot.MyTodoList.security.JwtAuthFilter -->  com.springboot.MyTodoList.security.UserDetailsServiceImpl : userDetailsService
+com.springboot.MyTodoList.security.UserDetailsServiceImpl -->  com.springboot.MyTodoList.repository.EmployeeRepository : employeeRepository
+com.springboot.MyTodoList.security.WebSecurityConfiguration -->  com.springboot.MyTodoList.security.JwtAuthFilter : jwtAuthFilter
+com.springboot.MyTodoList.service.AgentToolService *--  com.springboot.MyTodoList.repository.EmployeeRepository : employeeRepository
+com.springboot.MyTodoList.service.AgentToolService *--  com.springboot.MyTodoList.service.ProjectService : projectService
+com.springboot.MyTodoList.service.AgentToolService *--  com.springboot.MyTodoList.service.SprintService : sprintService
+com.springboot.MyTodoList.service.AgentToolService *--  com.springboot.MyTodoList.service.TaskService : taskService
+com.springboot.MyTodoList.service.BotAgentService *--  com.springboot.MyTodoList.rag.RagRetriever : ragRetriever
+com.springboot.MyTodoList.service.BotAgentService *--  com.springboot.MyTodoList.service.AgentToolService : agentToolService
+com.springboot.MyTodoList.service.BotAgentService *--  com.springboot.MyTodoList.service.OpenRouterService : openRouterService
+com.springboot.MyTodoList.service.CommentService -->  com.springboot.MyTodoList.rag.RagDirtyEnqueuer : ragDirty
+com.springboot.MyTodoList.service.CommentService -->  com.springboot.MyTodoList.repository.CommentRepository : commentRepository
+com.springboot.MyTodoList.service.EmployeeTeamService -->  com.springboot.MyTodoList.repository.EmployeeRepository : employeeRepository
+com.springboot.MyTodoList.service.EmployeeTeamService -->  com.springboot.MyTodoList.repository.EmployeeTeamRepository : employeeTeamRepository
+com.springboot.MyTodoList.service.EmployeeTeamService -->  com.springboot.MyTodoList.repository.TeamRepository : teamRepository
+com.springboot.MyTodoList.service.ProjectService -->  com.springboot.MyTodoList.rag.RagDirtyEnqueuer : ragDirty
+com.springboot.MyTodoList.service.ProjectService -->  com.springboot.MyTodoList.repository.ProjectRepository : projectRepository
+com.springboot.MyTodoList.service.RefreshTokenService -->  com.springboot.MyTodoList.repository.RefreshTokenRepository : refreshTokenRepository
+com.springboot.MyTodoList.service.SprintService -->  com.springboot.MyTodoList.rag.RagDirtyEnqueuer : ragDirty
+com.springboot.MyTodoList.service.SprintService -->  com.springboot.MyTodoList.repository.SprintRepository : sprintRepository
+com.springboot.MyTodoList.service.TaskService -->  com.springboot.MyTodoList.rag.RagDirtyEnqueuer : ragDirty
+com.springboot.MyTodoList.service.TaskService -->  com.springboot.MyTodoList.repository.CommentRepository : commentRepository
+com.springboot.MyTodoList.service.TaskService -->  com.springboot.MyTodoList.repository.ProjectRepository : projectRepository
+com.springboot.MyTodoList.service.TaskService -->  com.springboot.MyTodoList.repository.TaskRepository : taskRepository
+com.springboot.MyTodoList.service.TeamService -->  com.springboot.MyTodoList.repository.TeamRepository : teamRepository
+com.springboot.MyTodoList.service.UserService -->  com.springboot.MyTodoList.repository.CommentRepository : commentRepository
+com.springboot.MyTodoList.service.UserService -->  com.springboot.MyTodoList.repository.EmployeeRepository : employeeRepository
+com.springboot.MyTodoList.service.UserService -->  com.springboot.MyTodoList.repository.EmployeeTeamRepository : employeeTeamRepository
+com.springboot.MyTodoList.service.UserService -->  com.springboot.MyTodoList.repository.RefreshTokenRepository : refreshTokenRepository
+com.springboot.MyTodoList.service.UserService -->  com.springboot.MyTodoList.repository.TaskRepository : taskRepository
+com.springboot.MyTodoList.util.BotActions *--  com.springboot.MyTodoList.repository.EmployeeRepository : employeeRepository
+com.springboot.MyTodoList.util.BotActions *--  com.springboot.MyTodoList.service.BotAgentService : botAgentService
+com.springboot.MyTodoList.util.BotActions *--  com.springboot.MyTodoList.service.OpenRouterService : openRouterService
+com.springboot.MyTodoList.util.BotActions *--  com.springboot.MyTodoList.service.ProjectService : projectService
+com.springboot.MyTodoList.util.BotActions *--  com.springboot.MyTodoList.service.SprintService : sprintService
+com.springboot.MyTodoList.util.BotActions *--  com.springboot.MyTodoList.service.TaskService : taskService
+
+
+@enduml
