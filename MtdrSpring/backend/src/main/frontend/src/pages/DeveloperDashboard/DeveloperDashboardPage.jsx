@@ -6,6 +6,8 @@ import { updateTask } from '../../lib/api'
 import { fetcher } from '../../lib/fetcher'
 import { parseLocalDate, cn } from '../../lib/utils'
 import { Skeleton } from '../../components/ui/Skeleton'
+import CreateTaskButton from '../../components/CreateTaskButton'
+import TaskModal from '../Kanban/components/TaskModal'
 import { MAIN_TABS } from './constants'
 import KpiCards from './components/KpiCards'
 import ProgressBar from './components/ProgressBar'
@@ -87,10 +89,13 @@ export default function DeveloperDashboardPage() {
   const swrKey = user?.employeeId ? `/tasks/employee/${user.employeeId}` : null
 
   const { data: tasks = [], error, isLoading, mutate } = useSWR(swrKey, fetcher)
+  const { data: projects = [] }  = useSWR('/projects', fetcher)
+  const { data: employees = [] } = useSWR('/employees', fetcher)
 
   const [filterStatus, setFilterStatus] = useState('all')
   const [mainTab, setMainTab]           = useState('tasks')
   const [view, setView]                 = useState('list')
+  const [editTask, setEditTask]         = useState(null)
 
   const handleUpdate = useCallback(async (task, newStatus) => {
     const updated = await updateTask(task.taskId, { ...task, status: newStatus })
@@ -110,11 +115,14 @@ export default function DeveloperDashboardPage() {
 
   return (
     <div className="px-6 py-6 max-w-6xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-xl font-bold text-foreground">My Dashboard</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          Welcome back, {user?.firstName ?? 'Developer'} — here are your assigned tasks
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-bold text-foreground">My Dashboard</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            Welcome back, {user?.firstName ?? 'Developer'} — here are your assigned tasks
+          </p>
+        </div>
+        <CreateTaskButton onSaved={() => mutate()} />
       </div>
 
       {error && (
@@ -169,16 +177,28 @@ export default function DeveloperDashboardPage() {
                 </div>
               ) : view === 'list' ? (
                 <div className="space-y-3">
-                  {filtered.map((task) => <TaskRow key={task.taskId} task={task} onUpdate={handleUpdate} />)}
+                  {filtered.map((task) => (
+                    <TaskRow key={task.taskId} task={task} onUpdate={handleUpdate} onOpen={setEditTask} />
+                  ))}
                 </div>
               ) : (
-                <KanbanBoard tasks={filtered} onUpdate={handleUpdate} />
+                <KanbanBoard tasks={filtered} onUpdate={handleUpdate} onOpen={setEditTask} />
               )}
             </div>
           )}
 
           {mainTab === 'backlog' && <BacklogView />}
         </>
+      )}
+
+      {editTask && (
+        <TaskModal
+          task={editTask}
+          projects={projects}
+          employees={employees}
+          onClose={() => setEditTask(null)}
+          onSave={() => { setEditTask(null); mutate() }}
+        />
       )}
     </div>
   )

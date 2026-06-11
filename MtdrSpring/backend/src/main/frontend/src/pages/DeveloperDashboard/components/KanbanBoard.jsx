@@ -3,7 +3,7 @@ import { cn } from '../../../lib/utils'
 import { KANBAN_COLUMNS } from '../constants'
 import KanbanCard from './KanbanCard'
 
-export default function KanbanBoard({ tasks, onUpdate }) {
+export default function KanbanBoard({ tasks, onUpdate, onOpen }) {
   const draggingTask = useRef(null)
   const [dragOver, setDragOver] = useState(null)
 
@@ -58,7 +58,7 @@ export default function KanbanBoard({ tasks, onUpdate }) {
 
             <div className="flex-1 p-2 space-y-2">
               {colTasks.map((task) => (
-                <KanbanCard key={task.taskId} task={task} onDragStart={handleDragStart} />
+                <KanbanCard key={task.taskId} task={task} onDragStart={handleDragStart} onOpen={onOpen} />
               ))}
               {colTasks.length === 0 && (
                 <div className="h-16 rounded-md border-2 border-dashed border-border/50 flex items-center justify-center">

@@ -106,7 +106,7 @@ public class TaskController {
         return taskService.findByProjectAndSprint(projectId, sprintId);
     }
 
-    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+    // Any authenticated user (managers and developers) may create tasks.
     @PostMapping
     public ResponseEntity<?> create(@RequestBody Task task) {
         ResponseEntity<?> err = validateTask(task);
@@ -148,7 +148,6 @@ public class TaskController {
     }
 
     /** Assigns a developer to the task, replacing any previous assignee. */
-    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     @PostMapping("/{id}/assignees/{employeeId}")
     public ResponseEntity<?> assign(@PathVariable int id, @PathVariable int employeeId) {
         Optional<Task> taskOpt = taskService.findById(id);
@@ -170,7 +169,6 @@ public class TaskController {
     }
 
     /** Removes the assignee from the task. */
-    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     @DeleteMapping("/{id}/assignees/{employeeId}")
     public ResponseEntity<Void> unassign(@PathVariable int id, @PathVariable int employeeId) {
         Optional<Task> taskOpt = taskService.findById(id);

@@ -2,9 +2,43 @@ import { COLUMNS, PRIORITIES, PRIORITY_CONFIG } from '../constants'
 import Field from './Field'
 import ErrorMsg from './ErrorMsg'
 
-export default function TaskForm({ form, setForm, onSubmit, error, developers, assigneeId, onAssigneeChange }) {
+export default function TaskForm({
+  form, setForm, onSubmit, error, developers, assigneeId, onAssigneeChange,
+  projects, projectId, onProjectChange, sprints, sprintId, onSprintChange,
+}) {
   return (
     <form id="task-form" onSubmit={onSubmit} className="px-5 py-4 space-y-4">
+      {projects && (
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Project *">
+            <select
+              className="field"
+              required
+              value={projectId ?? ''}
+              onChange={(e) => onProjectChange(e.target.value ? Number(e.target.value) : null)}
+            >
+              <option value="">Select a project…</option>
+              {projects.map((p) => (
+                <option key={p.projectId} value={p.projectId}>{p.name}</option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Sprint">
+            <select
+              className="field"
+              value={sprintId ?? ''}
+              disabled={!projectId}
+              onChange={(e) => onSprintChange(e.target.value ? Number(e.target.value) : null)}
+            >
+              <option value="">No sprint (backlog)</option>
+              {(sprints ?? []).map((s) => (
+                <option key={s.sprintId} value={s.sprintId}>{s.name}</option>
+              ))}
+            </select>
+          </Field>
+        </div>
+      )}
+
       <Field label="Title *">
         <input
           className="field"
