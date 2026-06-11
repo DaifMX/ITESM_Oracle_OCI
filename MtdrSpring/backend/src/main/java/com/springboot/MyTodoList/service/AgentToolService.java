@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -47,6 +48,7 @@ public class AgentToolService {
 
     private static final Set<String> MANAGER_ONLY_TOOLS = Set.of(
         "list_employees", "get_project_insights",
+        "create_tasks",
         "create_sprint", "update_sprint",
         "create_project", "update_project",
         "register_employee"
@@ -114,7 +116,8 @@ public class AgentToolService {
                 stringParam(params, "description", "Longer task description.", false);
                 intParam(params, "sprintId", "Sprint to place the task in (must belong to the same project).", false);
                 if (isManager) {
-                    intParam(params, "assigneeId", "Employee to assign. Omit to leave unassigned.", false);
+                    stringParam(params, "assignee",
+                        "Employee to assign, by full name, email, or numeric id. Omit to leave unassigned.", false);
                 }
                 enumParam(params, "status", "Task status. Defaults to todo.", TASK_STATUSES, false);
                 enumParam(params, "priority", "Task priority. Defaults to medium.", TASK_PRIORITIES, false);
@@ -123,6 +126,29 @@ public class AgentToolService {
                 dateParam(params, "startDate", "Start date.", false);
                 dateParam(params, "expectedEndDate", "Expected end / due date.", false);
             }));
+
+        if (isManager) {
+            tools.add(tool("create_tasks",
+                "Create the SAME task for several employees at once -- one task per assignee. "
+                + "Use this whenever the user asks to assign a task or activity to multiple people "
+                + "(e.g. 'give all developers a Linux course'). Resolves each assignee by name, email "
+                + "or id, so you do NOT need to look up ids first. Returns every created task.",
+                params -> {
+                    stringParam(params, "title", "Short task title, shared by all created tasks.", true);
+                    projectParam(params, "Project the tasks belong to.", true);
+                    stringArrayParam(params, "assignees",
+                        "Employees to create a task for, each by full name, email, or numeric id. "
+                        + "One task is created per entry.", true);
+                    stringParam(params, "description", "Longer task description, shared by all.", false);
+                    intParam(params, "sprintId", "Sprint to place the tasks in (must belong to the same project).", false);
+                    enumParam(params, "status", "Task status. Defaults to todo.", TASK_STATUSES, false);
+                    enumParam(params, "priority", "Task priority. Defaults to medium.", TASK_PRIORITIES, false);
+                    intParam(params, "storyPoints", "Story point estimate per task.", false);
+                    numberParam(params, "estimatedHours", "Estimated hours of work per task.", false);
+                    dateParam(params, "startDate", "Start date.", false);
+                    dateParam(params, "expectedEndDate", "Expected end / due date.", false);
+                }));
+        }
 
         tools.add(tool("update_task",
             isManager
@@ -234,6 +260,7 @@ public class AgentToolService {
                 case "list_sprints":         return listSprints(args);
                 case "list_tasks":           return listTasks(args, caller, isManager);
                 case "create_task":          return createTask(args, caller, isManager);
+                case "create_tasks":         return createTasks(args, caller);
                 case "update_task":          return updateTask(args, caller, isManager);
                 case "list_employees":       return listEmployees();
                 case "get_project_insights": return projectInsights(args);
@@ -401,8 +428,8 @@ public class AgentToolService {
         }
 
         if (isManager) {
-            Integer assigneeId = optInt(args, "assigneeId");
-            if (assigneeId != null) task.setAssignee(requireEmployee(assigneeId));
+            Employee assignee = resolveAssigneeArg(args);
+            if (assignee != null) task.setAssignee(assignee);
         } else {
             // Developers always create tasks for themselves.
             task.setAssignee(caller);
@@ -410,6 +437,60 @@ public class AgentToolService {
 
         Task saved = taskService.save(task);
         return okJson("Task created.", "task", taskJson(saved));
+    }
+
+    /**
+     * Creates one task per assignee, all sharing the same fields. Manager-only
+     * (developers can only self-assign). Every assignee is resolved up front so
+     * a bad name fails the whole batch before anything is written, rather than
+     * leaving a half-created set.
+     */
+    private String createTasks(JsonNode args, Employee caller) {
+        String title = reqString(args, "title");
+        Project project = resolveProjectArg(args, true);
+
+        JsonNode assignees = args.path("assignees");
+        if (!assignees.isArray() || assignees.isEmpty()) {
+            throw new ToolException("Missing required field: assignees "
+                + "(a non-empty list of employee names, emails or ids).");
+        }
+        List<Employee> targets = new ArrayList<>();
+        for (JsonNode a : assignees) targets.add(resolveEmployeeRef(a.asText()));
+
+        String description = optString(args, "description");
+        String status = validated(optString(args, "status"), TASK_STATUSES, "status", "todo");
+        String priority = validated(optString(args, "priority"), TASK_PRIORITIES, "priority", "medium");
+        Integer storyPoints = optInt(args, "storyPoints");
+        BigDecimal estimatedHours = optDecimal(args, "estimatedHours");
+        LocalDate startDate = optDate(args, "startDate");
+        LocalDate expectedEndDate = optDate(args, "expectedEndDate");
+
+        Sprint sprint = null;
+        Integer sprintId = optInt(args, "sprintId");
+        if (sprintId != null) sprint = requireSprintInProject(sprintId, project.getProjectId());
+
+        ArrayNode created = mapper.createArrayNode();
+        for (Employee target : targets) {
+            Task task = new Task();
+            task.setTitle(title);
+            task.setProject(project);
+            task.setDescription(description);
+            task.setStatus(status);
+            task.setPriority(priority);
+            task.setStoryPoints(storyPoints);
+            task.setEstimatedHours(estimatedHours);
+            task.setStartDate(startDate);
+            task.setExpectedEndDate(expectedEndDate);
+            task.setSprint(sprint);
+            task.setAssignee(target);
+            created.add(taskJson(taskService.save(task)));
+        }
+
+        ObjectNode root = mapper.createObjectNode();
+        root.put("ok", true);
+        root.put("message", "Created " + created.size() + " task(s).");
+        root.set("tasks", created);
+        return root.toString();
     }
 
     private String updateTask(JsonNode args, Employee caller, boolean isManager) {
@@ -669,6 +750,56 @@ public class AgentToolService {
         return e.orElseThrow(() -> new ToolException("Employee " + id + " not found. Use list_employees to find valid ids."));
     }
 
+    /** Resolves the optional manager "assignee" argument: numeric assigneeId, or assignee name/email/id. */
+    private Employee resolveAssigneeArg(JsonNode args) {
+        Integer id = optInt(args, "assigneeId");
+        if (id != null) return requireEmployee(id);
+        String ref = optString(args, "assignee");
+        if (ref == null || ref.isBlank()) return null;
+        return resolveEmployeeRef(ref.trim());
+    }
+
+    /**
+     * Resolves an employee reference: a numeric id, an email, or a full/partial
+     * name. Throws (listing candidates) when nothing or several match, so the
+     * model can't silently invent or mis-assign a person.
+     */
+    private Employee resolveEmployeeRef(String ref) {
+        String trimmed = ref == null ? "" : ref.trim();
+        if (trimmed.isEmpty()) throw new ToolException("Empty employee reference.");
+        if (trimmed.matches("\\d+")) return requireEmployee(Integer.parseInt(trimmed));
+
+        List<Employee> all = employeeRepository.findAll();
+
+        // Email is unique -> an exact email match wins outright.
+        Optional<Employee> byEmail = all.stream()
+            .filter(e -> trimmed.equalsIgnoreCase(e.getEmail()))
+            .findFirst();
+        if (byEmail.isPresent()) return byEmail.get();
+
+        List<Employee> exact = all.stream()
+            .filter(e -> fullName(e).equalsIgnoreCase(trimmed))
+            .toList();
+        List<Employee> matches = !exact.isEmpty() ? exact
+            : all.stream()
+                .filter(e -> fullName(e).toLowerCase().contains(trimmed.toLowerCase()))
+                .toList();
+        if (matches.size() == 1) return matches.get(0);
+
+        String catalog = all.stream()
+            .map(e -> fullName(e) + " (" + e.getEmail() + ")")
+            .collect(java.util.stream.Collectors.joining("; "));
+        if (matches.size() > 1) {
+            throw new ToolException("Employee reference '" + ref + "' is ambiguous. Employees: " + catalog);
+        }
+        throw new ToolException("Employee '" + ref + "' not found. Employees: "
+            + (catalog.isBlank() ? "(none exist yet)" : catalog));
+    }
+
+    private String fullName(Employee e) {
+        return (e.getFirstName() + " " + e.getLastName()).trim();
+    }
+
     // ─── JSON serialization helpers ──────────────────────────────────────────
 
     private ObjectNode taskJson(Task t) {
@@ -851,6 +982,11 @@ public class AgentToolService {
 
     private void stringParam(ObjectNode props, String name, String description, boolean required) {
         param(props, name, "string", description, required);
+    }
+
+    private void stringArrayParam(ObjectNode props, String name, String description, boolean required) {
+        ObjectNode p = param(props, name, "array", description, required);
+        p.putObject("items").put("type", "string");
     }
 
     private void projectParam(ObjectNode props, String description, boolean required) {
