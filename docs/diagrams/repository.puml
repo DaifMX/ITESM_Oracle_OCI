@@ -21,6 +21,8 @@ interface com.springboot.MyTodoList.repository.EmployeeTeamRepository {
 
 
 interface com.springboot.MyTodoList.repository.ProjectRepository {
+	{method}  {abstract} +findByNameIgnoreCase ( name : String ) : java.util.Optional
+	{method}  {abstract} +findByShortNameIgnoreCase ( shortName : String ) : java.util.Optional
 	{method}  {abstract} +findByStatus ( status : String ) : java.util.List
 	{method}  {abstract} +findByTeam_TeamId ( teamId : int ) : java.util.List
 }
@@ -44,9 +46,12 @@ interface com.springboot.MyTodoList.repository.TaskRepository {
 	{method}  {abstract} +findByProject_ProjectId ( projectId : int ) : java.util.List
 	{method}  {abstract} +findByProject_ProjectIdAndSprint_SprintId ( projectId : int , sprintId : int ) : java.util.List
 	{method}  {abstract} +findByProject_ProjectIdAndStatus ( projectId : int , status : String ) : java.util.List
+	{method}  {abstract} +findByProject_ProjectIdAndTicketNumber ( projectId : int , ticketNumber : int ) : java.util.Optional
 	{method}  {abstract} +findBySprint_SprintId ( sprintId : int ) : java.util.List
 	{method}  {abstract} +findBySprint_SprintIdAndStatus ( sprintId : int , status : String ) : java.util.List
 	{method}  {abstract} +findByStatus ( status : String ) : java.util.List
+	{method}  {abstract} +findByTicketNumberIsNullOrderByProject_ProjectIdAscTaskIdAsc () : java.util.List
+	{method}  {abstract} +findMaxTicketNumber ( projectId : int ) : int
 }
 
 

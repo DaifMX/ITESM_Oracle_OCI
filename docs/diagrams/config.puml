@@ -45,6 +45,24 @@ class com.springboot.MyTodoList.config.OracleConfiguration {
 }
 
 
+class com.springboot.MyTodoList.config.TicketKeyBackfill {
+	{field} {static} -logger : org.slf4j.Logger
+	{field} -projectRepository : com.springboot.MyTodoList.repository.ProjectRepository
+	{field} -projectService : com.springboot.MyTodoList.service.ProjectService
+	{field} -ragDirty : com.springboot.MyTodoList.rag.RagDirtyEnqueuer
+	{field} -taskRepository : com.springboot.MyTodoList.repository.TaskRepository
+	{method} -backfillProjectKeys () : void
+	{method} -backfillTicketNumbers () : void
+	{method} +run ( args : org.springframework.boot.ApplicationArguments ) : void
+}
+
+
+class com.springboot.MyTodoList.config.WebConfig {
+	{method} +addResourceHandlers ( registry : org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry ) : void
+	{method} +configurePathMatch ( configurer : org.springframework.web.servlet.config.annotation.PathMatchConfigurer ) : void
+}
+
+
 
 
 

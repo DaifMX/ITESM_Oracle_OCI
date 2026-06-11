@@ -22,7 +22,9 @@ class com.springboot.MyTodoList.controller.ChatController {
 
 class com.springboot.MyTodoList.controller.CommentController {
 	{field} -commentService : com.springboot.MyTodoList.service.CommentService
-	{method} +create ( taskId : int , comment : com.springboot.MyTodoList.model.Comment ) : org.springframework.http.ResponseEntity
+	{field} -employeeRepository : com.springboot.MyTodoList.repository.EmployeeRepository
+	{field} -taskService : com.springboot.MyTodoList.service.TaskService
+	{method} +create ( taskId : int , body : java.util.Map ) : org.springframework.http.ResponseEntity
 	{method} +delete ( id : int ) : org.springframework.http.ResponseEntity
 	{method} +getById ( id : int ) : org.springframework.http.ResponseEntity
 	{method} +getByTask ( taskId : int ) : java.util.List
@@ -48,6 +50,7 @@ class com.springboot.MyTodoList.controller.ProjectController {
 	{method} +delete ( id : int ) : org.springframework.http.ResponseEntity
 	{method} +getAll () : java.util.List
 	{method} +getById ( id : int ) : org.springframework.http.ResponseEntity
+	{method} +getByKey ( key : String ) : org.springframework.http.ResponseEntity
 	{method} +getByStatus ( status : String ) : java.util.List
 	{method} +getByTeam ( teamId : int ) : java.util.List
 	{method} +update ( id : int , project : com.springboot.MyTodoList.model.Project ) : org.springframework.http.ResponseEntity
@@ -86,8 +89,10 @@ class com.springboot.MyTodoList.controller.TaskController {
 	{method} +getBySprint ( sprintId : int ) : java.util.List
 	{method} +getBySprintAndStatus ( sprintId : int , status : String ) : java.util.List
 	{method} +getByStatus ( status : String ) : java.util.List
+	{method} +getByTicketKey ( ticketKey : String ) : org.springframework.http.ResponseEntity
 	{method} +unassign ( id : int , employeeId : int ) : org.springframework.http.ResponseEntity
 	{method} +update ( id : int , task : com.springboot.MyTodoList.model.Task ) : org.springframework.http.ResponseEntity
+	{method} -validateTask ( task : com.springboot.MyTodoList.model.Task ) : org.springframework.http.ResponseEntity
 	{method} -validateTaskDates ( task : com.springboot.MyTodoList.model.Task ) : org.springframework.http.ResponseEntity
 }
 

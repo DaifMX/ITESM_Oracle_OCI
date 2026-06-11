@@ -4,7 +4,7 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
-  base: './',
+  base: '/',
   build: {
     outDir: 'dist',
   },
@@ -15,13 +15,8 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/auth':      'http://localhost:8080',
-      '/employees': 'http://localhost:8080',
-      '/projects':  'http://localhost:8080',
-      '/sprints':   'http://localhost:8080',
-      '/tasks':     'http://localhost:8080',
-      '/comments':  'http://localhost:8080',
-      '/teams':     'http://localhost:8080',
+      // All REST endpoints live under /api/** — proxy them to the backend.
+      '/api': 'http://localhost:8080',
     },
   },
 })

@@ -22,10 +22,14 @@ public class Task {
     @JoinColumn(name = "PROJECT_ID", nullable = false)
     private Project project;
 
+    // Per-project sequential number; the ticket key is PROJECT_SHORT_NAME-TICKET_NUMBER.
+    @Column(name = "TICKET_NUMBER")
+    private Integer ticketNumber;
+
     @Column(name = "TITLE", nullable = false)
     private String title;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", length = 500)
     private String description;
 
     @Column(name = "STATUS")
@@ -74,6 +78,16 @@ public class Task {
 
     public Project getProject() { return project; }
     public void setProject(Project project) { this.project = project; }
+
+    public Integer getTicketNumber() { return ticketNumber; }
+    public void setTicketNumber(Integer ticketNumber) { this.ticketNumber = ticketNumber; }
+
+    /** Jira-style ticket key, e.g. "P1-7". Null until the project has a short name. */
+    @Transient
+    public String getTicketKey() {
+        if (ticketNumber == null || project == null || project.getShortName() == null) return null;
+        return project.getShortName() + "-" + ticketNumber;
+    }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }

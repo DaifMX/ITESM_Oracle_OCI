@@ -33,6 +33,7 @@ class com.springboot.MyTodoList.model.Project {
 	{field} +endDate : java.time.LocalDate
 	{field} +name : String
 	{field} +projectId : int
+	{field} +shortName : String
 	{field} +startDate : java.time.LocalDate
 	{field} +status : String
 }
@@ -66,8 +67,10 @@ class com.springboot.MyTodoList.model.Task {
 	{field} +status : String
 	{field} +storyPoints : Integer
 	{field} +taskId : int
+	{field} +ticketNumber : Integer
 	{field} +title : String
 	{field} +totalHours : java.math.BigDecimal
+	{method} +getTicketKey () : String
 	{method} #onCreate () : void
 }
 

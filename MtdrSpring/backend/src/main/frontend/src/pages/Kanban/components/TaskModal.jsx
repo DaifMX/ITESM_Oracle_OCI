@@ -2,17 +2,18 @@ import { useState, useEffect } from 'react'
 import { Loader2, X } from 'lucide-react'
 import { Button } from '../../../components/ui/button'
 import { cn } from '../../../lib/utils'
-import { getUser } from '../../../lib/auth'
-import { createTask, updateTask, getTaskAssignees, assignEmployee, unassignEmployee, getComments } from '../../../lib/api'
+import { createTask, updateTask, getTaskAssignees, assignEmployee, unassignEmployee, getComments, getSprintsByProject } from '../../../lib/api'
 import { EMPTY_TASK_FORM } from '../constants'
 import TaskForm from './TaskForm'
 import AssigneesTab from './AssigneesTab'
 import CommentsTab from './CommentsTab'
 
-export default function TaskModal({ task, sprint, sprintId, projectId, employees, onClose, onSave }) {
+export default function TaskModal({ task, sprint, sprintId, projectId, projects, employees, onClose, onSave }) {
   const isEdit = !!task
-  const isManager = ['manager', 'admin'].includes(getUser()?.role)
-  const developers = (employees ?? []).filter((e) => 
+  // Standalone mode (dashboard): no fixed project/sprint context, so the form
+  // lets the user pick a project and (optionally) a sprint.
+  const standalone = !!projects
+  const developers = (employees ?? []).filter((e) =>
     e.role === 'developer' || e.role === 'manager'
   );
 
@@ -35,6 +36,30 @@ export default function TaskModal({ task, sprint, sprintId, projectId, employees
   const [comments, setComments]        = useState([])
   const [loadingMeta, setLoadingMeta]  = useState(false)
 
+  // Project / sprint selection — used in standalone mode. Falls back to the
+  // fixed context (Kanban board / backlog) or the task being edited.
+  const [selProjectId, setSelProjectId] = useState(
+    projectId ? Number(projectId) : (task?.project?.projectId ?? null)
+  )
+  const [selSprintId, setSelSprintId] = useState(
+    sprintId ? Number(sprintId) : (task?.sprint?.sprintId ?? null)
+  )
+  const [sprintOptions, setSprintOptions] = useState([])
+
+  useEffect(() => {
+    if (!standalone || !selProjectId) { setSprintOptions([]); return }
+    let active = true
+    getSprintsByProject(selProjectId)
+      .then((s) => { if (active) setSprintOptions(s) })
+      .catch(() => { if (active) setSprintOptions([]) })
+    return () => { active = false }
+  }, [standalone, selProjectId])
+
+  function handleProjectChange(id) {
+    setSelProjectId(id)
+    setSelSprintId(null)
+  }
+
   useEffect(() => {
     if (!isEdit) return
     setLoadingMeta(true)
@@ -46,9 +71,22 @@ export default function TaskModal({ task, sprint, sprintId, projectId, employees
 
   async function handleSubmit(e) {
     e.preventDefault()
-    if (sprint) {
-      const sd = sprint.startDate
-      const ed = sprint.endDate
+
+    const effProjectId = standalone ? selProjectId : (projectId ? Number(projectId) : null)
+    const effSprintId  = standalone ? selSprintId  : (sprintId ? Number(sprintId) : null)
+
+    if (standalone && !effProjectId) {
+      setError('Please select a project')
+      return
+    }
+
+    // Validate task dates against the bounds of the chosen sprint, if any.
+    const effSprint = standalone
+      ? (sprintOptions.find((s) => s.sprintId === effSprintId) ?? null)
+      : sprint
+    if (effSprint) {
+      const sd = effSprint.startDate
+      const ed = effSprint.endDate
       if (
         (form.startDate && sd && form.startDate < sd) ||
         (form.startDate && ed && form.startDate > ed) ||
@@ -63,8 +101,8 @@ export default function TaskModal({ task, sprint, sprintId, projectId, employees
     try {
       const payload = {
         ...form,
-        project: { projectId: Number(projectId) },
-        sprint: sprintId ? { sprintId: Number(sprintId) } : null,
+        project: { projectId: Number(effProjectId) },
+        sprint: effSprintId ? { sprintId: Number(effSprintId) } : null,
         storyPoints: form.storyPoints !== '' ? Number(form.storyPoints) : null,
         estimatedHours: form.estimatedHours !== '' ? Number(form.estimatedHours) : null,
         totalHours: form.totalHours !== '' ? Number(form.totalHours) : null,
@@ -130,9 +168,15 @@ export default function TaskModal({ task, sprint, sprintId, projectId, employees
               setForm={setForm}
               onSubmit={handleSubmit}
               error={error}
-              developers={!isEdit && isManager ? developers : undefined}
+              developers={!isEdit ? developers : undefined}
               assigneeId={assigneeId}
               onAssigneeChange={setAssigneeId}
+              projects={standalone ? projects : undefined}
+              projectId={standalone ? selProjectId : undefined}
+              onProjectChange={handleProjectChange}
+              sprints={standalone ? sprintOptions : undefined}
+              sprintId={standalone ? selSprintId : undefined}
+              onSprintChange={setSelSprintId}
             />
           )}
           {tab === 'assignees' && isEdit && (

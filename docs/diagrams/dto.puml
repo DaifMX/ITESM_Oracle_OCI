@@ -8,6 +8,12 @@ class com.springboot.MyTodoList.dto.AuthResponse {
 }
 
 
+class com.springboot.MyTodoList.dto.ChatMessage {
+	{field} +content : String
+	{field} +role : String
+}
+
+
 class com.springboot.MyTodoList.dto.ChatRequest {
 	{field} +message : String
 }
@@ -39,6 +45,7 @@ class com.springboot.MyTodoList.dto.RegisterRequest {
 
 
 
+com.springboot.MyTodoList.dto.ChatRequest "1" o-- "0..*"  com.springboot.MyTodoList.dto.ChatMessage : history
 
 
 @enduml

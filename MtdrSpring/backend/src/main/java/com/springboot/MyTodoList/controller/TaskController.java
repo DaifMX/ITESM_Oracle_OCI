@@ -31,6 +31,12 @@ public class TaskController {
     @Autowired
     private SprintRepository sprintRepository;
 
+    private ResponseEntity<?> validateTask(Task task) {
+        if (task.getDescription() != null && task.getDescription().length() > 500)
+            return ResponseEntity.badRequest().body(Map.of("error", "Description is too long. Please shorten it."));
+        return validateTaskDates(task);
+    }
+
     private ResponseEntity<?> validateTaskDates(Task task) {
         if (task.getSprint() == null) return null;
         Optional<Sprint> sprintOpt = sprintRepository.findById(task.getSprint().getSprintId());
@@ -54,6 +60,13 @@ public class TaskController {
     @GetMapping
     public List<Task> getAll() {
         return taskService.findAll();
+    }
+
+    @GetMapping("/key/{ticketKey}")
+    public ResponseEntity<Task> getByTicketKey(@PathVariable String ticketKey) {
+        return taskService.findByTicketKey(ticketKey)
+                .map(t -> ResponseEntity.ok(t))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/{id}")
@@ -93,17 +106,17 @@ public class TaskController {
         return taskService.findByProjectAndSprint(projectId, sprintId);
     }
 
-    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+    // Any authenticated user (managers and developers) may create tasks.
     @PostMapping
     public ResponseEntity<?> create(@RequestBody Task task) {
-        ResponseEntity<?> err = validateTaskDates(task);
+        ResponseEntity<?> err = validateTask(task);
         if (err != null) return err;
         return ResponseEntity.status(HttpStatus.CREATED).body(taskService.save(task));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable int id, @RequestBody Task task) {
-        ResponseEntity<?> err = validateTaskDates(task);
+        ResponseEntity<?> err = validateTask(task);
         if (err != null) return err;
         return taskService.update(id, task)
                 .map(t -> ResponseEntity.ok(t))
@@ -135,7 +148,6 @@ public class TaskController {
     }
 
     /** Assigns a developer to the task, replacing any previous assignee. */
-    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     @PostMapping("/{id}/assignees/{employeeId}")
     public ResponseEntity<?> assign(@PathVariable int id, @PathVariable int employeeId) {
         Optional<Task> taskOpt = taskService.findById(id);
@@ -157,7 +169,6 @@ public class TaskController {
     }
 
     /** Removes the assignee from the task. */
-    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     @DeleteMapping("/{id}/assignees/{employeeId}")
     public ResponseEntity<Void> unassign(@PathVariable int id, @PathVariable int employeeId) {
         Optional<Task> taskOpt = taskService.findById(id);

@@ -20,6 +20,9 @@ export default function TaskCard({ task, onEdit, onDelete, onDragStart, isDraggi
         isDragging && 'opacity-40 scale-95 shadow-none'
       )}
     >
+      {task.ticketKey && (
+        <p className="text-[11px] font-mono text-muted-foreground mb-0.5">{task.ticketKey}</p>
+      )}
       <p className="text-sm font-medium text-foreground leading-snug">{task.title}</p>
 
       {task.description && (

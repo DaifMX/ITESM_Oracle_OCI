@@ -2,11 +2,18 @@ import { cn, parseLocalDate } from '../../../lib/utils'
 import PriorityBadge from './PriorityBadge'
 import StatusSelect from './StatusSelect'
 
-export default function TaskRow({ task, onUpdate }) {
+export default function TaskRow({ task, onUpdate, onOpen }) {
   const isOverdue = task.expectedEndDate && task.status !== 'done' && parseLocalDate(task.expectedEndDate) < new Date()
 
   return (
-    <div className={cn('rounded-lg border bg-card px-5 py-4', isOverdue && 'border-red-200 dark:border-red-900')}>
+    <div
+      onClick={() => onOpen?.(task)}
+      className={cn(
+        'rounded-lg border bg-card px-5 py-4',
+        onOpen && 'cursor-pointer hover:border-primary/40 transition-colors',
+        isOverdue && 'border-red-200 dark:border-red-900'
+      )}
+    >
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -35,7 +42,9 @@ export default function TaskRow({ task, onUpdate }) {
             )}
           </div>
         </div>
-        <StatusSelect task={task} onUpdate={onUpdate} />
+        <div onClick={(e) => e.stopPropagation()}>
+          <StatusSelect task={task} onUpdate={onUpdate} />
+        </div>
       </div>
     </div>
   )
