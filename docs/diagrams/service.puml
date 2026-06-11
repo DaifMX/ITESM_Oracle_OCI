@@ -16,10 +16,12 @@ class com.springboot.MyTodoList.service.AgentToolService {
 	{method} -createProject ( args : com.fasterxml.jackson.databind.JsonNode ) : String
 	{method} -createSprint ( args : com.fasterxml.jackson.databind.JsonNode ) : String
 	{method} -createTask ( args : com.fasterxml.jackson.databind.JsonNode , caller : com.springboot.MyTodoList.model.Employee , isManager : boolean ) : String
+	{method} -createTasks ( args : com.fasterxml.jackson.databind.JsonNode , caller : com.springboot.MyTodoList.model.Employee ) : String
 	{method} -dateParam ( props : com.fasterxml.jackson.databind.node.ObjectNode , name : String , description : String , required : boolean ) : void
 	{method} -enumParam ( props : com.fasterxml.jackson.databind.node.ObjectNode , name : String , description : String , values : java.util.Set , required : boolean ) : void
 	{method} -errorJson ( message : String ) : String
 	{method} +execute ( name : String , args : com.fasterxml.jackson.databind.JsonNode , caller : com.springboot.MyTodoList.model.Employee ) : String
+	{method} -fullName ( e : com.springboot.MyTodoList.model.Employee ) : String
 	{method} -generateTempPassword () : String
 	{method} -intParam ( props : com.fasterxml.jackson.databind.node.ObjectNode , name : String , description : String , required : boolean ) : void
 	{method} -listEmployees () : String
@@ -42,10 +44,13 @@ class com.springboot.MyTodoList.service.AgentToolService {
 	{method} -requireEmployee ( id : int ) : com.springboot.MyTodoList.model.Employee
 	{method} -requireProject ( id : int ) : com.springboot.MyTodoList.model.Project
 	{method} -requireSprintInProject ( sprintId : int , projectId : int ) : com.springboot.MyTodoList.model.Sprint
+	{method} -resolveAssigneeArg ( args : com.fasterxml.jackson.databind.JsonNode ) : com.springboot.MyTodoList.model.Employee
+	{method} -resolveEmployeeRef ( ref : String ) : com.springboot.MyTodoList.model.Employee
 	{method} -resolveProjectArg ( args : com.fasterxml.jackson.databind.JsonNode , required : boolean ) : com.springboot.MyTodoList.model.Project
 	{method} -resolveProjectRef ( ref : String ) : com.springboot.MyTodoList.model.Project
 	{method} -resolveTaskArg ( args : com.fasterxml.jackson.databind.JsonNode ) : com.springboot.MyTodoList.model.Task
 	{method} -sprintJson ( s : com.springboot.MyTodoList.model.Sprint ) : com.fasterxml.jackson.databind.node.ObjectNode
+	{method} -stringArrayParam ( props : com.fasterxml.jackson.databind.node.ObjectNode , name : String , description : String , required : boolean ) : void
 	{method} -stringParam ( props : com.fasterxml.jackson.databind.node.ObjectNode , name : String , description : String , required : boolean ) : void
 	{method} -sumHours ( tasks : java.util.List , estimated : boolean ) : java.math.BigDecimal
 	{method} -taskJson ( t : com.springboot.MyTodoList.model.Task ) : com.fasterxml.jackson.databind.node.ObjectNode
