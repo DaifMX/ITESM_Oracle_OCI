@@ -1,3 +1,16 @@
+# [1.5.0](https://github.com/DaifMX/ITESM_Oracle_OCI/compare/v1.4.0...v1.5.0) (2026-06-11)
+
+
+### Bug Fixes
+
+* **ci:** prevent PlantUML diagrams from being clipped ([ffee786](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/ffee786825cc0d873dd1feb81d2af78894f1b3db))
+* restore auto-generated UML diagrams from main ([1048479](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/10484797de2b68da8afe65a684e4f51f0f1c4b1d))
+
+
+### Features
+
+* **tasks:** let developers create and edit tasks from dashboards ([c849eaa](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/c849eaaa10b519e609ba58b36fc791b308a8e382))
+
 # [1.4.0](https://github.com/DaifMX/ITESM_Oracle_OCI/compare/v1.3.0...v1.4.0) (2026-06-10)
 
 
