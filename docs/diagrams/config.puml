@@ -1,0 +1,70 @@
+@startuml
+
+class com.springboot.MyTodoList.config.BotProps {
+	{field} +name : String
+	{field} +token : String
+}
+
+
+class com.springboot.MyTodoList.config.CorsConfig {
+	{field} ~logger : org.slf4j.Logger
+	{method} +corsFilter () : org.springframework.web.filter.CorsFilter
+}
+
+
+class com.springboot.MyTodoList.config.DataInitializer {
+	{field} -employeeRepository : com.springboot.MyTodoList.repository.EmployeeRepository
+	{field} {static} -logger : org.slf4j.Logger
+	{field} -passwordEncoder : org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+	{method} +seedAdminUser () : void
+}
+
+
+class com.springboot.MyTodoList.config.DbSettings {
+	{field} +driver_class_name : String
+	{field} +password : String
+	{field} +url : String
+	{field} +username : String
+}
+
+
+class com.springboot.MyTodoList.config.OpenRouterConfig {
+	{field} -apiKey : String
+	{method} +httpClient () : org.apache.hc.client5.http.impl.classic.CloseableHttpClient
+	{method} +openRouterRequest ( apiUrl : String ) : org.apache.hc.client5.http.classic.methods.HttpPost
+}
+
+
+class com.springboot.MyTodoList.config.OracleConfiguration {
+	{field} -dbPassword : String
+	{field} -dbUrl : String
+	{field} -dbUser : String
+	{field} -driverClassName : String
+	{field} ~logger : org.slf4j.Logger
+	{method} +dataSource () : javax.sql.DataSource
+}
+
+
+class com.springboot.MyTodoList.config.TicketKeyBackfill {
+	{field} {static} -logger : org.slf4j.Logger
+	{field} -projectRepository : com.springboot.MyTodoList.repository.ProjectRepository
+	{field} -projectService : com.springboot.MyTodoList.service.ProjectService
+	{field} -ragDirty : com.springboot.MyTodoList.rag.RagDirtyEnqueuer
+	{field} -taskRepository : com.springboot.MyTodoList.repository.TaskRepository
+	{method} -backfillProjectKeys () : void
+	{method} -backfillTicketNumbers () : void
+	{method} +run ( args : org.springframework.boot.ApplicationArguments ) : void
+}
+
+
+class com.springboot.MyTodoList.config.WebConfig {
+	{method} +addResourceHandlers ( registry : org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry ) : void
+	{method} +configurePathMatch ( configurer : org.springframework.web.servlet.config.annotation.PathMatchConfigurer ) : void
+}
+
+
+
+
+
+
+@enduml

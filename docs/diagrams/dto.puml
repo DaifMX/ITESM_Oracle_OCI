@@ -1,0 +1,51 @@
+@startuml
+
+class com.springboot.MyTodoList.dto.AuthResponse {
+	{field} -accessToken : String
+	{field} -expiresIn : long
+	{field} -refreshToken : String
+	{field} -tokenType : String
+}
+
+
+class com.springboot.MyTodoList.dto.ChatMessage {
+	{field} +content : String
+	{field} +role : String
+}
+
+
+class com.springboot.MyTodoList.dto.ChatRequest {
+	{field} +message : String
+}
+
+
+class com.springboot.MyTodoList.dto.LoginRequest {
+	{field} +email : String
+	{field} +password : String
+}
+
+
+class com.springboot.MyTodoList.dto.RefreshRequest {
+	{field} +refreshToken : String
+}
+
+
+class com.springboot.MyTodoList.dto.RegisterRequest {
+	{field} +email : String
+	{field} +firstName : String
+	{field} +lastName : String
+	{field} +modality : String
+	{field} +password : String
+	{field} +phoneNumber : String
+	{field} +position : String
+	{field} +role : String
+	{field} +telegramChatId : String
+}
+
+
+
+
+com.springboot.MyTodoList.dto.ChatRequest "1" o-- "0..*"  com.springboot.MyTodoList.dto.ChatMessage : history
+
+
+@enduml

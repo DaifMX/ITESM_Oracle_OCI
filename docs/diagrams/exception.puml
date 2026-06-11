@@ -1,0 +1,11 @@
+@startuml
+
+class com.springboot.MyTodoList.exception.ElementNotFoundException {
+}
+
+
+
+
+
+
+@enduml

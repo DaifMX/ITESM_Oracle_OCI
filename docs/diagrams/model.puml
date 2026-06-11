@@ -1,0 +1,99 @@
+@startuml
+
+class com.springboot.MyTodoList.model.Comment {
+	{field} +commentId : int
+	{field} +content : String
+	{field} +createdAt : java.time.LocalDateTime
+	{method} #onCreate () : void
+}
+
+
+class com.springboot.MyTodoList.model.Employee {
+	{field} +email : String
+	{field} +employeeId : int
+	{field} +firstName : String
+	{field} +lastName : String
+	{field} +modality : String
+	{field} +passwordHash : String
+	{field} +phoneNumber : String
+	{field} +position : String
+	{field} +role : String
+	{field} +telegramChatId : String
+}
+
+
+class com.springboot.MyTodoList.model.EmployeeTeam {
+	{field} +id : com.springboot.MyTodoList.id.EmployeeTeamId
+	{field} +joinedAt : java.time.LocalDate
+}
+
+
+class com.springboot.MyTodoList.model.Project {
+	{field} +description : String
+	{field} +endDate : java.time.LocalDate
+	{field} +name : String
+	{field} +projectId : int
+	{field} +shortName : String
+	{field} +startDate : java.time.LocalDate
+	{field} +status : String
+}
+
+
+class com.springboot.MyTodoList.model.RefreshToken {
+	{field} +expiryDate : java.time.Instant
+	{field} -id : Long
+	{field} +token : String
+}
+
+
+class com.springboot.MyTodoList.model.Sprint {
+	{field} +endDate : java.time.LocalDate
+	{field} +goal : String
+	{field} +name : String
+	{field} +sprintId : int
+	{field} +startDate : java.time.LocalDate
+	{field} +status : String
+}
+
+
+class com.springboot.MyTodoList.model.Task {
+	{field} +createdAt : java.time.LocalDateTime
+	{field} +description : String
+	{field} +endDate : java.time.LocalDate
+	{field} +estimatedHours : java.math.BigDecimal
+	{field} +expectedEndDate : java.time.LocalDate
+	{field} +priority : String
+	{field} +startDate : java.time.LocalDate
+	{field} +status : String
+	{field} +storyPoints : Integer
+	{field} +taskId : int
+	{field} +ticketNumber : Integer
+	{field} +title : String
+	{field} +totalHours : java.math.BigDecimal
+	{method} +getTicketKey () : String
+	{method} #onCreate () : void
+}
+
+
+class com.springboot.MyTodoList.model.Team {
+	{field} +name : String
+	{field} +teamId : int
+}
+
+
+
+
+com.springboot.MyTodoList.model.Comment -->  com.springboot.MyTodoList.model.Employee :  @ManyToOne\nemployee
+com.springboot.MyTodoList.model.Comment -->  com.springboot.MyTodoList.model.Task :  @ManyToOne\ntask
+com.springboot.MyTodoList.model.EmployeeTeam -->  com.springboot.MyTodoList.model.Employee :  @ManyToOne\nemployee
+com.springboot.MyTodoList.model.EmployeeTeam -->  com.springboot.MyTodoList.model.Team :  @ManyToOne\nteam
+com.springboot.MyTodoList.model.Project -->  com.springboot.MyTodoList.model.Team :  @ManyToOne\nteam
+com.springboot.MyTodoList.model.RefreshToken -->  com.springboot.MyTodoList.model.Employee :  @OneToOne\nemployee
+com.springboot.MyTodoList.model.Sprint -->  com.springboot.MyTodoList.model.Project :  @ManyToOne\nproject
+com.springboot.MyTodoList.model.Task -->  com.springboot.MyTodoList.model.Employee :  @ManyToOne\nassignee
+com.springboot.MyTodoList.model.Task -->  com.springboot.MyTodoList.model.Project :  @ManyToOne\nproject
+com.springboot.MyTodoList.model.Task -->  com.springboot.MyTodoList.model.Sprint :  @ManyToOne\nsprint
+com.springboot.MyTodoList.model.Team -->  com.springboot.MyTodoList.model.Employee :  @ManyToOne\nmanager
+
+
+@enduml

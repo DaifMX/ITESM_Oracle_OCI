@@ -1,0 +1,154 @@
+@startuml
+
+class com.springboot.MyTodoList.rag.EmbeddingModelLoader {
+	{field} {static} -DEFAULT_URL : String
+	{field} {static} -LOAD_METADATA : String
+	{field} -dataSource : javax.sql.DataSource
+	{field} {static} -logger : org.slf4j.Logger
+	{field} -modelName : String
+	{field} -modelUrl : String
+	{method} -downloadAndExtractOnnx () : [B
+	{method} +ensureLoaded () : void
+	{method} -existsInCurrentSchema () : boolean
+	{method} -loadIntoDb ( onnx : [B ) : void
+}
+
+
+class com.springboot.MyTodoList.rag.EmbeddingService {
+	{field} -dataSource : javax.sql.DataSource
+	{field} {static} -logger : org.slf4j.Logger
+	{field} -modelName : String
+	{method} +embed ( text : String ) : [F
+	{method} +modelName () : String
+}
+
+
+class com.springboot.MyTodoList.rag.RagBackfillRunner {
+	{field} -enabled : boolean
+	{field} {static} -logger : org.slf4j.Logger
+	{field} -projectRepo : com.springboot.MyTodoList.repository.ProjectRepository
+	{field} -sprintRepo : com.springboot.MyTodoList.repository.SprintRepository
+	{field} -taskRepo : com.springboot.MyTodoList.repository.TaskRepository
+	{method} +backfill () : void
+	{method} -enqueueMissing ( sourceType : String , ids : [J ) : int
+}
+
+
+class com.springboot.MyTodoList.rag.RagChunk {
+	{field} +chunkId : Long
+	{field} +content : String
+	{field} +contentHash : String
+	{field} +ownerEmployeeId : Long
+	{field} +projectId : Long
+	{field} +sourceId : Long
+	{field} +sourceType : String
+	{field} +sprintId : Long
+	{field} +updatedAt : java.time.LocalDateTime
+}
+
+
+interface com.springboot.MyTodoList.rag.RagChunkRepository {
+	{method}  {abstract} +countBySourceType ( sourceType : String ) : long
+	{method}  {abstract} +existsBySourceTypeAndSourceId ( sourceType : String , sourceId : Long ) : boolean
+	{method}  {abstract} +findBySourceTypeAndSourceId ( sourceType : String , sourceId : Long ) : java.util.Optional
+}
+
+
+class com.springboot.MyTodoList.rag.RagDirty {
+	{field} {static} +ACTION_DELETE : String
+	{field} {static} +ACTION_UPSERT : String
+	{field} +action : String
+	{field} +attempts : int
+	{field} +dirtyId : Long
+	{field} +enqueuedAt : java.time.LocalDateTime
+	{field} +lastError : String
+	{field} +sourceId : Long
+	{field} +sourceType : String
+	{method} ~onCreate () : void
+}
+
+
+class com.springboot.MyTodoList.rag.RagDirtyEnqueuer {
+	{field} {static} +TYPE_PROJECT : String
+	{field} {static} +TYPE_SPRINT : String
+	{field} {static} +TYPE_TASK : String
+	{method} +delete ( sourceType : String , sourceId : long ) : void
+	{method} +upsert ( sourceType : String , sourceId : long ) : void
+}
+
+
+interface com.springboot.MyTodoList.rag.RagDirtyRepository {
+	{method}  {abstract} +countByAttemptsGreaterThanEqual ( attempts : int ) : long
+}
+
+
+class com.springboot.MyTodoList.rag.RagIndexWorker {
+	{field} -batchSize : int
+	{field} -dataSource : javax.sql.DataSource
+	{field} {static} -logger : org.slf4j.Logger
+	{field} -maxAttempts : int
+	{method} -coalesce ( rows : java.util.List ) : java.util.Map
+	{method} -deleteGroup ( c : java.sql.Connection , g : com.springboot.MyTodoList.rag.RagIndexWorker$DirtyGroup ) : void
+	{method} ~drainOnce () : void
+	{method} -markFailure ( c : java.sql.Connection , g : com.springboot.MyTodoList.rag.RagIndexWorker$DirtyGroup , e : Exception ) : void
+	{method} -pickBatch ( c : java.sql.Connection ) : java.util.List
+	{method} +tick () : void
+}
+
+
+class com.springboot.MyTodoList.rag.RagIndexer {
+	{field} -commentRepo : com.springboot.MyTodoList.repository.CommentRepository
+	{field} -dataSource : javax.sql.DataSource
+	{field} {static} -logger : org.slf4j.Logger
+	{field} -projectRepo : com.springboot.MyTodoList.repository.ProjectRepository
+	{field} -sprintRepo : com.springboot.MyTodoList.repository.SprintRepository
+	{field} -taskRepo : com.springboot.MyTodoList.repository.TaskRepository
+	{method} -buildProjectText ( p : com.springboot.MyTodoList.model.Project ) : String
+	{method} -buildSprintText ( s : com.springboot.MyTodoList.model.Sprint ) : String
+	{method} -buildTaskText ( t : com.springboot.MyTodoList.model.Task ) : String
+	{method} +delete ( sourceType : String , sourceId : long ) : void
+	{method} -merge ( sourceType : String , sourceId : long , content : String , ownerEmployeeId : Long , projectId : Long , sprintId : Long ) : void
+	{method}  {static} -nz ( s : String ) : String
+	{method} +reindex ( sourceType : String , sourceId : long ) : boolean
+	{method}  {static} -setNullableLong ( ps : java.sql.PreparedStatement , idx : int , v : Long ) : void
+	{method}  {static} -sha256 ( s : String ) : String
+	{method} -upsertProject ( p : com.springboot.MyTodoList.model.Project ) : void
+	{method} -upsertSprint ( s : com.springboot.MyTodoList.model.Sprint ) : void
+	{method} -upsertTask ( t : com.springboot.MyTodoList.model.Task ) : void
+}
+
+
+class com.springboot.MyTodoList.rag.RagRetriever {
+	{field} -dataSource : javax.sql.DataSource
+	{field} {static} -logger : org.slf4j.Logger
+	{method} +search ( query : String , topK : int , caller : com.springboot.MyTodoList.model.Employee , isManager : boolean ) : java.util.List
+}
+
+
+class com.springboot.MyTodoList.rag.RagRetriever$RetrievedChunk {
+	{field} -content : String
+	{field} -distance : double
+	{field} -sourceId : long
+	{field} -sourceType : String
+	{method} +content () : String
+	{method} +distance () : double
+	{method} +equals ( o : Object ) : boolean
+	{method} +hashCode () : int
+	{method} +sourceId () : long
+	{method} +sourceType () : String
+	{method} +toString () : String
+}
+
+
+
+
+com.springboot.MyTodoList.rag.RagBackfillRunner *--  com.springboot.MyTodoList.rag.RagChunkRepository : chunkRepo
+com.springboot.MyTodoList.rag.RagBackfillRunner *--  com.springboot.MyTodoList.rag.RagDirtyEnqueuer : enqueuer
+com.springboot.MyTodoList.rag.RagDirtyEnqueuer -->  com.springboot.MyTodoList.rag.RagDirtyRepository : repo
+com.springboot.MyTodoList.rag.RagIndexWorker *--  com.springboot.MyTodoList.rag.RagIndexer : indexer
+com.springboot.MyTodoList.rag.RagIndexer *--  com.springboot.MyTodoList.rag.EmbeddingService : embeddingService
+com.springboot.MyTodoList.rag.RagIndexer *--  com.springboot.MyTodoList.rag.RagChunkRepository : chunkRepo
+com.springboot.MyTodoList.rag.RagRetriever *--  com.springboot.MyTodoList.rag.EmbeddingService : embeddingService
+
+
+@enduml
