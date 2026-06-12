@@ -8,6 +8,8 @@ import { parseLocalDate, cn } from '../../lib/utils'
 import { Skeleton } from '../../components/ui/Skeleton'
 import CreateTaskButton from '../../components/CreateTaskButton'
 import TaskModal from '../Kanban/components/TaskModal'
+import DoneHoursDialog from '../../components/DoneHoursDialog'
+import { useDoneHoursGuard } from '../../hooks/useDoneHoursGuard'
 import { MAIN_TABS } from './constants'
 import KpiCards from './components/KpiCards'
 import ProgressBar from './components/ProgressBar'
@@ -97,10 +99,13 @@ export default function DeveloperDashboardPage() {
   const [view, setView]                 = useState('list')
   const [editTask, setEditTask]         = useState(null)
 
-  const handleUpdate = useCallback(async (task, newStatus) => {
-    const updated = await updateTask(task.taskId, { ...task, status: newStatus })
+  const commit = useCallback(async (task, newStatus, extra) => {
+    const updated = await updateTask(task.taskId, { ...task, status: newStatus, ...extra })
     mutate(tasks.map((t) => (t.taskId === updated.taskId ? updated : t)), { revalidate: false })
   }, [tasks, mutate])
+
+  const { requestChange: handleUpdate, pending, confirm, cancel, saving, error: doneError } =
+    useDoneHoursGuard(commit)
 
   const total       = tasks.length
   const done        = tasks.filter((t) => t.status === 'done').length
@@ -198,6 +203,16 @@ export default function DeveloperDashboardPage() {
           employees={employees}
           onClose={() => setEditTask(null)}
           onSave={() => { setEditTask(null); mutate() }}
+        />
+      )}
+
+      {pending && (
+        <DoneHoursDialog
+          task={pending.task}
+          onConfirm={confirm}
+          onCancel={cancel}
+          saving={saving}
+          error={doneError}
         />
       )}
     </div>
