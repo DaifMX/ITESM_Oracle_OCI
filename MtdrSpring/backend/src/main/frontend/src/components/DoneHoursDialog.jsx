@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Loader2, CheckCircle2 } from 'lucide-react'
 import { Button } from './ui/button'
 
@@ -10,6 +10,11 @@ export default function DoneHoursDialog({ task, onConfirm, onCancel, saving = fa
   const initial = task?.totalHours != null && task.totalHours !== '' ? String(task.totalHours) : ''
   const [hours, setHours]     = useState(initial)
   const [touched, setTouched] = useState(false)
+
+  useEffect(() => {
+    setHours(initial)
+    setTouched(false)
+  }, [task?.taskId, initial])
 
   const value = hours.trim()
   const num   = Number(value)
