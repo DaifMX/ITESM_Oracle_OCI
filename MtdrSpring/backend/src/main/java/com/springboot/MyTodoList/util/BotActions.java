@@ -188,7 +188,7 @@ public class BotActions {
         StringBuilder sb = new StringBuilder("📋 *Your Tasks* \\(").append(tasks.size()).append("\\)\n");
         sb.append("━━━━━━━━━━━━━━━━━━━━\n\n");
         for (Task t : tasks) {
-            sb.append("*\\#").append(t.getTaskId()).append("* ")
+            sb.append(statusEmoji(t.getStatus())).append(" *\\#").append(t.getTaskId()).append("* ")
               .append(escapeMarkdown(t.getTitle())).append("\n");
         }
         sb.append("\n━━━━━━━━━━━━━━━━━━━━\n");
@@ -434,6 +434,17 @@ public class BotActions {
 
     private void send(String text, ReplyKeyboardMarkup keyboard) {
         BotHelper.sendMessageToTelegram(chatId, text, telegramClient, keyboard);
+    }
+
+    private static String statusEmoji(String status) {
+        if (status == null) return "⬜";
+        return switch (status.toLowerCase()) {
+            case "todo"        -> "📝";
+            case "in_progress" -> "🔄";
+            case "done"        -> "✅";
+            case "blocked"     -> "🚫";
+            default            -> "⬜";
+        };
     }
 
     private static String projectEmoji(String status) {
