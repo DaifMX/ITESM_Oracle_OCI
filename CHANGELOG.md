@@ -1,3 +1,12 @@
+# [1.6.0](https://github.com/DaifMX/ITESM_Oracle_OCI/compare/v1.5.0...v1.6.0) (2026-06-12)
+
+
+### Features
+
+* **AI:** AI Feature now support bulk creation of tasks, employee and other resource. ([407759e](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/407759e80bfddbcca7ec0181353796c0deef7dce))
+* **dashboard:** add median tasks/hours per developer KPIs ([2bf4ae6](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/2bf4ae648a06fafe2eb127ee570540cbff7b574a))
+* **tasks:** require logging total hours when moving a task to Done ([407d854](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/407d8542c0527f196dde7de0137f52aefac08807))
+
 # [1.5.0](https://github.com/DaifMX/ITESM_Oracle_OCI/compare/v1.4.0...v1.5.0) (2026-06-11)
 
 
