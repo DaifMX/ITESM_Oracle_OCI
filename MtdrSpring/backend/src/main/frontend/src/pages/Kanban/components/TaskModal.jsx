@@ -72,6 +72,11 @@ export default function TaskModal({ task, sprint, sprintId, projectId, projects,
   async function handleSubmit(e) {
     e.preventDefault()
 
+    if (form.status === 'done' && (form.totalHours === '' || form.totalHours == null)) {
+      setError('Set the total hours spent before marking this task as done.')
+      return
+    }
+
     const effProjectId = standalone ? selProjectId : (projectId ? Number(projectId) : null)
     const effSprintId  = standalone ? selSprintId  : (sprintId ? Number(sprintId) : null)
 

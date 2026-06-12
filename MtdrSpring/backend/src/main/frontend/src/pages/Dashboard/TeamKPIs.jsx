@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
-import { AlertCircle, BarChart3, CheckCircle2, Timer, TrendingUp, Clock } from 'lucide-react'
+import { AlertCircle, BarChart3, CheckCircle2, Timer, TrendingUp, Clock, Activity, Gauge } from 'lucide-react'
 import { fetcher } from '../../lib/fetcher'
 import { Skeleton } from '../../components/ui/Skeleton'
 import { DEV_COLORS } from './constants'
@@ -12,6 +12,13 @@ import DevLegend from './components/DevLegend'
 import SprintVelocityChart from './components/SprintVelocityChart'
 import ProductivityTable from './components/ProductivityTable'
 
+function median(values) {
+  if (values.length === 0) return 0
+  const sorted = [...values].sort((a, b) => a - b)
+  const mid = Math.floor(sorted.length / 2)
+  return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2
+}
+
 function KpiSkeleton() {
   return (
     <div className="space-y-6">
@@ -22,8 +29,8 @@ function KpiSkeleton() {
         </div>
         <Skeleton className="h-8 w-36 rounded-md" />
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-20 rounded-lg" />)}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        {[...Array(6)].map((_, i) => <Skeleton key={i} className="h-20 rounded-lg" />)}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Skeleton className="h-64 rounded-lg" />
@@ -145,6 +152,9 @@ export default function TeamKPIs() {
     }),
     [developers, empTasksMap, selectedSprintId, selectedProjectId])
 
+  const medianTasksPerDev = median(devStats.map((d) => d.done)).toFixed(1)
+  const medianHoursPerDev = median(devStats.map((d) => d.hours)).toFixed(1)
+
   const groupedChartData = useMemo(() => {
     if (selectedSprintId !== 'all' || filteredSprints.length === 0) return null
     const groups = developers.map((emp, i) => ({
@@ -245,11 +255,13 @@ export default function TeamKPIs() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatCard icon={CheckCircle2} label="Tasks" value={`${doneTasks} / ${totalTasks}`} />
-        <StatCard icon={Timer} label="Total Hours" value={`${totalHours.toFixed(1)}h`} />
-        <StatCard icon={TrendingUp} label="Avg Tasks/Dev" value={avgTasksPerDev} />
-        <StatCard icon={Clock} label="Avg Hours/Dev" value={`${avgHoursPerDev}h`} />
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        <StatCard compact icon={CheckCircle2} label="Tasks" value={`${doneTasks} / ${totalTasks}`} />
+        <StatCard compact icon={Timer} label="Total Hours" value={`${totalHours.toFixed(1)}h`} />
+        <StatCard compact icon={TrendingUp} label="Avg Tasks" value={avgTasksPerDev} />
+        <StatCard compact icon={Clock} label="Avg Hours" value={`${avgHoursPerDev}h`} />
+        <StatCard compact icon={Activity} label="Median Tasks" value={medianTasksPerDev} />
+        <StatCard compact icon={Gauge} label="Median Hours" value={`${medianHoursPerDev}h`} />
       </div>
 
       {devStats.length > 0 && (

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import useSWR from 'swr'
 import { Plus, ChevronRight, AlertCircle, X, Calendar } from 'lucide-react'
@@ -7,6 +7,8 @@ import { fetcher } from '../../lib/fetcher'
 import { cn, parseLocalDate } from '../../lib/utils'
 import { Button } from '../../components/ui/button'
 import { Skeleton } from '../../components/ui/Skeleton'
+import DoneHoursDialog from '../../components/DoneHoursDialog'
+import { useDoneHoursGuard } from '../../hooks/useDoneHoursGuard'
 import { COLUMNS } from './constants'
 import KanbanColumn from './components/KanbanColumn'
 import TaskModal from './components/TaskModal'
@@ -93,7 +95,20 @@ export default function KanbanPage() {
     dragLeaveTimer.current = setTimeout(() => setDragOverCol(null), 60)
   }
 
-  async function handleDrop(e, targetColKey) {
+  const commit = useCallback(async (task, newStatus, extra) => {
+    setTasks((prev) => prev.map((t) => t.taskId === task.taskId ? { ...t, status: newStatus, ...extra } : t))
+    try {
+      await updateTask(task.taskId, { ...task, status: newStatus, ...extra, sprint: { sprintId: Number(sprintId) }, project: { projectId: Number(projectId) } })
+    } catch (err) {
+      setTasks((prev) => prev.map((t) => t.taskId === task.taskId ? { ...task } : t))
+      setMutateError('Failed to move task. Please try again.')
+      throw err
+    }
+  }, [sprintId, projectId])
+
+  const { requestChange, pending, confirm, cancel, saving, error: doneError } = useDoneHoursGuard(commit)
+
+  function handleDrop(e, targetColKey) {
     e.preventDefault()
     clearTimeout(dragLeaveTimer.current)
     setDragOverCol(null)
@@ -104,13 +119,7 @@ export default function KanbanPage() {
     const task = tasks.find((t) => t.taskId === taskId)
     if (!task || task.status === targetColKey) return
 
-    setTasks((prev) => prev.map((t) => t.taskId === taskId ? { ...t, status: targetColKey } : t))
-    try {
-      await updateTask(taskId, { ...task, status: targetColKey, sprint: { sprintId: Number(sprintId) }, project: { projectId: Number(projectId) } })
-    } catch {
-      setTasks((prev) => prev.map((t) => t.taskId === taskId ? { ...t, status: task.status } : t))
-      setMutateError('Failed to move task. Please try again.')
-    }
+    requestChange(task, targetColKey)
   }
 
   async function handleDelete(task) {
@@ -249,6 +258,16 @@ export default function KanbanPage() {
           employees={employees}
           onClose={() => setModal(null)}
           onSave={handleSaved}
+        />
+      )}
+
+      {pending && (
+        <DoneHoursDialog
+          task={pending.task}
+          onConfirm={confirm}
+          onCancel={cancel}
+          saving={saving}
+          error={doneError}
         />
       )}
     </div>
