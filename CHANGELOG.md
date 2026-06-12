@@ -1,3 +1,10 @@
+## [1.6.1](https://github.com/DaifMX/ITESM_Oracle_OCI/compare/v1.6.0...v1.6.1) (2026-06-12)
+
+
+### Bug Fixes
+
+* **bot:** remove illegal MarkdownV2 em dash escapes breaking commands ([bbfe1d5](https://github.com/DaifMX/ITESM_Oracle_OCI/commit/bbfe1d5fb6a64a78f20ce9c7f8f8e97d1bc501c9))
+
 # [1.6.0](https://github.com/DaifMX/ITESM_Oracle_OCI/compare/v1.5.0...v1.6.0) (2026-06-12)
 
 
