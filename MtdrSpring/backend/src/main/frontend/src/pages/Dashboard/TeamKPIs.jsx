@@ -256,12 +256,12 @@ export default function TeamKPIs() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-        <StatCard icon={CheckCircle2} label="Tasks" value={`${doneTasks} / ${totalTasks}`} />
-        <StatCard icon={Timer} label="Total Hours" value={`${totalHours.toFixed(1)}h`} />
-        <StatCard icon={TrendingUp} label="Avg Tasks/Dev" value={avgTasksPerDev} />
-        <StatCard icon={Clock} label="Avg Hours/Dev" value={`${avgHoursPerDev}h`} />
-        <StatCard icon={Activity} label="Median Tasks/Dev" value={medianTasksPerDev} />
-        <StatCard icon={Gauge} label="Median Hours/Dev" value={`${medianHoursPerDev}h`} />
+        <StatCard compact icon={CheckCircle2} label="Tasks" value={`${doneTasks} / ${totalTasks}`} />
+        <StatCard compact icon={Timer} label="Total Hours" value={`${totalHours.toFixed(1)}h`} />
+        <StatCard compact icon={TrendingUp} label="Avg Tasks" value={avgTasksPerDev} />
+        <StatCard compact icon={Clock} label="Avg Hours" value={`${avgHoursPerDev}h`} />
+        <StatCard compact icon={Activity} label="Median Tasks" value={medianTasksPerDev} />
+        <StatCard compact icon={Gauge} label="Median Hours" value={`${medianHoursPerDev}h`} />
       </div>
 
       {devStats.length > 0 && (
