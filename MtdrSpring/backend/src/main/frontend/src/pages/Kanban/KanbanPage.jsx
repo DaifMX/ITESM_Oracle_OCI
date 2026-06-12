@@ -100,7 +100,7 @@ export default function KanbanPage() {
     try {
       await updateTask(task.taskId, { ...task, status: newStatus, ...extra, sprint: { sprintId: Number(sprintId) }, project: { projectId: Number(projectId) } })
     } catch (err) {
-      setTasks((prev) => prev.map((t) => t.taskId === task.taskId ? { ...t, status: task.status } : t))
+      setTasks((prev) => prev.map((t) => t.taskId === task.taskId ? { ...task } : t))
       setMutateError('Failed to move task. Please try again.')
       throw err
     }
