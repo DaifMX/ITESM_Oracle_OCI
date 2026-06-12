@@ -32,7 +32,6 @@ class com.springboot.MyTodoList.util.BotActions {
 	{method} -handleConversationReply ( state : com.springboot.MyTodoList.util.BotActions$ConvState , employee : com.springboot.MyTodoList.model.Employee ) : void
 	{method}  {static} -isManagerOrAdmin ( emp : com.springboot.MyTodoList.model.Employee ) : boolean
 	{method} -matches ( cmd : com.springboot.MyTodoList.util.BotCommands ) : boolean
-	{method}  {static} -priorityLabel ( priority : String ) : String
 	{method}  {static} -projectEmoji ( status : String ) : String
 	{method} -send ( text : String ) : void
 	{method} -send ( text : String , keyboard : org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup ) : void
@@ -62,9 +61,11 @@ enum com.springboot.MyTodoList.util.BotCommands {
 
 
 class com.springboot.MyTodoList.util.BotHelper {
+	{field} {static} -MAX_MESSAGE_LENGTH : int
 	{field} {static} -logger : org.slf4j.Logger
 	{method}  {static} +sendMessageToTelegram ( chatId : Long , text : String , bot : org.telegram.telegrambots.meta.generics.TelegramClient ) : void
 	{method}  {static} +sendMessageToTelegram ( chatId : Long , text : String , bot : org.telegram.telegrambots.meta.generics.TelegramClient , rk : org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup ) : void
+	{method}  {static} -splitMessage ( text : String ) : java.util.List
 }
 
 
