@@ -188,18 +188,10 @@ public class BotActions {
         StringBuilder sb = new StringBuilder("📋 *Your Tasks* \\(").append(tasks.size()).append("\\)\n");
         sb.append("━━━━━━━━━━━━━━━━━━━━\n\n");
         for (Task t : tasks) {
-            sb.append(statusEmoji(t.getStatus())).append(" *\\#").append(t.getTaskId())
-              .append(" — ").append(escapeMarkdown(t.getTitle())).append("*\n");
-            sb.append("     ").append(priorityLabel(t.getPriority()));
-            if (t.getStoryPoints() != null) sb.append(" \\| SP: `").append(t.getStoryPoints()).append("`");
-            if (t.getEstimatedHours() != null) sb.append(" \\| Est: `").append(t.getEstimatedHours()).append("h`");
-            sb.append("\n");
-            if (t.getSprint() != null) sb.append("     🏃 ").append(escapeMarkdown(t.getSprint().getName()));
-            if (t.getExpectedEndDate() != null) sb.append(" \\| 📅 Due: `").append(t.getExpectedEndDate()).append("`");
-            if (t.getSprint() != null || t.getExpectedEndDate() != null) sb.append("\n");
-            sb.append("\n");
+            sb.append("*\\#").append(t.getTaskId()).append("* ")
+              .append(escapeMarkdown(t.getTitle())).append("\n");
         }
-        sb.append("━━━━━━━━━━━━━━━━━━━━\n");
+        sb.append("\n━━━━━━━━━━━━━━━━━━━━\n");
         sb.append("💡 Use `/done <taskId>` to complete a task");
         send(sb.toString());
     }
@@ -442,27 +434,6 @@ public class BotActions {
 
     private void send(String text, ReplyKeyboardMarkup keyboard) {
         BotHelper.sendMessageToTelegram(chatId, text, telegramClient, keyboard);
-    }
-
-    private static String statusEmoji(String status) {
-        if (status == null) return "⬜";
-        return switch (status.toLowerCase()) {
-            case "todo"        -> "📝";
-            case "in_progress" -> "🔄";
-            case "done"        -> "✅";
-            case "blocked"     -> "🚫";
-            default            -> "⬜";
-        };
-    }
-
-    private static String priorityLabel(String priority) {
-        if (priority == null) return "⬜ unknown";
-        return switch (priority.toLowerCase()) {
-            case "high"   -> "🔴 High";
-            case "medium" -> "🟡 Medium";
-            case "low"    -> "🟢 Low";
-            default       -> "⬜ " + priority;
-        };
     }
 
     private static String projectEmoji(String status) {
