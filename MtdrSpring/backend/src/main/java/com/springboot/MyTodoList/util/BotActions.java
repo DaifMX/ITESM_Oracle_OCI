@@ -145,7 +145,7 @@ public class BotActions {
     // ─── /help ───────────────────────────────────────────────────────────────
 
     private void fnHelp() {
-        String help = "📖 *Help \\— All Commands*\n\n" +
+        String help = "📖 *Help — All Commands*\n\n" +
                 "━━━━━━━━━━━━━━━━━━━━\n" +
                 "📋 *Tasks*\n" +
                 "  /mytasks — view your assigned tasks\n" +
@@ -189,7 +189,7 @@ public class BotActions {
         sb.append("━━━━━━━━━━━━━━━━━━━━\n\n");
         for (Task t : tasks) {
             sb.append(statusEmoji(t.getStatus())).append(" *\\#").append(t.getTaskId())
-              .append(" \\— ").append(escapeMarkdown(t.getTitle())).append("*\n");
+              .append(" — ").append(escapeMarkdown(t.getTitle())).append("*\n");
             sb.append("     ").append(priorityLabel(t.getPriority()));
             if (t.getStoryPoints() != null) sb.append(" \\| SP: `").append(t.getStoryPoints()).append("`");
             if (t.getEstimatedHours() != null) sb.append(" \\| Est: `").append(t.getEstimatedHours()).append("h`");
@@ -265,7 +265,7 @@ public class BotActions {
             task.setStatus("done");
             taskService.update(taskId, task);
             send("🎉 *Task completed\\!*\n\n" +
-                 "✅ *\\#" + taskId + " \\— " + escapeMarkdown(task.getTitle()) + "*\n\n" +
+                 "✅ *\\#" + taskId + " — " + escapeMarkdown(task.getTitle()) + "*\n\n" +
                  "Great work\\! Keep it up 💪");
         } catch (NumberFormatException e) {
             send("❌ Invalid task ID\\. Usage: `/done <taskId>`");
@@ -285,7 +285,7 @@ public class BotActions {
         for (Project p : projects) {
             sb.append(projectEmoji(p.getStatus()))
               .append(" *\\#").append(p.getProjectId())
-              .append(" \\— ").append(escapeMarkdown(p.getName())).append("*\n");
+              .append(" — ").append(escapeMarkdown(p.getName())).append("*\n");
             sb.append("     Status: `").append(p.getStatus()).append("`");
             if (p.getStartDate() != null) sb.append(" \\| Start: `").append(p.getStartDate()).append("`");
             if (p.getEndDate() != null) sb.append(" \\| End: `").append(p.getEndDate()).append("`");
@@ -447,7 +447,7 @@ public class BotActions {
     private static String statusEmoji(String status) {
         if (status == null) return "⬜";
         return switch (status.toLowerCase()) {
-            case "todo"        -> "�";
+            case "todo"        -> "📝";
             case "in_progress" -> "🔄";
             case "done"        -> "✅";
             case "blocked"     -> "🚫";
